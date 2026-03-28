@@ -2,7 +2,8 @@
 import ProductCard from "@/components/ProductCard"
 import { useParams } from "next/navigation"
 import { useEffect, useState } from "react"
-import { MailIcon, MapPinIcon } from "lucide-react"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faEnvelope, faMapPin } from "@fortawesome/free-solid-svg-icons"
 import Loading from "@/components/Loading"
 import Image from "next/image"
 import axios from "axios"
@@ -49,11 +50,11 @@ export default function StoreShop() {
                         <div className="text-xs text-slate-500 mt-4 space-y-1"></div>
                         <div className="space-y-2 text-sm text-slate-500">
                             <div className="flex items-center">
-                                <MapPinIcon className="w-4 h-4 text-gray-500 mr-2" />
+                                <FontAwesomeIcon icon={faMapPin} className="w-4 h-4 text-gray-500 mr-2" />
                                 <span>{storeInfo.address}</span>
                             </div>
                             <div className="flex items-center">
-                                <MailIcon className="w-4 h-4 text-gray-500 mr-2" />
+                                <FontAwesomeIcon icon={faEnvelope} className="w-4 h-4 text-gray-500 mr-2" />
                                 <span>{storeInfo.email}</span>
                             </div>
                            

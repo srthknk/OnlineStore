@@ -5,7 +5,7 @@ import axios from 'axios'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCheckCircle, faBox, faMapPin, faPhone, faEnvelope, faArrowRight, faMobileAlt, faCreditCard, faWallet } from '@fortawesome/free-solid-svg-icons'
+import { faCheckCircle, faBox, faMapPin, faPhone, faEnvelope, faArrowRight, faMobile, faCreditCard, faWallet } from '@fortawesome/free-solid-svg-icons'
 
 export default function OrderSuccessPage() {
     const router = useRouter()
@@ -151,7 +151,7 @@ export default function OrderSuccessPage() {
                         <p className="text-sm text-slate-600 mb-1">Payment Method</p>
                         <p className="font-semibold text-slate-800">
                             {order.paymentMethod === 'RAZORPAY_UPI'
-                                ? <><FontAwesomeIcon icon={faMobileAlt} className="mr-2" /> UPI Payment</>
+                                ? <><FontAwesomeIcon icon={faMobile} className="mr-2" /> UPI Payment</>
                                 : order.paymentMethod === 'RAZORPAY_CARD'
                                 ? <><FontAwesomeIcon icon={faCreditCard} className="mr-2" /> Card Payment</>
                                 : order.paymentMethod === 'RAZORPAY_WALLET'

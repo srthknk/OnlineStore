@@ -21,6 +21,8 @@ export async function POST(request){
         const price = Number(formData.get("price"))
         const category = formData.get("category")
         const images = formData.getAll("images")
+        const imageUrls = formData.get("imageUrls") ? JSON.parse(formData.get("imageUrls")) : []
+        const manufacturingDate = formData.get("manufacturingDate") || null
         const expiryDate = formData.get("expiryDate") || null
         const isOrganic = formData.get("isOrganic") === "true"
         const isVegan = formData.get("isVegan") === "true"
@@ -28,32 +30,49 @@ export async function POST(request){
         const hasVariants = formData.get("hasVariants") === "true"
         const variantsData = formData.get("variantsData") ? JSON.parse(formData.get("variantsData")) : []
 
-        if(!name || !description || !mrp || !price || !category || images.length < 1){
+        if(!name || !description || !mrp || !price || !category){
             return NextResponse.json({error: 'missing product details'}, { status: 400 } )
+        }
+
+        if(images.length < 1 && imageUrls.length < 1){
+            return NextResponse.json({error: 'must provide at least one image (file or URL)'}, { status: 400 } )
         }
 
         if(hasVariants && variantsData.length === 0){
             return NextResponse.json({error: 'products with variants must have at least one variant'}, { status: 400 } )
         }
 
-        // Uploading Images to ImageKit
-        const imagesUrl = await Promise.all(images.map(async (image) => {
-            const buffer = Buffer.from(await image.arrayBuffer());
-            const response = await imagekit.upload({
-                file: buffer,
-                fileName: image.name,
-                folder: "products",
-            })
-            const url = imagekit.url({
-                path: response.filePath,
-                transformation: [
-                    { quality: 'auto' },
-                    { format: 'webp' },
-                    { width: '1024' }
-                ]
-            })
-            return url
-        }))
+        // Handle Images - combine uploaded files and URLs
+        let imagesUrl = [...imageUrls]
+
+        // Upload file-based images to ImageKit
+        if(images.length > 0) {
+            const uploadedImages = await Promise.all(images.map(async (image) => {
+                const buffer = Buffer.from(await image.arrayBuffer());
+                const response = await imagekit.upload({
+                    file: buffer,
+                    fileName: image.name,
+                    folder: "products",
+                })
+                const url = imagekit.url({
+                    path: response.filePath,
+                    transformation: [
+                        { quality: 'auto' },
+                        { format: 'webp' },
+                        { width: '1024' }
+                    ]
+                })
+                return url
+            }))
+            imagesUrl = [...imagesUrl, ...uploadedImages]
+        }
+
+        // Validate dates
+        if(manufacturingDate && expiryDate) {
+            if(new Date(manufacturingDate) > new Date(expiryDate)) {
+                return NextResponse.json({error: 'expiry date must be after manufacturing date'}, { status: 400 })
+            }
+        }
 
         // Calculate total units
         let totalUnits = 0
@@ -74,6 +93,7 @@ export async function POST(request){
                 storeId,
                 totalUnits,
                 inStock: totalUnits > 0,
+                manufacturingDate: manufacturingDate ? new Date(manufacturingDate) : null,
                 expiryDate: expiryDate ? new Date(expiryDate) : null,
                 isOrganic,
                 isVegan,
@@ -142,10 +162,27 @@ export async function PUT(request){
         const mrp = Number(formData.get("mrp"))
         const price = Number(formData.get("price"))
         const category = formData.get("category")
+        const manufacturingDate = formData.get("manufacturingDate") || null
+        const expiryDate = formData.get("expiryDate") || null
+        const isVegan = formData.get("isVegan") === "true"
+        const isOrganic = formData.get("isOrganic") === "true"
+        const manufacturer = formData.get("manufacturer") || null
         const newImages = formData.getAll("newImages")
+        const imageUrls = formData.get("imageUrls") ? JSON.parse(formData.get("imageUrls")) : []
+        const variantsJson = formData.get("variants")
+        const variants = variantsJson ? JSON.parse(variantsJson) : []
 
         if(!productId || !name || !description || !mrp || !price || !category){
             return NextResponse.json({error: 'missing product details'}, { status: 400 } )
+        }
+
+        // Date validation
+        if(manufacturingDate && expiryDate) {
+            const mfgDate = new Date(manufacturingDate)
+            const expDate = new Date(expiryDate)
+            if(expDate <= mfgDate) {
+                return NextResponse.json({error: 'expiry date must be after manufacturing date'}, { status: 400 } )
+            }
         }
 
         // Check if product belongs to this seller
@@ -154,10 +191,12 @@ export async function PUT(request){
             return NextResponse.json({error: 'not authorized'}, { status: 401 } )
         }
 
-        // Upload new images if provided
-        let imagesUrl = product.images
+        // Handle images: start with URL images, then add uploaded images
+        let imagesUrl = [...imageUrls]
+        
+        // Upload new file-based images if provided
         if(newImages.length > 0){
-            imagesUrl = await Promise.all(newImages.map(async (image) => {
+            const uploadedImages = await Promise.all(newImages.map(async (image) => {
                 const buffer = Buffer.from(await image.arrayBuffer());
                 const response = await imagekit.upload({
                     file: buffer,
@@ -174,8 +213,41 @@ export async function PUT(request){
                 })
                 return url
             }))
+            imagesUrl = [...imagesUrl, ...uploadedImages]
         }
 
+        // If no new images provided, keep existing images
+        if(imagesUrl.length === 0) {
+            imagesUrl = product.images
+        }
+
+        // Handle variants
+        if(variants.length > 0) {
+            // Delete existing variants
+            await prisma.productVariant.deleteMany({
+                where: { productId: productId }
+            })
+
+            // Create new variants
+            for(const variant of variants) {
+                if(!variant.id?.toString().startsWith('new-')) {
+                    // Skip existing variants that weren't modified
+                    continue
+                }
+                
+                await prisma.productVariant.create({
+                    data: {
+                        productId: productId,
+                        quantity: parseFloat(variant.quantity),
+                        quantityUnit: variant.quantityUnit,
+                        totalUnits: parseFloat(variant.totalUnits),
+                        availableUnits: parseFloat(variant.availableUnits)
+                    }
+                })
+            }
+        }
+
+        // Update product
         await prisma.product.update({
             where: { id: productId },
             data: {
@@ -184,7 +256,12 @@ export async function PUT(request){
                 mrp,
                 price,
                 category,
-                images: imagesUrl
+                images: imagesUrl,
+                manufacturingDate: manufacturingDate ? new Date(manufacturingDate) : null,
+                expiryDate: expiryDate ? new Date(expiryDate) : null,
+                isVegan,
+                isOrganic,
+                manufacturer
             }
         })
 

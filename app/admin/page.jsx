@@ -4,7 +4,8 @@ import Loading from "@/components/Loading"
 import OrdersAreaChart from "@/components/OrdersAreaChart"
 import { useAuth } from "@clerk/nextjs"
 import axios from "axios"
-import { CircleDollarSignIcon, ShoppingBasketIcon, StoreIcon, TagsIcon } from "lucide-react"
+import { faDollarSign, faShoppingBasket, faStore, faTags } from "@fortawesome/free-solid-svg-icons"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
 
@@ -26,15 +27,15 @@ export default function AdminDashboard() {
     })
 
     const dashboardCardsData = [
-        { title: 'Total Products', value: dashboardData.products, icon: ShoppingBasketIcon, color: 'bg-blue-100 text-blue-700' },
-        { title: 'Total Revenue (Active Orders)', value: currency + dashboardData.revenue, icon: CircleDollarSignIcon, color: 'bg-green-100 text-green-700' },
-        { title: 'Total Orders (Active)', value: dashboardData.orders, icon: TagsIcon, color: 'bg-orange-100 text-orange-700' },
-        { title: 'Total Stores', value: dashboardData.stores, icon: StoreIcon, color: 'bg-purple-100 text-purple-700' },
+        { title: 'Total Products', value: dashboardData.products, icon: faShoppingBasket, color: 'bg-blue-100 text-blue-700' },
+        { title: 'Total Revenue (Active Orders)', value: currency + dashboardData.revenue, icon: faDollarSign, color: 'bg-green-100 text-green-700' },
+        { title: 'Total Orders (Active)', value: dashboardData.orders, icon: faTags, color: 'bg-orange-100 text-orange-700' },
+        { title: 'Total Stores', value: dashboardData.stores, icon: faStore, color: 'bg-purple-100 text-purple-700' },
     ]
 
     const cancelledCardsData = [
-        { title: 'Cancelled Orders', value: dashboardData.cancelledOrders, icon: TagsIcon, color: 'bg-red-100 text-red-700' },
-        { title: 'Lost Revenue (Cancelled)', value: currency + dashboardData.cancelledRevenue, icon: CircleDollarSignIcon, color: 'bg-red-100 text-red-700' },
+        { title: 'Cancelled Orders', value: dashboardData.cancelledOrders, icon: faTags, color: 'bg-red-100 text-red-700' },
+        { title: 'Lost Revenue (Cancelled)', value: currency + dashboardData.cancelledRevenue, icon: faDollarSign, color: 'bg-red-100 text-red-700' },
     ]
 
     const fetchDashboardData = async () => {
@@ -69,7 +70,9 @@ export default function AdminDashboard() {
                                 <p className="text-slate-600">{card.title}</p>
                                 <b className="text-xl sm:text-2xl font-medium text-slate-700 break-words">{card.value}</b>
                             </div>
-                            <card.icon size={40} className="w-10 h-10 p-2 text-slate-400 bg-slate-100 rounded-full flex-shrink-0" />
+                            <div className="p-2 text-slate-400 bg-slate-100 rounded-full flex-shrink-0">
+                                <FontAwesomeIcon icon={card.icon} className="text-2xl" />
+                            </div>
                         </div>
                     ))
                 }
@@ -86,7 +89,9 @@ export default function AdminDashboard() {
                                     <p className="text-slate-600">{card.title}</p>
                                     <b className="text-xl sm:text-2xl font-medium text-slate-700 break-words">{card.value}</b>
                                 </div>
-                                <card.icon size={40} className="w-10 h-10 p-2 text-red-400 bg-red-100 rounded-full flex-shrink-0" />
+                                <div className="p-2 text-red-400 bg-red-100 rounded-full flex-shrink-0">
+                                    <FontAwesomeIcon icon={card.icon} className="text-2xl" />
+                                </div>
                             </div>
                         ))
                     }

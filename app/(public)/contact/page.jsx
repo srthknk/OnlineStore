@@ -2,7 +2,9 @@
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import axios from "axios"
-import { Mail, Phone, MapPin, Facebook, Instagram, Twitter, Linkedin } from "lucide-react"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faEnvelope, faPhone, faMapPin } from "@fortawesome/free-solid-svg-icons"
+import { faFacebook, faInstagram, faTwitter, faLinkedin } from "@fortawesome/free-brands-svg-icons"
 import toast from "react-hot-toast"
 
 export default function Contact() {
@@ -108,7 +110,7 @@ export default function Contact() {
                             {/* Email */}
                             <div className="flex gap-4 sm:gap-6">
                                 <div className="flex-shrink-0">
-                                    <Mail className="w-6 h-6 sm:w-8 sm:h-8 text-indigo-600 mt-1" />
+                                    <FontAwesomeIcon icon={faEnvelope} className="w-6 h-6 sm:w-8 sm:h-8 text-indigo-600 mt-1" />
                                 </div>
                                 <div>
                                     <h3 className="text-lg sm:text-xl font-semibold text-slate-800 mb-1">Email</h3>
@@ -127,7 +129,7 @@ export default function Contact() {
                             {/* Phone */}
                             <div className="flex gap-4 sm:gap-6">
                                 <div className="flex-shrink-0">
-                                    <Phone className="w-6 h-6 sm:w-8 sm:h-8 text-indigo-600 mt-1" />
+                                    <FontAwesomeIcon icon={faPhone} className="w-6 h-6 sm:w-8 sm:h-8 text-indigo-600 mt-1" />
                                 </div>
                                 <div>
                                     <h3 className="text-lg sm:text-xl font-semibold text-slate-800 mb-1">Phone</h3>
@@ -146,7 +148,7 @@ export default function Contact() {
                             {/* Address */}
                             <div className="flex gap-4 sm:gap-6">
                                 <div className="flex-shrink-0">
-                                    <MapPin className="w-6 h-6 sm:w-8 sm:h-8 text-indigo-600 mt-1" />
+                                    <FontAwesomeIcon icon={faMapPin} className="w-6 h-6 sm:w-8 sm:h-8 text-indigo-600 mt-1" />
                                 </div>
                                 <div>
                                     <h3 className="text-lg sm:text-xl font-semibold text-slate-800 mb-1">Address</h3>
@@ -164,16 +166,16 @@ export default function Contact() {
                             </h3>
                             <div className="flex gap-4 sm:gap-6">
                                 <a href={settings.facebookUrl} target="_blank" rel="noopener noreferrer" className="p-3 bg-slate-100 hover:bg-indigo-600 hover:text-white rounded-lg transition">
-                                    <Facebook className="w-6 h-6" />
+                                    <FontAwesomeIcon icon={faFacebook} className="w-6 h-6" />
                                 </a>
                                 <a href={settings.instagramUrl} target="_blank" rel="noopener noreferrer" className="p-3 bg-slate-100 hover:bg-indigo-600 hover:text-white rounded-lg transition">
-                                    <Instagram className="w-6 h-6" />
+                                    <FontAwesomeIcon icon={faInstagram} className="w-6 h-6" />
                                 </a>
                                 <a href={settings.twitterUrl} target="_blank" rel="noopener noreferrer" className="p-3 bg-slate-100 hover:bg-indigo-600 hover:text-white rounded-lg transition">
-                                    <Twitter className="w-6 h-6" />
+                                    <FontAwesomeIcon icon={faTwitter} className="w-6 h-6" />
                                 </a>
                                 <a href={settings.linkedinUrl} target="_blank" rel="noopener noreferrer" className="p-3 bg-slate-100 hover:bg-indigo-600 hover:text-white rounded-lg transition">
-                                    <Linkedin className="w-6 h-6" />
+                                    <FontAwesomeIcon icon={faLinkedin} className="w-6 h-6" />
                                 </a>
                             </div>
                         </div>

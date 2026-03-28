@@ -6,8 +6,9 @@ import { useAuth } from "@clerk/nextjs"
 import axios from "axios"
 import toast from "react-hot-toast"
 import SellerCancelOrderModal from "@/components/SellerCancelOrderModal"
+import InvoiceModal from "@/components/InvoiceModal"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faList, faGears, faTruck, faCheckCircle, faBan, faBell, faUser, faBox, faCreditCard, faSackDollar, faTicket, faRotate } from "@fortawesome/free-solid-svg-icons"
+import { faList, faGears, faTruck, faCheckCircle, faBan, faBell, faUser, faBox, faCreditCard, faSackDollar, faTicket, faRotate, faFileInvoice } from "@fortawesome/free-solid-svg-icons"
 
 export default function StoreOrders() {
     const [orders, setOrders] = useState([])
@@ -15,9 +16,28 @@ export default function StoreOrders() {
     const [selectedOrder, setSelectedOrder] = useState(null)
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [cancelModalOpen, setCancelModalOpen] = useState(false)
-
+    const [invoice, setInvoice] = useState(null)
+    const [showInvoice, setShowInvoice] = useState(false)
+    const [loadingInvoice, setLoadingInvoice] = useState(false)
+    const [websiteSettings, setWebsiteSettings] = useState({ storeName: 'E-Commerce Shop' })
 
     const { getToken } = useAuth()
+
+    useEffect(() => {
+        // Fetch website settings for dynamic name
+        const fetchWebsiteSettings = async () => {
+            try {
+                const response = await fetch('/api/admin/settings')
+                if (response.ok) {
+                    const data = await response.json()
+                    setWebsiteSettings(data)
+                }
+            } catch (error) {
+                console.error('Failed to fetch website settings:', error)
+            }
+        }
+        fetchWebsiteSettings()
+    }, [])
 
     const fetchOrders = async () => {
        try {
@@ -54,6 +74,36 @@ export default function StoreOrders() {
     const closeModal = () => {
         setSelectedOrder(null)
         setIsModalOpen(false)
+    }
+
+    const handleGenerateInvoice = async () => {
+        if (!selectedOrder) return
+        try {
+            setLoadingInvoice(true)
+            const response = await fetch('/api/invoices', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ orderId: selectedOrder.id })
+            })
+
+            if (!response.ok) {
+                throw new Error('Failed to generate invoice')
+            }
+
+            const data = await response.json()
+            if (data.success) {
+                setInvoice(data.data)
+                setShowInvoice(true)
+                toast.success('Invoice generated successfully!')
+            }
+        } catch (error) {
+            console.error('Invoice error:', error)
+            toast.error(error.message || 'Failed to generate invoice')
+        } finally {
+            setLoadingInvoice(false)
+        }
     }
 
     useEffect(() => {
@@ -191,10 +241,10 @@ export default function StoreOrders() {
                                             onChange={e => updateOrderStatus(order.id, e.target.value)}
                                             className={`w-full px-3 py-2 rounded-lg text-sm font-medium border-0 focus:ring-2 focus:ring-offset-1 transition-all cursor-pointer ${colors.badge}`}
                                         >
-                                            <option value="ORDER_PLACED"><FontAwesomeIcon icon={faList} /> ORDER PLACED</option>
-                                            <option value="PROCESSING"><FontAwesomeIcon icon={faGears} /> PROCESSING</option>
-                                            <option value="SHIPPED"><FontAwesomeIcon icon={faTruck} /> SHIPPED</option>
-                                            <option value="DELIVERED"><FontAwesomeIcon icon={faCheckCircle} /> DELIVERED</option>
+                                            <option value="ORDER_PLACED">ORDER PLACED</option>
+                                            <option value="PROCESSING">PROCESSING</option>
+                                            <option value="SHIPPED">SHIPPED</option>
+                                            <option value="DELIVERED">DELIVERED</option>
                                         </select>
                                     )}
                                 </div>
@@ -313,25 +363,33 @@ export default function StoreOrders() {
                                         'border-orange-300 bg-orange-50 text-orange-700'
                                     }`}
                                 >
-                                    <option value="ORDER_PLACED"><FontAwesomeIcon icon={faList} /> ORDER PLACED</option>
-                                    <option value="PROCESSING"><FontAwesomeIcon icon={faGears} /> PROCESSING</option>
-                                    <option value="SHIPPED"><FontAwesomeIcon icon={faTruck} /> SHIPPED</option>
-                                    <option value="DELIVERED"><FontAwesomeIcon icon={faCheckCircle} /> DELIVERED</option>
+                                    <option value="ORDER_PLACED">ORDER PLACED</option>
+                                    <option value="PROCESSING">PROCESSING</option>
+                                    <option value="SHIPPED">SHIPPED</option>
+                                    <option value="DELIVERED">DELIVERED</option>
                                 </select>
                             </div>
                         )}
 
                         {/* Actions */}
-                        <div className="flex justify-end gap-2">
+                        <div className="flex flex-wrap gap-2">
+                            <button
+                                onClick={handleGenerateInvoice}
+                                disabled={loadingInvoice}
+                                className="flex-1 min-w-[150px] px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 btn-animate font-medium transition-all duration-300 disabled:opacity-50 flex items-center justify-center gap-2"
+                            >
+                                <FontAwesomeIcon icon={faFileInvoice} />
+                                {loadingInvoice ? 'Generating...' : 'Invoice'}
+                            </button>
                             {!selectedOrder.isCancelled && !['DELIVERED', 'SHIPPED'].includes(selectedOrder.status) && (
                                 <button 
                                     onClick={() => { setCancelModalOpen(true); closeModal(); }}
-                                    className="px-4 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 btn-animate font-medium transition-all duration-300"
+                                    className="flex-1 min-w-[150px] px-4 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 btn-animate font-medium transition-all duration-300"
                                 >
                                     Cancel Order
                                 </button>
                             )}
-                            <button onClick={closeModal} className="px-4 py-2 bg-slate-200 text-slate-800 rounded-lg hover:bg-slate-300 btn-animate btn-secondary font-medium transition-all duration-300">
+                            <button onClick={closeModal} className="flex-1 min-w-[150px] px-4 py-2 bg-slate-200 text-slate-800 rounded-lg hover:bg-slate-300 btn-animate btn-secondary font-medium transition-all duration-300">
                                 Close
                             </button>
                         </div>
@@ -352,6 +410,16 @@ export default function StoreOrders() {
                         setSelectedOrder(null)
                         setIsModalOpen(false)
                     }}
+                />
+            )}
+
+            {showInvoice && invoice && (
+                <InvoiceModal
+                    invoice={invoice}
+                    onClose={() => setShowInvoice(false)}
+                    storeName={selectedOrder?.store?.storeName || 'Store'}
+                    websiteName={websiteSettings?.storeName || 'E-Commerce Shop'}
+                    autoDownload={true}
                 />
             )}
         </>

@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faHome, faShieldCheck, faStore, faPercent, faPalette, faBars, faXmark } from '@fortawesome/free-solid-svg-icons'
+import { faHome, faShield, faStore, faPercent, faPalette, faBars, faXmark, faBell, faTruck } from '@fortawesome/free-solid-svg-icons'
 import Image from "next/image"
 import Link from "next/link"
 import { assets } from "@/assets/assets"
@@ -18,8 +18,10 @@ const AdminSidebar = () => {
     const sidebarLinks = [
         { name: 'Dashboard', href: '/admin', icon: faHome },
         { name: 'Stores', href: '/admin/stores', icon: faStore },
-        { name: 'Approve Store', href: '/admin/approve', icon: faShieldCheck },
+        { name: 'Approve Store', href: '/admin/approve', icon: faShield },
+        { name: 'Announcements', href: '/admin/announcements', icon: faBell },
         { name: 'Coupons', href: '/admin/coupons', icon: faPercent  },
+        { name: 'Order Settings', href: '/admin/order-settings', icon: faTruck  },
         { name: 'Personalize', href: '/admin/personalize', icon: faPalette  },
     ]
 
@@ -106,7 +108,7 @@ const AdminSidebar = () => {
                                     }}
                                     onClick={() => setMobileOpen(false)}
                                 >
-                                    <link.icon size={20} className="flex-shrink-0 transition-transform duration-300 group-hover:scale-110" />
+                                    <FontAwesomeIcon icon={link.icon} className="text-xl flex-shrink-0 transition-transform duration-300 group-hover:scale-110" />
                                     <p className="text-sm font-medium">{link.name}</p>
                                 </Link>
                             ))

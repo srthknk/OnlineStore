@@ -6,7 +6,7 @@ import { useAuth, useUser } from '@clerk/nextjs'
 import axios from 'axios'
 import toast from 'react-hot-toast'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCheckCircle, faExclamationCircle, faCircleNotch } from '@fortawesome/free-solid-svg-icons'
+import { faCheckCircle, faExclamationCircle, faCircleNotch, faTruck } from '@fortawesome/free-solid-svg-icons'
 
 export default function CheckoutComponent() {
     const router = useRouter()
@@ -20,11 +20,28 @@ export default function CheckoutComponent() {
     const [paymentMethod, setPaymentMethod] = useState('razorpay-upi')
     const [coupon, setCoupon] = useState(null)
     const [processingPayment, setProcessingPayment] = useState(false)
+    const [orderSettings, setOrderSettings] = useState({
+        minimumAmountForFreeDelivery: 500,
+        deliveryCharges: 50,
+        freeDeliveryMessage: "Yay! You unlocked free delivery"
+    })
 
-    // Fetch addresses on mount
+    // Fetch addresses and order settings on mount
     useEffect(() => {
         fetchAddresses()
+        fetchOrderSettings()
     }, [])
+
+    const fetchOrderSettings = async () => {
+        try {
+            const { data } = await axios.get('/api/order-settings')
+            if (data.success) {
+                setOrderSettings(data.data)
+            }
+        } catch (error) {
+            console.error('Failed to load order settings:', error)
+        }
+    }
 
     const fetchAddresses = async () => {
         try {
@@ -38,13 +55,28 @@ export default function CheckoutComponent() {
         }
     }
 
-    // Calculate total
-    const calculateTotal = () => {
-        let total = cartItems.reduce((sum, item) => {
+    // Calculate subtotal (product cost only)
+    const calculateSubtotal = () => {
+        return cartItems.reduce((sum, item) => {
             const quantity = typeof item === 'object' ? item.quantity : 1
             const price = typeof item === 'object' ? item.price : item
             return sum + (price * quantity)
         }, 0)
+    }
+
+    // Calculate delivery charges based on subtotal
+    const calculateDeliveryCharges = () => {
+        const subtotal = calculateSubtotal()
+        if (subtotal >= orderSettings.minimumAmountForFreeDelivery) {
+            return 0
+        }
+        return orderSettings.deliveryCharges
+    }
+
+    // Calculate total including delivery charges
+    const calculateTotal = () => {
+        let subtotal = calculateSubtotal()
+        let total = subtotal + calculateDeliveryCharges()
 
         if (coupon) {
             total = total - (total * coupon.discount / 100)
@@ -73,7 +105,9 @@ export default function CheckoutComponent() {
 
             // Create order on backend
             const { data } = await axios.post('/api/payments', {
-                total,
+                total: calculateTotal(),
+                subtotal: calculateSubtotal(),
+                deliveryCharges: calculateDeliveryCharges(),
                 cartItems,
                 addressId: selectedAddress,
                 storeId,
@@ -81,7 +115,7 @@ export default function CheckoutComponent() {
             })
 
             // Initialize Razorpay
-            const options = {
+            const options = {calculateTotal()
                 key: data.keyId,
                 amount: Math.round(total * 100), // Amount in paise
                 currency: 'INR',
@@ -159,7 +193,10 @@ export default function CheckoutComponent() {
         }
     }
 
+    const subtotal = calculateSubtotal()
+    const deliveryCharges = calculateDeliveryCharges()
     const total = calculateTotal()
+    const isEligibleForFreeDelivery = subtotal >= orderSettings.minimumAmountForFreeDelivery
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white py-8 px-4">
@@ -277,19 +314,29 @@ export default function CheckoutComponent() {
                         <div className="bg-white rounded-lg shadow-md p-6 border border-slate-200 sticky top-4">
                             <h2 className="text-lg font-semibold text-slate-800 mb-4">Price Details</h2>
                             
+                            {/* Free Delivery Notification */}
+                            {isEligibleForFreeDelivery && (
+                                <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg flex items-start gap-2 animate-pulse">
+                                    <FontAwesomeIcon icon={faTruck} className="text-green-600 text-lg flex-shrink-0 mt-0.5" />
+                                    <p className="text-sm font-semibold text-green-700">{orderSettings.freeDeliveryMessage}</p>
+                                </div>
+                            )}
+                            
                             <div className="space-y-2 mb-4 pb-4 border-b border-slate-200">
                                 <div className="flex justify-between text-sm">
                                     <span className="text-slate-600">Subtotal</span>
-                                    <span className="text-slate-800 font-medium">₹{cartItems.reduce((sum, item) => sum + ((typeof item === 'object' ? item.price : item) * (typeof item === 'object' ? item.quantity : 1)), 0)}</span>
+                                    <span className="text-slate-800 font-medium">₹{subtotal.toFixed(2)}</span>
                                 </div>
                                 <div className="flex justify-between text-sm">
                                     <span className="text-slate-600">Delivery</span>
-                                    <span className="text-green-600 font-medium">FREE</span>
+                                    <span className={`font-medium ${deliveryCharges === 0 ? 'text-green-600' : 'text-slate-800'}`}>
+                                        {deliveryCharges === 0 ? 'FREE' : `₹${deliveryCharges}`}
+                                    </span>
                                 </div>
                                 {coupon && (
                                     <div className="flex justify-between text-sm">
                                         <span className="text-slate-600">Discount ({coupon.discount}%)</span>
-                                        <span className="text-green-600 font-medium">-₹{Math.round(cartItems.reduce((sum, item) => sum + ((typeof item === 'object' ? item.price : item) * (typeof item === 'object' ? item.quantity : 1)), 0) * coupon.discount / 100)}</span>
+                                        <span className="text-green-600 font-medium">-₹{Math.round(total * coupon.discount / 100)}</span>
                                     </div>
                                 )}
                             </div>

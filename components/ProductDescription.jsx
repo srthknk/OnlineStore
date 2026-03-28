@@ -31,7 +31,14 @@ const ProductDescription = ({ product }) => {
                 <div className="flex flex-col gap-3 mt-14">
                     {product.rating.map((item,index) => (
                         <div key={index} className="flex gap-5 mb-10">
-                            <Image src={item.user.image} alt="" className="size-10 rounded-full" width={100} height={100} />
+                            <Image 
+                                src={item.user.image} 
+                                alt={item.user.name}
+                                className="size-10 rounded-full object-cover" 
+                                width={40} 
+                                height={40}
+                                loading="lazy"
+                            />
                             <div>
                                 <div className="flex items-center gap-0.5" >
                                     {Array(5).fill('').map((_, index) => (
@@ -39,8 +46,8 @@ const ProductDescription = ({ product }) => {
                                     ))}
                                 </div>
                                 <p className="text-sm max-w-lg my-4">{item.review}</p>
-                                <p className="font-medium text-slate-800">{item.user.name}</p>
-                                <p className="mt-3 font-light">{new Date(item.createdAt).toDateString()}</p>
+                                <p className="text-sm font-medium text-slate-800">{item.user.name}</p>
+                                <p className="mt-3 text-xs font-light text-slate-500">{new Date(item.createdAt).toDateString()}</p>
                             </div>
                         </div>
                     ))}
@@ -49,7 +56,14 @@ const ProductDescription = ({ product }) => {
 
             {/* Store Page */}
             <div className="flex gap-3 mt-14">
-                <Image src={product.store.logo} alt="" className="size-11 rounded-full ring ring-slate-400" width={100} height={100} />
+                <Image 
+                    src={product.store.logo} 
+                    alt={product.store.name}
+                    className="size-11 rounded-full ring ring-slate-400 object-cover" 
+                    width={44} 
+                    height={44}
+                    loading="lazy"
+                />
                 <div>
                     <p className="font-medium text-slate-600">Product by {product.store.name}</p>
                     <Link href={`/shop/${product.store.username}`} className="flex items-center gap-1.5 text-green-500"> view store <FontAwesomeIcon icon={faArrowRight} className="text-sm" /></Link>

@@ -1,0 +1,118 @@
+in the seller dashbord when he wants to add the product, add a functionality to add product by the image url from internet, it can be single and multiple and these url pictures should be renderd on the users interface... also the second problem is that when sellers add the product, there is expiry and manufacturing date is given, it is not getting rendered on the user interface when the user purchase it, it should be shown to user, also another problem is that when seller ticks on whether this product is vegan , organic if he tick any one of them , it should be rendered on the product description while user purchase it .. next problem is that user add the product quantity by the multiple variants so if the seller add the variats like 500 1000 whether it is kg ml litre anything user should have a choice to select.. Build this logic on your own in detail.... the next problem is that when seller add the multiple variants while creating a products , and in manage product, the multiple variant system should be editable it is not getting rendered there , so build logic for this also neatly... also the manage products screen is also like the strips make it looking like the card as we edited for the orders tab... also edit the edit form of the product... the enhanced prompt is 1. Product Image via URL (Single + Multiple)
+Allow sellers to:
+Add single or multiple image URLs
+Input should support dynamic addition/removal of fields
+Validate:
+Proper URL format
+Must be an image (jpg, png, webp)
+Store images as:
+images: [String]
+On the User Interface (Product Page):
+Render all images in:
+Main preview image
+Image carousel / gallery
+First image should be default preview
+📅 2. Manufacturing & Expiry Date Visibility
+While creating product:
+manufacturingDate: Date,
+expiryDate: Date
+On User Side:
+Display clearly in product details section:
+"Manufactured on: DD/MM/YYYY"
+"Expiry Date: DD/MM/YYYY"
+Add logic:
+If product expired → show:
+⚠️ "This product is expired"
+Disable purchase button
+🌱 3. Vegan / Organic Flags
+Seller can toggle:
+isVegan: Boolean,
+isOrganic: Boolean
+On Product Page:
+Show badges:
+🌱 Vegan
+🍃 Organic
+Only show badge if true
+⚖️ 4. Product Variants (Dynamic Selection)
+Seller can add multiple variants like:
+variants: [
+  {
+    value: Number, // 500, 1000
+    unit: String,  // g, kg, ml, litre
+    price: Number,
+    stock: Number
+  }
+]
+On User Side:
+Show dropdown / selectable buttons:
+Example: 500g | 1kg | 2L
+When user selects variant:
+Price updates dynamically
+Stock validation applies
+✏️ 5. Editable Variants in Manage Products
+Fix issue where variants are not visible/editable
+On "Manage Products":
+Each product should show:
+Variant list
+Edit button
+Edit form should:
+Pre-fill existing variants
+Allow:
+Add new variant
+Edit existing
+Delete variant
+🧾 6. Manage Products UI (Card Layout)
+Replace strip/list UI with card-based layout
+
+Each product card should include:
+
+Product Image
+Product Name
+Price Range (based on variants)
+Stock status
+Vegan / Organic badges
+Buttons:
+Edit
+Delete
+🛠️ 7. Enhanced Product Edit Form
+
+Improve UX:
+
+Sections:
+Basic Info
+Images (URL based)
+Variants
+Dates
+Tags (Vegan/Organic)
+Features:
+Live image preview from URL
+Add/remove variant fields dynamically
+Toggle switches for Vegan/Organic
+Date picker UI
+🔄 8. Data Consistency Between Seller & User
+
+Ensure:
+
+All seller inputs reflect on user UI:
+Images
+Dates
+Variants
+Tags
+Use consistent API response format:
+{
+  name,
+  images,
+  variants,
+  manufacturingDate,
+  expiryDate,
+  isVegan,
+  isOrganic
+}
+⚡ 9. Bonus Improvements (Highly Recommended)
+Auto-select first variant by default
+Show:
+"Only X left" if stock low
+Lazy load images
+Add skeleton loaders for UI
+Validation for:
+Expiry > Manufacturing date.... Note: Strictly use Fontawesome icons dont use any lucide or emojis.... Take your time

@@ -3,7 +3,8 @@ import { dummyStoreDashboardData } from "@/assets/assets"
 import Loading from "@/components/Loading"
 import { useAuth } from "@clerk/nextjs"
 import axios from "axios"
-import { CircleDollarSignIcon, ShoppingBasketIcon, StarIcon, TagsIcon } from "lucide-react"
+import { faDollarSign, faShoppingBasket, faStar, faTags } from "@fortawesome/free-solid-svg-icons"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
@@ -28,15 +29,15 @@ export default function Dashboard() {
     })
 
     const dashboardCardsData = [
-        { title: 'Total Products', value: dashboardData.totalProducts, icon: ShoppingBasketIcon, color: 'bg-emerald-100 text-emerald-700' },
-        { title: 'Total Earnings (Active)', value: currency + dashboardData.totalEarnings, icon: CircleDollarSignIcon, color: 'bg-green-100 text-green-700' },
-        { title: 'Total Orders (Active)', value: dashboardData.totalOrders, icon: TagsIcon, color: 'bg-teal-100 text-teal-700' },
-        { title: 'Total Ratings', value: dashboardData.ratings.length, icon: StarIcon, color: 'bg-amber-100 text-amber-700' },
+        { title: 'Total Products', value: dashboardData.totalProducts, icon: faShoppingBasket, color: 'bg-emerald-100 text-emerald-700' },
+        { title: 'Total Earnings (Active)', value: currency + dashboardData.totalEarnings, icon: faDollarSign, color: 'bg-green-100 text-green-700' },
+        { title: 'Total Orders (Active)', value: dashboardData.totalOrders, icon: faTags, color: 'bg-teal-100 text-teal-700' },
+        { title: 'Total Ratings', value: dashboardData.ratings.length, icon: faStar, color: 'bg-amber-100 text-amber-700' },
     ]
 
     const cancelledCardsData = [
-        { title: 'Cancelled Orders', value: dashboardData.cancelledOrdersCount, icon: TagsIcon, color: 'bg-red-100 text-red-700' },
-        { title: 'Lost Earnings (Cancelled)', value: currency + dashboardData.cancelledEarnings, icon: CircleDollarSignIcon, color: 'bg-red-100 text-red-700' },
+        { title: 'Cancelled Orders', value: dashboardData.cancelledOrdersCount, icon: faTags, color: 'bg-red-100 text-red-700' },
+        { title: 'Lost Earnings (Cancelled)', value: currency + dashboardData.cancelledEarnings, icon: faDollarSign, color: 'bg-red-100 text-red-700' },
     ]
 
     const fetchDashboardData = async () => {
@@ -73,7 +74,7 @@ export default function Dashboard() {
                                 <b className="text-xl sm:text-2xl md:text-3xl font-semibold text-slate-700">{card.value}</b>
                             </div>
                             <div className="p-2.5 text-slate-400 bg-gradient-to-br from-slate-50 to-slate-100 rounded-full flex-shrink-0">
-                                <card.icon size={24} className="sm:w-6 sm:h-6" />
+                                <FontAwesomeIcon icon={card.icon} className="text-2xl" />
                             </div>
                         </div>
                     ))
@@ -96,7 +97,7 @@ export default function Dashboard() {
                                     <b className="text-xl sm:text-2xl md:text-3xl font-semibold text-slate-700">{card.value}</b>
                                 </div>
                                 <div className="p-2.5 text-red-400 bg-gradient-to-br from-red-50 to-red-100 rounded-full flex-shrink-0">
-                                    <card.icon size={24} className="sm:w-6 sm:h-6" />
+                                    <FontAwesomeIcon icon={card.icon} className="text-2xl" />
                                 </div>
                             </div>
                         ))
@@ -129,7 +130,7 @@ export default function Dashboard() {
                                     <p className="font-medium text-slate-700 text-sm">{review.product?.name}</p>
                                     <div className='flex items-center gap-1'>
                                         {Array(5).fill('').map((_, index) => (
-                                            <StarIcon key={index} size={16} className='text-transparent' fill={review.rating >= index + 1 ? "#00C950" : "#D1D5DB"} />
+                                            <FontAwesomeIcon key={index} icon={faStar} className='text-base' style={{color: review.rating >= index + 1 ? "#00C950" : "#D1D5DB"}} />
                                         ))}
                                     </div>
                                 </div>

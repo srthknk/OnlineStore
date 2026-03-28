@@ -5,7 +5,8 @@ import axios from "axios"
 import Image from "next/image"
 import { useState } from "react"
 import { toast } from "react-hot-toast"
-import { Plus, Trash2 } from "lucide-react"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faPlus, faTrash, faLink, faImage, faLeaf } from "@fortawesome/free-solid-svg-icons"
 
 const QUANTITY_UNITS = ['PIECE', 'KG', 'GRAM', 'LITER', 'MILLILITER', 'DOZEN', 'PACKET', 'BOTTLE', 'BOX']
 
@@ -14,6 +15,7 @@ export default function StoreAddProduct() {
     const categories = ['Fresh Produce', 'Dairy & Eggs', 'Meat & Fish', 'Pantry Staples', 'Frozen Foods', 'Beverages', 'Organic', 'Bakery', 'Snacks', 'Spices', 'Others']
 
     const [images, setImages] = useState({ 1: null, 2: null, 3: null, 4: null })
+    const [imageUrls, setImageUrls] = useState({ 1: '', 2: '', 3: '', 4: '' })
     const [productInfo, setProductInfo] = useState({
         name: "",
         description: "",
@@ -21,6 +23,7 @@ export default function StoreAddProduct() {
         price: 0,
         category: "",
         hasVariants: false,
+        manufacturingDate: "",
         expiryDate: "",
         isOrganic: false,
         isVegan: false,
@@ -111,8 +114,17 @@ export default function StoreAddProduct() {
     const onSubmitHandler = async (e) => {
         e.preventDefault()
         try {
-            if (!images[1] && !images[2] && !images[3] && !images[4]) {
-                return toast.error('Please upload at least one image')
+            const hasFileImages = Object.values(images).some(img => img !== null)
+            const hasUrlImages = Object.values(imageUrls).some(url => url?.trim() !== '')
+            
+            if (!hasFileImages && !hasUrlImages) {
+                return toast.error('Please upload or provide image URLs (at least one)')
+            }
+
+            if(productInfo.manufacturingDate && productInfo.expiryDate) {
+                if(new Date(productInfo.manufacturingDate) > new Date(productInfo.expiryDate)) {
+                    return toast.error('Expiry date must be after manufacturing date')
+                }
             }
 
             if(productInfo.hasVariants && productVariants.length === 0){
@@ -131,10 +143,17 @@ export default function StoreAddProduct() {
             formData.append('mrp', productInfo.mrp)
             formData.append('price', productInfo.price)
             formData.append('category', productInfo.category)
+            formData.append('manufacturingDate', productInfo.manufacturingDate)
             formData.append('expiryDate', productInfo.expiryDate)
             formData.append('isOrganic', productInfo.isOrganic)
             formData.append('isVegan', productInfo.isVegan)
             formData.append('manufacturer', productInfo.manufacturer)
+            
+            // Add image URLs to formData
+            const urlList = Object.values(imageUrls).filter(url => url?.trim() !== '')
+            if(urlList.length > 0) {
+                formData.append('imageUrls', JSON.stringify(urlList))
+            }
             
             if(productInfo.hasVariants){
                 formData.append('variantsData', JSON.stringify(productVariants))
@@ -150,8 +169,9 @@ export default function StoreAddProduct() {
             const { data } = await axios.post('/api/store/product', formData, { headers: { Authorization: `Bearer ${token}` } })
             toast.success(data.message)
 
-            setProductInfo({ name: "", description: "", mrp: 0, price: 0, category: "", hasVariants: false, expiryDate: "", isOrganic: false, isVegan: false, manufacturer: "", units: 0 })
+            setProductInfo({ name: "", description: "", mrp: 0, price: 0, category: "", hasVariants: false, manufacturingDate: "", expiryDate: "", isOrganic: false, isVegan: false, manufacturer: "", units: 0 })
             setImages({ 1: null, 2: null, 3: null, 4: null })
+            setImageUrls({ 1: '', 2: '', 3: '', 4: '' })
             setProductVariants([])
             setAiUsed(false)
         } catch (error) {
@@ -168,14 +188,17 @@ export default function StoreAddProduct() {
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 mt-4">
                 {Object.keys(images).map((key) => (
-                    <label key={key} htmlFor={`images${key}`}>
+                    <label key={key} htmlFor={`images${key}`} className="relative group">
                         <Image
                             width={300}
                             height={300}
                             className='h-20 sm:h-24 w-full object-cover border-2 border-slate-200 rounded-lg cursor-pointer hover:border-slate-300 transition-colors'
-                            src={images[key] ? URL.createObjectURL(images[key]) : assets.upload_area}
+                            src={imageUrls[key] ? imageUrls[key] : (images[key] ? URL.createObjectURL(images[key]) : assets.upload_area)}
                             alt=""
                         />
+                        <div className="absolute inset-0 bg-black bg-opacity-50 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                            <FontAwesomeIcon icon={faImage} className="text-white text-lg" />
+                        </div>
                         <input
                             type="file"
                             accept='image/*'
@@ -185,6 +208,23 @@ export default function StoreAddProduct() {
                         />
                     </label>
                 ))}
+            </div>
+
+            <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <p className="text-sm font-medium text-slate-700 mb-3"><FontAwesomeIcon icon={faLink} className="mr-2" />Or Add Image URLs</p>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
+                    {Object.keys(imageUrls).map((key) => (
+                        <input
+                            key={key}
+                            type="url"
+                            placeholder={`Image ${key} URL`}
+                            value={imageUrls[key]}
+                            onChange={(e) => setImageUrls({...imageUrls, [key]: e.target.value})}
+                            className="p-2 px-3 outline-none border border-blue-200 rounded-lg focus:border-blue-400 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-10 text-xs"
+                        />
+                    ))}
+                </div>
+                <p className="text-xs text-slate-500 mt-2">Tip: Paste image URLs from internet. Supported formats: jpg, png, webp</p>
             </div>
 
             <label className="flex flex-col gap-2 my-6">
@@ -221,6 +261,16 @@ export default function StoreAddProduct() {
             {/* Grocery-specific Fields */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5 mt-6">
                 <label className="flex flex-col gap-2">
+                    <span className="font-medium text-slate-700">Manufacturing Date (Optional)</span>
+                    <input 
+                        type="date" 
+                        name="manufacturingDate" 
+                        onChange={onChangeHandler} 
+                        value={productInfo.manufacturingDate} 
+                        className="w-full p-2.5 px-4 outline-none border border-slate-200 rounded-lg focus:border-slate-400 focus:ring-2 focus:ring-green-500 focus:ring-opacity-10 transition-all" 
+                    />
+                </label>
+                <label className="flex flex-col gap-2">
                     <span className="font-medium text-slate-700">Expiry Date (Optional)</span>
                     <input 
                         type="date" 
@@ -230,6 +280,9 @@ export default function StoreAddProduct() {
                         className="w-full p-2.5 px-4 outline-none border border-slate-200 rounded-lg focus:border-slate-400 focus:ring-2 focus:ring-green-500 focus:ring-opacity-10 transition-all" 
                     />
                 </label>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5 mt-6">
                 <label className="flex flex-col gap-2">
                     <span className="font-medium text-slate-700">Manufacturer (Optional)</span>
                     <input 
@@ -253,7 +306,7 @@ export default function StoreAddProduct() {
                         onChange={onChangeHandler}
                         className="w-5 h-5 cursor-pointer accent-green-600"
                     />
-                    <span className="font-medium text-slate-700">🌱 Organic</span>
+                    <span className="font-medium text-slate-700"><FontAwesomeIcon icon={faLeaf} className="mr-2 text-green-600" />Organic</span>
                 </label>
                 <label className="flex items-center gap-3 p-3 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors">
                     <input 
@@ -263,7 +316,7 @@ export default function StoreAddProduct() {
                         onChange={onChangeHandler}
                         className="w-5 h-5 cursor-pointer accent-green-600"
                     />
-                    <span className="font-medium text-slate-700">🌿 Vegan</span>
+                    <span className="font-medium text-slate-700"><FontAwesomeIcon icon={faLeaf} className="mr-2 text-lime-600" />Vegan</span>
                 </label>
             </div>
 
@@ -308,7 +361,7 @@ export default function StoreAddProduct() {
                             onClick={addVariant}
                             className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg transition-all btn-animate"
                         >
-                            <Plus size={18} /> Add Variant
+                            <FontAwesomeIcon icon={faPlus} /> Add Variant
                         </button>
                     </div>
 
@@ -357,7 +410,7 @@ export default function StoreAddProduct() {
                                         onClick={() => removeVariant(index)}
                                         className="p-2.5 bg-red-100 hover:bg-red-200 text-red-600 rounded-lg transition-all"
                                     >
-                                        <Trash2 size={18} />
+                                        <FontAwesomeIcon icon={faTrash} />
                                     </button>
                                 </div>
                             ))}

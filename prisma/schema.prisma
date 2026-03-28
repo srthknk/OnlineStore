@@ -22,6 +22,7 @@ model User {
     Address     Address[]
     store       Store?
     buyerOrders Order[]   @relation("BuyerRelation")
+    invoices    Invoice[] @relation("InvoiceUser")
 }
 
 enum QuantityUnit {
@@ -50,6 +51,7 @@ model Product {
     createdAt       DateTime @default(now())
     updatedAt       DateTime @updatedAt
     totalUnits      Int      @default(0)
+    manufacturingDate DateTime?
     expiryDate      DateTime?
     units           String?  // e.g., "500g", "1kg", "1L"
     isOrganic       Boolean  @default(false)
@@ -126,6 +128,7 @@ enum PaymentStatus {
 model Order {
     id                    String                  @id @default(cuid())
     total                 Float
+    deliveryCharges       Float                   @default(0)
     status                OrderStatus             @default(ORDER_PLACED)
     userId                String
     storeId               String
@@ -151,6 +154,7 @@ model Order {
     user    User    @relation("BuyerRelation", fields: [userId], references: [id])
     store   Store   @relation(fields: [storeId], references: [id])
     address Address @relation(fields: [addressId], references: [id])
+    invoice Invoice?
 }
 
 // Required for creating an OrderItem: orderId, productId, quantity, price
@@ -255,6 +259,9 @@ model Store {
     Product Product[]
     Order   Order[]
     user    User      @relation(fields: [userId], references: [id])
+    announcementStores AnnouncementStore[]
+    announcementReads  AnnouncementRead[]
+    invoices Invoice[]
     
     @@index([isActive])
     @@index([status])
@@ -265,6 +272,7 @@ model Store {
 model Settings {
     id              String   @id @default("default")
     storeName       String   @default("My Store")
+    // Main Banner (Big Banner on Homepage)
     bannerImage1    String   @default("https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=1200")
     bannerImage2    String   @default("https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=1200")
     bannerImage3    String   @default("https://images.unsplash.com/photo-1491553895911-0055eca6402d?w=1200")
@@ -280,6 +288,28 @@ model Settings {
     bannerLink3     String   @default("/shop")
     bannerLink4     String   @default("/shop")
     bannerLink5     String   @default("/shop")
+    
+    // Feature Card 1 (Pharmacy)
+    featureCardTitle1       String   @default("Pharmacy at your doorstep!")
+    featureCardDesc1        String   @default("Cough syrups, pain relief sprays & more")
+    featureCardButton1      String   @default("Order Now")
+    featureCardLink1        String   @default("/shop?category=pharmacy")
+    featureCardImage1       String   @default("")
+    
+    // Feature Card 2 (Pet Care)
+    featureCardTitle2       String   @default("Pet care supplies at your door")
+    featureCardDesc2        String   @default("Food, treats, toys & more")
+    featureCardButton2      String   @default("Order Now")
+    featureCardLink2        String   @default("/shop?category=petcare")
+    featureCardImage2       String   @default("")
+    
+    // Feature Card 3 (Baby Care)
+    featureCardTitle3       String   @default("No time for a diaper run?")
+    featureCardDesc3        String   @default("Get baby care essentials")
+    featureCardButton3      String   @default("Order Now")
+    featureCardLink3        String   @default("/shop?category=baby")
+    featureCardImage3       String   @default("")
+    
     email           String   @default("contact@example.com")
     phone           String   @default("+1-212-456-7890")
     address         String   @default("794 Francisco, 94102")
@@ -301,3 +331,120 @@ model FAQ {
     updatedAt DateTime @updatedAt
 }
 
+// Announcement Models for Admin to Store Communication
+enum AnnouncementType {
+    NORMAL
+    URGENT
+    HIGHLY_URGENT
+}
+
+enum AnnouncementStatus {
+    ACTIVE
+    ARCHIVED
+}
+
+// Announcements created by admin for stores
+model Announcement {
+    id              String              @id @default(cuid())
+    title           String
+    content         String              @db.Text           // Preserves formatting and spaces
+    type            AnnouncementType    @default(NORMAL)
+    createdBy       String              // Admin user ID
+    createdAt       DateTime            @default(now())
+    updatedAt       DateTime            @updatedAt
+    status          AnnouncementStatus  @default(ACTIVE)
+
+    // Relations
+    storeAnnouncements  AnnouncementStore[]
+
+    @@index([createdAt])
+    @@index([type])
+    @@index([status])
+}
+
+// Junction table for announcements to multiple stores
+model AnnouncementStore {
+    id              String    @id @default(cuid())
+    announcementId  String
+    storeId         String
+    createdAt       DateTime  @default(now())
+
+    // Relations
+    announcement    Announcement    @relation(fields: [announcementId], references: [id], onDelete: Cascade)
+    store           Store           @relation(fields: [storeId], references: [id], onDelete: Cascade)
+    reads           AnnouncementRead[]
+
+    @@unique([announcementId, storeId])
+    @@index([storeId])
+    @@index([announcementId])
+}
+
+// Track which sellers have read announcements
+model AnnouncementRead {
+    id                      String    @id @default(cuid())
+    announcementStoreId     String
+    storeId                 String    // Denormalized for easier querying
+    readAt                  DateTime  @default(now())
+    dismissedAt             DateTime?
+    status                  String    @default("read")  // read, seen, dismissed
+
+    // Relations
+    announcementStore       AnnouncementStore @relation(fields: [announcementStoreId], references: [id], onDelete: Cascade)
+    store                   Store             @relation(fields: [storeId], references: [id], onDelete: Cascade)
+
+    @@unique([announcementStoreId, storeId])
+    @@index([storeId])
+    @@index([announcementStoreId])
+}
+
+// Invoice model for order invoices
+model Invoice {
+    id                  String    @id @default(cuid())
+    invoiceNumber       String    @unique // Unique invoice number (e.g., INV-2026-001)
+    orderId             String    @unique
+    userId              String
+    storeId             String
+    
+    // Customer Details
+    customerName        String
+    customerEmail       String
+    customerPhone       String
+    
+    // Address Details
+    deliveryAddress     String    @db.Text
+    
+    // Invoice Details
+    subtotal            Float
+    deliveryCharges     Float     @default(0) // Delivery charges
+    gst                 Float     @default(18) // GST percentage
+    gstAmount           Float
+    total               Float
+    paymentMethod       String
+    isPaid              Boolean   @default(false)
+    
+    // Dates
+    invoiceDate         DateTime  @default(now())
+    dueDate             DateTime?
+    createdAt           DateTime  @default(now())
+    updatedAt           DateTime  @updatedAt
+    
+    // Relations
+    order               Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
+    user                User      @relation("InvoiceUser", fields: [userId], references: [id])
+    store               Store     @relation(fields: [storeId], references: [id])
+    
+    @@index([orderId])
+    @@index([userId])
+    @@index([storeId])
+    @@index([invoiceNumber])
+}
+
+// Order Settings for Super Admin - manages delivery charges and free delivery threshold
+model OrderSettings {
+    id                          String    @id @default(cuid())
+    minimumAmountForFreeDelivery Float   @default(500) // Amount in rupees
+    deliveryCharges             Float   @default(50)  // Delivery charges in rupees
+    freeDeliveryMessage         String  @default("Yay! You unlocked free delivery") // Customizable message
+    createdAt                   DateTime  @default(now())
+    updatedAt                   DateTime  @updatedAt
+}

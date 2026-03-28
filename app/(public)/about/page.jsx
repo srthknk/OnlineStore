@@ -2,7 +2,8 @@
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import axios from "axios"
-import { ArrowRight, Zap, Users, Award } from "lucide-react"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faArrowRight, faLightbulb, faUsers, faAward } from "@fortawesome/free-solid-svg-icons"
 
 export default function About() {
     const [storeName, setStoreName] = useState('gocart')
@@ -79,7 +80,7 @@ export default function About() {
                         {/* Quality */}
                         <div className="bg-white p-6 sm:p-8 rounded-lg shadow hover:shadow-lg transition">
                             <div className="mb-4">
-                                <Zap className="w-10 h-10 sm:w-12 sm:h-12 text-indigo-600" />
+                                <FontAwesomeIcon icon={faLightbulb} className="w-10 h-10 sm:w-12 sm:h-12 text-indigo-600" />
                             </div>
                             <h3 className="text-lg sm:text-xl font-semibold text-slate-800 mb-3">Quality</h3>
                             <p className="text-sm sm:text-base text-slate-600">
@@ -90,7 +91,7 @@ export default function About() {
                         {/* Innovation */}
                         <div className="bg-white p-6 sm:p-8 rounded-lg shadow hover:shadow-lg transition">
                             <div className="mb-4">
-                                <Award className="w-10 h-10 sm:w-12 sm:h-12 text-indigo-600" />
+                                <FontAwesomeIcon icon={faAward} className="w-10 h-10 sm:w-12 sm:h-12 text-indigo-600" />
                             </div>
                             <h3 className="text-lg sm:text-xl font-semibold text-slate-800 mb-3">Innovation</h3>
                             <p className="text-sm sm:text-base text-slate-600">
@@ -101,7 +102,7 @@ export default function About() {
                         {/* Community */}
                         <div className="bg-white p-6 sm:p-8 rounded-lg shadow hover:shadow-lg transition">
                             <div className="mb-4">
-                                <Users className="w-10 h-10 sm:w-12 sm:h-12 text-indigo-600" />
+                                <FontAwesomeIcon icon={faUsers} className="w-10 h-10 sm:w-12 sm:h-12 text-indigo-600" />
                             </div>
                             <h3 className="text-lg sm:text-xl font-semibold text-slate-800 mb-3">Community</h3>
                             <p className="text-sm sm:text-base text-slate-600">
@@ -144,7 +145,7 @@ export default function About() {
                         className="inline-flex items-center gap-2 bg-white text-indigo-600 px-6 sm:px-8 py-3 sm:py-4 rounded-lg font-semibold hover:bg-indigo-50 transition text-sm sm:text-base"
                     >
                         Contact Us
-                        <ArrowRight size={20} />
+                        <FontAwesomeIcon icon={faArrowRight} />
                     </Link>
                 </div>
             </section>

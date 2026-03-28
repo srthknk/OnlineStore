@@ -8,8 +8,14 @@ import Link from 'next/link'
 const CategoryWiseProducts = () => {
     const products = useSelector(state => state.product.list)
 
+    // Filter out expired products
+    const validProducts = products.filter(product => {
+        if (!product.expiryDate) return true
+        return new Date(product.expiryDate) > new Date()
+    })
+
     // Group products by category
-    const groupedByCategory = products.reduce((acc, product) => {
+    const groupedByCategory = validProducts.reduce((acc, product) => {
         if (!acc[product.category]) {
             acc[product.category] = []
         }
@@ -45,7 +51,7 @@ const CategoryWiseProducts = () => {
                             
                             <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4 md:gap-6 lg:gap-12'>
                                 {categoryProducts.slice(0, productsPerCategory).map((product, idx) => (
-                                    <ProductCard key={idx} product={product} />
+                                    <ProductCard key={idx} product={product} hideStockAndTags={true} />
                                 ))}
                             </div>
 

@@ -3,7 +3,7 @@ import { useUser, UserButton } from "@clerk/nextjs"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faBars, faXmark, faHome, faShieldCheck, faStore, faPercent, faPalette } from '@fortawesome/free-solid-svg-icons'
+import { faBars, faXmark, faHome, faShield, faStore, faPercent, faPalette } from '@fortawesome/free-solid-svg-icons'
 import { usePathname } from "next/navigation"
 import axios from "axios"
 
@@ -17,7 +17,7 @@ const AdminNavbar = () => {
     const adminLinks = [
         { name: 'Dashboard', href: '/admin', icon: faHome },
         { name: 'Stores', href: '/admin/stores', icon: faStore },
-        { name: 'Approve Store', href: '/admin/approve', icon: faShieldCheck },
+        { name: 'Approve Store', href: '/admin/approve', icon: faShield },
         { name: 'Coupons', href: '/admin/coupons', icon: faPercent },
         { name: 'Personalize', href: '/admin/personalize', icon: faPalette },
     ]

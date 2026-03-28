@@ -11,7 +11,7 @@ export async function POST(request){
         if(!userId){
             return NextResponse.json({ error: "not authorized" }, { status: 401 });
         }
-        const { addressId, items, couponCode, paymentMethod } = await request.json()
+        const { addressId, items, couponCode, paymentMethod, deliveryCharges } = await request.json()
 
         // Check if all required fields are present
         if(!addressId || !paymentMethod || !items || !Array.isArray(items) || items.length === 0){
@@ -75,17 +75,20 @@ export async function POST(request){
                 isShippingFeeAdded = true
             }
 
-            fullAmount += parseFloat(total.toFixed(2))
+            // Add delivery charges to total
+            const finalTotal = total + (deliveryCharges || 0);
+            fullAmount += parseFloat(finalTotal.toFixed(2))
 
             const order = await prisma.order.create({
                 data: {
                     userId,
                      storeId,
                      addressId,
-                     total: parseFloat(total.toFixed(2)),
+                     total: parseFloat(finalTotal.toFixed(2)),
+                     deliveryCharges: deliveryCharges || 0,
                      paymentMethod,
                      isCouponUsed: coupon ? true : false,
-                     coupon: coupon ? coupon : {},
+                     coupon: coupon ? {code: coupon.code, discount: coupon.discount} : {},
                       orderItems: {
                         create: sellerItems.map(item => ({
                             productId: item.id,
@@ -153,7 +156,8 @@ export async function GET(request){
             ]},
             include: {
                 orderItems: {include: {product: true}},
-                address: true
+                address: true,
+                store: true
             },
             orderBy: {createdAt: 'desc'}
         })

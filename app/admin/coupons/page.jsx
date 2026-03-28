@@ -2,7 +2,8 @@
 import { useEffect, useState } from "react"
 import { format } from "date-fns"
 import toast from "react-hot-toast"
-import { DeleteIcon } from "lucide-react"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faTrash } from "@fortawesome/free-solid-svg-icons"
 import { couponDummyData } from "@/assets/assets"
 import { useAuth } from "@clerk/nextjs"
 import axios from "axios"
@@ -149,7 +150,9 @@ export default function AdminCoupons() {
                                     <td className="py-2 sm:py-3 px-2 sm:px-4 text-slate-800 hidden md:table-cell text-xs sm:text-sm">{format(coupon.expiresAt, 'MMM dd')}</td>
                                     <td className="py-2 sm:py-3 px-2 sm:px-4 text-slate-800 hidden lg:table-cell text-xs sm:text-sm">{coupon.forNewUser ? '✓' : '—'}</td>
                                     <td className="py-2 sm:py-3 px-2 sm:px-4 text-slate-800 text-center">
-                                        <DeleteIcon onClick={() => toast.promise(deleteCoupon(coupon.code), { loading: "Deleting coupon..." })} className="w-4 h-4 text-red-500 hover:text-red-800 cursor-pointer btn-animate btn-danger transition-all duration-300" />
+                                        <button onClick={() => toast.promise(deleteCoupon(coupon.code), { loading: "Deleting coupon..." })} className="text-red-500 hover:text-red-800 cursor-pointer btn-animate btn-danger transition-all duration-300" title="Delete coupon">
+                                            <FontAwesomeIcon icon={faTrash} />
+                                        </button>
                                     </td>
                                 </tr>
                             ))}

@@ -1,7 +1,7 @@
 'use client'
 import Image from "next/image";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faDotCircle, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faCircle, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { useSelector } from "react-redux";
 import Rating from "./Rating";
 import { useState } from "react";
@@ -73,7 +73,7 @@ const OrderItem = ({ order, onOrderCancelled }) => {
                                     : 'text-slate-500 bg-slate-100'
                         }`}
                     >
-                        <FontAwesomeIcon icon={faDotCircle} className="text-lg" />
+                        <FontAwesomeIcon icon={faCircle} className="text-lg" />
                         {order.status.split('_').join(' ').toLowerCase()}
                     </div>
                     {order.isCancelled && (

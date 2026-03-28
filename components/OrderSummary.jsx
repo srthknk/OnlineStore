@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPlus, faPencil, faXmark } from '@fortawesome/free-solid-svg-icons'
-import React, { useState } from 'react'
+import { faPlus, faPencil, faXmark, faTruck, faCheckCircle } from '@fortawesome/free-solid-svg-icons'
+import React, { useState, useEffect } from 'react'
 import AddressModal from './AddressModal';
 import { useDispatch, useSelector } from 'react-redux';
 import toast from 'react-hot-toast';
@@ -25,6 +25,41 @@ const OrderSummary = ({ totalPrice, items }) => {
     const [showAddressModal, setShowAddressModal] = useState(false);
     const [couponCodeInput, setCouponCodeInput] = useState('');
     const [coupon, setCoupon] = useState('');
+    const [orderSettings, setOrderSettings] = useState({
+        minimumAmountForFreeDelivery: 500,
+        deliveryCharges: 50,
+        freeDeliveryMessage: "Yay! You unlocked free delivery"
+    });
+    const [settingsLoading, setSettingsLoading] = useState(true);
+
+    // Fetch order settings on mount
+    useEffect(() => {
+        const fetchOrderSettings = async () => {
+            try {
+                setSettingsLoading(true)
+                const { data } = await axios.get('/api/order-settings')
+                if (data.success) {
+                    setOrderSettings(data.data)
+                }
+            } catch (error) {
+                console.error('Failed to load order settings:', error)
+                // Keep default settings on error
+            } finally {
+                setSettingsLoading(false)
+            }
+        }
+
+        fetchOrderSettings()
+    }, [])
+
+    // Calculate delivery charges
+    const isEligibleForFreeDelivery = totalPrice >= orderSettings.minimumAmountForFreeDelivery;
+    const deliveryCharges = isEligibleForFreeDelivery ? 0 : orderSettings.deliveryCharges;
+    const subtotalWithDelivery = totalPrice + deliveryCharges;
+
+    // Calculate final total with coupon
+    const discountAmount = coupon ? (subtotalWithDelivery * coupon.discount / 100) : 0;
+    const finalTotal = subtotalWithDelivery - discountAmount;
 
     const handleCouponCode = async (event) => {
         event.preventDefault();
@@ -58,7 +93,8 @@ const OrderSummary = ({ totalPrice, items }) => {
             const orderData = {
                 addressId: selectedAddress.id,
                 items,
-                paymentMethod
+                paymentMethod,
+                deliveryCharges: deliveryCharges
             }
 
             if(coupon){
@@ -85,81 +121,187 @@ const OrderSummary = ({ totalPrice, items }) => {
     }
 
     return (
-        <div className='w-full max-w-lg lg:max-w-[340px] bg-slate-50/30 border border-slate-200 text-slate-500 text-sm rounded-xl p-7'>
-            <h2 className='text-xl font-medium text-slate-600'>Payment Summary</h2>
-            <p className='text-slate-400 text-xs my-4'>Payment Method</p>
-            <div className='flex gap-2 items-center'>
-                <input type="radio" id="COD" onChange={() => setPaymentMethod('COD')} checked={paymentMethod === 'COD'} className='accent-gray-500' />
-                <label htmlFor="COD" className='cursor-pointer'>COD</label>
+        <div className='w-full bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden sticky top-4'>
+            {/* Header */}
+            <div className='bg-gradient-to-r from-indigo-600 to-indigo-700 text-white p-4 sm:p-6'>
+                <h2 className='text-xl sm:text-2xl font-bold flex items-center gap-2'>
+                    <FontAwesomeIcon icon={faTruck} className='text-lg' />
+                    Order Summary
+                </h2>
             </div>
-            <div className='flex gap-2 items-center mt-1'>
-                <input type="radio" id="STRIPE" name='payment' onChange={() => setPaymentMethod('STRIPE')} checked={paymentMethod === 'STRIPE'} className='accent-gray-500' />
-                <label htmlFor="STRIPE" className='cursor-pointer'>UPI</label>
-            </div>
-            <div className='my-4 py-4 border-y border-slate-200 text-slate-400'>
-                <p>Address</p>
-                {
-                    selectedAddress ? (
-                        <div className='flex gap-2 items-center'>
-                            <p>{selectedAddress.name}, {selectedAddress.city}, {selectedAddress.state}, {selectedAddress.zip}</p>
-                            <FontAwesomeIcon icon={faPencil} onClick={() => setSelectedAddress(null)} className='cursor-pointer text-lg' />
-                        </div>
-                    ) : (
+
+            <div className='p-4 sm:p-6 space-y-6'>
+                {/* Free Delivery Alert */}
+                {isEligibleForFreeDelivery && (
+                    <div className='p-3 sm:p-4 bg-green-50 border border-green-200 rounded-lg flex gap-3 animate-pulse'>
+                        <FontAwesomeIcon icon={faCheckCircle} className='text-green-600 text-lg flex-shrink-0 mt-0.5' />
                         <div>
-                            {
-                                addressList.length > 0 && (
-                                    <select className='border border-slate-400 p-2 w-full my-3 outline-none rounded' onChange={(e) => setSelectedAddress(addressList[e.target.value])} >
-                                        <option value="">Select Address</option>
-                                        {
-                                            addressList.map((address, index) => (
-                                                <option key={index} value={index}>{address.name}, {address.city}, {address.state}, {address.zip}</option>
-                                            ))
-                                        }
-                                    </select>
-                                )
-                            }
-                            <button className='flex items-center gap-1 text-slate-600 mt-1 btn-animate btn-secondary transition-all duration-300' onClick={() => setShowAddressModal(true)} >Add Address <FontAwesomeIcon icon={faPlus} className='text-lg' /></button>
+                            <p className='text-sm font-semibold text-green-700'>{orderSettings.freeDeliveryMessage}</p>
+                            <p className='text-xs text-green-600 mt-1'>No delivery charges on this order</p>
                         </div>
-                    )
-                }
-            </div>
-            <div className='pb-4 border-b border-slate-200'>
-                <div className='flex justify-between'>
-                    <div className='flex flex-col gap-1 text-slate-400'>
-                        <p>Subtotal:</p>
-                        <p>Shipping:</p>
-                        {coupon && <p>Coupon:</p>}
                     </div>
-                    <div className='flex flex-col gap-1 font-medium text-right'>
-                        <p>{currency}{totalPrice.toLocaleString()}</p>
-                        <p><Protect plan={'plus'} fallback={`${currency}5`}>Free</Protect></p>
-                        {coupon && <p>{`-${currency}${(coupon.discount / 100 * totalPrice).toFixed(2)}`}</p>}
+                )}
+
+                {/* Payment Method */}
+                <div>
+                    <h3 className='text-sm font-semibold text-slate-700 mb-3 uppercase tracking-wide'>Payment Method</h3>
+                    <div className='space-y-2'>
+                        <label className='flex items-center gap-3 p-3 border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50 transition-colors'>
+                            <input 
+                                type="radio" 
+                                name="payment" 
+                                value="COD" 
+                                onChange={() => setPaymentMethod('COD')} 
+                                checked={paymentMethod === 'COD'} 
+                                className='accent-indigo-600'
+                            />
+                            <div>
+                                <p className='font-medium text-slate-900'>Cash on Delivery</p>
+                                <p className='text-xs text-slate-500'>Pay when you receive</p>
+                            </div>
+                        </label>
+                        <label className='flex items-center gap-3 p-3 border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50 transition-colors'>
+                            <input 
+                                type="radio" 
+                                name="payment" 
+                                value="STRIPE" 
+                                onChange={() => setPaymentMethod('STRIPE')} 
+                                checked={paymentMethod === 'STRIPE'} 
+                                className='accent-indigo-600'
+                            />
+                            <div>
+                                <p className='font-medium text-slate-900'>UPI / Online</p>
+                                <p className='text-xs text-slate-500'>Secure online payment</p>
+                            </div>
+                        </label>
                     </div>
                 </div>
+
+                {/* Delivery Address */}
+                <div>
+                    <h3 className='text-sm font-semibold text-slate-700 mb-3 uppercase tracking-wide'>Delivery Address</h3>
+                    {
+                        selectedAddress ? (
+                            <div className='p-4 bg-blue-50 border border-blue-200 rounded-lg flex gap-2 items-start'>
+                                <div className='flex-1'>
+                                    <p className='font-medium text-slate-900'>{selectedAddress.name}</p>
+                                    <p className='text-sm text-slate-600 mt-1'>
+                                        {selectedAddress.house}, {selectedAddress.area}, {selectedAddress.city}
+                                    </p>
+                                    {selectedAddress.landmark && <p className='text-sm text-slate-600'>Near {selectedAddress.landmark}</p>}
+                                    <p className='text-sm text-slate-600'>{selectedAddress.state}, {selectedAddress.pin}</p>
+                                </div>
+                                <button 
+                                    onClick={() => setSelectedAddress(null)} 
+                                    className='text-indigo-600 hover:text-indigo-700 p-2 rounded-lg hover:bg-white transition-colors flex-shrink-0'
+                                    title="Change address"
+                                >
+                                    <FontAwesomeIcon icon={faPencil} className='text-lg' />
+                                </button>
+                            </div>
+                        ) : (
+                            <div className='space-y-3'>
+                                {
+                                    addressList.length > 0 && (
+                                        <select 
+                                            className='w-full border border-slate-300 p-3 rounded-lg outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all'
+                                            onChange={(e) => setSelectedAddress(addressList[e.target.value])}
+                                        >
+                                            <option value="">Select an address</option>
+                                            {
+                                                addressList.map((address, index) => (
+                                                    <option key={index} value={index}>
+                                                        {address.name} - {address.city}, {address.state}
+                                                    </option>
+                                                ))
+                                            }
+                                        </select>
+                                    )
+                                }
+                                <button 
+                                    className='w-full flex items-center justify-center gap-2 text-indigo-600 border border-indigo-600 py-2.5 rounded-lg hover:bg-indigo-50 font-medium transition-colors'
+                                    onClick={() => setShowAddressModal(true)}
+                                >
+                                    <FontAwesomeIcon icon={faPlus} className='text-lg' />
+                                    Add New Address
+                                </button>
+                            </div>
+                        )
+                    }
+                </div>
+
+                {/* Price Breakdown */}
+                <div className='space-y-3 py-4 border-y border-slate-200'>
+                    <div className='flex justify-between items-center'>
+                        <span className='text-slate-600'>Subtotal</span>
+                        <span className='font-semibold text-slate-900'>{currency}{totalPrice.toFixed(2)}</span>
+                    </div>
+                    <div className='flex justify-between items-center'>
+                        <span className='text-slate-600'>Delivery Charges</span>
+                        <span className={`font-semibold ${deliveryCharges === 0 ? 'text-green-600' : 'text-slate-900'}`}>
+                            {deliveryCharges === 0 ? 'FREE' : `${currency}${deliveryCharges.toFixed(2)}`}
+                        </span>
+                    </div>
+                    {coupon && (
+                        <div className='flex justify-between items-center'>
+                            <span className='text-slate-600'>Coupon Discount ({coupon.discount}%)</span>
+                            <span className='font-semibold text-green-600'>-{currency}{discountAmount.toFixed(2)}</span>
+                        </div>
+                    )}
+                </div>
+
+                {/* Coupon Section */}
                 {
                     !coupon ? (
-                        <form onSubmit={e => toast.promise(handleCouponCode(e), { loading: 'Checking Coupon...' })} className='flex justify-center gap-3 mt-3'>
-                            <input onChange={(e) => setCouponCodeInput(e.target.value)} value={couponCodeInput} type="text" placeholder='Coupon Code' className='border border-slate-400 p-1.5 rounded w-full outline-none' />
-                            <button className='bg-slate-600 text-white px-3 rounded hover:bg-slate-800 btn-animate transition-all duration-300'>Apply</button>
+                        <form onSubmit={e => toast.promise(handleCouponCode(e), { loading: 'Checking Coupon...' })} className='flex gap-2'>
+                            <input 
+                                onChange={(e) => setCouponCodeInput(e.target.value)} 
+                                value={couponCodeInput} 
+                                type="text" 
+                                placeholder='Enter coupon code' 
+                                className='flex-1 border border-slate-300 px-3 py-2 rounded-lg outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all text-sm'
+                            />
+                            <button 
+                                type='submit'
+                                className='bg-slate-600 text-white px-4 py-2 rounded-lg hover:bg-slate-700 font-medium transition-colors text-sm whitespace-nowrap'
+                            >
+                                Apply
+                            </button>
                         </form>
                     ) : (
-                        <div className='w-full flex items-center justify-center gap-2 text-xs mt-2'>
-                            <p>Code: <span className='font-semibold ml-1'>{coupon.code.toUpperCase()}</span></p>
-                            <p>{coupon.description}</p>
-                            <FontAwesomeIcon icon={faXmark} onClick={() => setCoupon('')} className='text-lg hover:text-red-700 transition cursor-pointer' />
+                        <div className='w-full flex items-center justify-between gap-2 p-3 bg-green-50 border border-green-200 rounded-lg text-xs'>
+                            <div>
+                                <p className='font-semibold text-green-700'>Code: {coupon.code.toUpperCase()}</p>
+                                <p className='text-green-600 text-xs'>{coupon.description}</p>
+                            </div>
+                            <button 
+                                onClick={() => setCoupon('')}
+                                className='text-green-700 hover:text-red-700 transition p-1'
+                            >
+                                <FontAwesomeIcon icon={faXmark} className='text-lg' />
+                            </button>
                         </div>
                     )
                 }
+
+                {/* Final Total */}
+                <div className='p-4 bg-gradient-to-r from-indigo-50 to-blue-50 border border-indigo-200 rounded-lg'>
+                    <div className='flex justify-between items-center'>
+                        <span className='text-slate-700 font-semibold text-lg'>Total Amount</span>
+                        <span className='text-2xl font-bold text-indigo-600'>{currency}{finalTotal.toFixed(2)}</span>
+                    </div>
+                </div>
+
+                {/* Place Order Button */}
+                <button 
+                    onClick={e => toast.promise(handlePlaceOrder(e), { loading: 'Placing order...' })} 
+                    disabled={!selectedAddress}
+                    className='w-full bg-gradient-to-r from-indigo-600 to-indigo-700 text-white py-3 rounded-lg hover:from-indigo-700 hover:to-indigo-800 disabled:from-slate-400 disabled:to-slate-400 font-semibold transition-all duration-300 flex items-center justify-center gap-2'
+                >
+                    <FontAwesomeIcon icon={faCheckCircle} />
+                    Place Order
+                </button>
             </div>
-            <div className='flex justify-between py-4'>
-                <p>Total:</p>
-                <p className='font-medium text-right'>
-                    <Protect plan={'plus'} fallback={`${currency}${coupon ? (totalPrice + 5 - (coupon.discount / 100 * totalPrice)).toFixed(2) : (totalPrice + 5).toLocaleString()}`}>  
-                    {currency}{coupon ? (totalPrice - (coupon.discount / 100 * totalPrice)).toFixed(2) : totalPrice.toLocaleString()}
-                    </Protect>
-                    </p>
-            </div>
-            <button onClick={e => toast.promise(handlePlaceOrder(e), { loading: 'placing Order...' })} className='w-full bg-slate-700 text-white py-2.5 rounded hover:bg-slate-900 btn-animate transition-all duration-300'>Place Order</button>
 
             {showAddressModal && <AddressModal setShowAddressModal={setShowAddressModal} />}
 

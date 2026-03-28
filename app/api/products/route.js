@@ -7,7 +7,14 @@ export const revalidate = 60;
 export async function GET(request){
     try {
         let products = await prisma.product.findMany({
-            where: {inStock: true },
+            where: {
+                inStock: true,
+                // Exclude expired products
+                OR: [
+                    { expiryDate: null },  // No expiry date set
+                    { expiryDate: { gt: new Date() } }  // Expiry date is in the future
+                ]
+            },
             include: {
                 rating: {
                     select: {

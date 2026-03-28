@@ -1,7 +1,8 @@
 'use client'
 import { Suspense, useState, useMemo } from "react"
 import ProductCard from "@/components/ProductCard"
-import { MoveLeftIcon, Search, Sliders, X } from "lucide-react"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faArrowLeft, faMagnifyingGlass, faSliders, faXmark } from "@fortawesome/free-solid-svg-icons"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useSelector } from "react-redux"
 
@@ -32,6 +33,12 @@ function ShopContent() {
     // Filter products
     const filteredProducts = useMemo(() => {
         let result = products
+
+        // Exclude expired products (data consistency validation)
+        result = result.filter(product => {
+            if (!product.expiryDate) return true
+            return new Date(product.expiryDate) > new Date()
+        })
 
         // Search filter
         if (localSearch) {
@@ -99,7 +106,7 @@ function ShopContent() {
             <div className="max-w-7xl mx-auto">
                 {/* Header */}
                 <h1 onClick={() => router.push('/shop')} className="text-2xl sm:text-3xl text-slate-500 my-4 sm:my-6 flex items-center gap-2 cursor-pointer">
-                    {search && <MoveLeftIcon size={20} />}
+                    {search && <FontAwesomeIcon icon={faArrowLeft} />}
                     All <span className="text-slate-700 font-medium">Products</span>
                 </h1>
 
@@ -107,7 +114,7 @@ function ShopContent() {
                 <form onSubmit={handleSearch} className="mb-6 animate-fadeIn">
                     <div className="flex gap-2 sm:gap-3 flex-col sm:flex-row">
                         <div className="flex items-center gap-2 flex-1 bg-slate-100 px-4 py-2.5 rounded-lg border border-transparent hover:border-slate-300 transition-all duration-200 focus-within:border-indigo-500 focus-within:bg-white">
-                            <Search size={20} className="text-slate-400 flex-shrink-0 transition-colors duration-200" />
+                            <FontAwesomeIcon icon={faMagnifyingGlass} className="text-slate-400 flex-shrink-0 transition-colors duration-200" />
                             <input
                                 type="text"
                                 placeholder="Search products..."
@@ -148,7 +155,7 @@ function ShopContent() {
                                     : 'border border-slate-200 text-slate-700 hover:border-indigo-400 hover:shadow-md'
                             } active:scale-95`}
                         >
-                            <Sliders size={18} />
+                            <FontAwesomeIcon icon={faSliders} size="lg" />
                             <span className="hidden sm:inline">Filters</span>
                         </button>
 
@@ -194,7 +201,7 @@ function ShopContent() {
                                 onClick={() => setShowFilters(false)}
                                 className="p-1 hover:bg-slate-300 rounded transition-colors duration-200 active:scale-95"
                             >
-                                <X size={20} className="text-slate-600" />
+                                <FontAwesomeIcon icon={faXmark} size="lg" className="text-slate-600" />
                             </button>
                         </div>
 

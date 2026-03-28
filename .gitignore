@@ -97,5 +97,6 @@ Dockerfile
 
 # Git
 .gitmodules
-
-MDFiles/
+.env.example
+MDFiles
+RunMANUAL.pdf

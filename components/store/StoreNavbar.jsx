@@ -3,9 +3,10 @@ import { useUser, UserButton} from "@clerk/nextjs"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faBars, faXmark, faHome, faPlus, faPen, faList } from '@fortawesome/free-solid-svg-icons'
+import { faBars, faXmark, faHome, faPlus, faPen, faList, faBell } from '@fortawesome/free-solid-svg-icons'
 import { usePathname } from "next/navigation"
 import axios from "axios"
+import StoreAnnouncementsBadge from "./StoreAnnouncementsBadge"
 
 const StoreNavbar = () => {
 
@@ -19,6 +20,7 @@ const StoreNavbar = () => {
         { name: 'Add Product', href: '/store/add-product', icon: faPlus },
         { name: 'Manage Product', href: '/store/manage-product', icon: faPen },
         { name: 'Orders', href: '/store/orders', icon: faList },
+        { name: 'Announcements', href: '/store/announcements', icon: faBell },
     ]
 
     useEffect(() => {
@@ -44,15 +46,20 @@ const StoreNavbar = () => {
                 </Link>
                 
                 <div className="flex items-center gap-2 sm:gap-3">
+                    {/* Announcements Badge */}
+                    <Link href="/store/announcements" className="hidden sm:block">
+                        <StoreAnnouncementsBadge />
+                    </Link>
+
                     {/* Mobile Menu Button */}
                     <button 
                         onClick={() => setMenuOpen(!menuOpen)}
                         className={`md:hidden p-2 rounded-lg transition-all duration-300 hamburger-icon ${menuOpen ? 'open bg-green-600 text-white shadow-lg scale-110' : 'bg-slate-100 text-slate-700 hover:bg-slate-200 active:scale-95'}`}
                     >
                         {menuOpen ? (
-                            <X size={24} className="transition-transform duration-300 rotate-90" />
+                            <FontAwesomeIcon icon={faXmark} size="xl" className="transition-transform duration-300 rotate-90" />
                         ) : (
-                            <Menu size={24} className="transition-transform duration-300" />
+                            <FontAwesomeIcon icon={faBars} size="xl" className="transition-transform duration-300" />
                         )}
                     </button>
 
@@ -87,7 +94,7 @@ const StoreNavbar = () => {
                             }}
                             onClick={() => setMenuOpen(false)}
                         >
-                            <link.icon size={20} className="flex-shrink-0" />
+                            <FontAwesomeIcon icon={link.icon} className="flex-shrink-0 text-lg" />
                             <span className="font-medium">{link.name}</span>
                         </Link>
                     ))}
