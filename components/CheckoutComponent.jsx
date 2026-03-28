@@ -32,6 +32,32 @@ export default function CheckoutComponent() {
         fetchOrderSettings()
     }, [])
 
+    // Dynamically load Razorpay script only when CheckoutComponent is mounted
+    useEffect(() => {
+        const loadRazorpayScript = () => {
+            const script = document.createElement('script')
+            script.src = 'https://checkout.razorpay.com/v1/checkout.js'
+            script.async = true
+            script.onload = () => {
+                console.log('✅ Razorpay script loaded')
+            }
+            script.onerror = () => {
+                console.error('❌ Failed to load Razorpay script')
+            }
+            document.head.appendChild(script)
+        }
+
+        // Only load if Razorpay is not already loaded
+        if (!window.Razorpay) {
+            loadRazorpayScript()
+        }
+
+        // Cleanup: No need to remove script as it's needed for payment processing
+        return () => {
+            // Keep script loaded for payment processing
+        }
+    }, [])
+
     const fetchOrderSettings = async () => {
         try {
             const { data } = await axios.get('/api/order-settings')

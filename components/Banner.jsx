@@ -5,6 +5,11 @@ import toast from 'react-hot-toast';
 export default function Banner() {
 
     const [isOpen, setIsOpen] = React.useState(true);
+    const [mounted, setMounted] = React.useState(false);
+
+    React.useEffect(() => {
+        setMounted(true);
+    }, []);
 
     const handleClaim = () => {
         setIsOpen(false);
@@ -12,8 +17,10 @@ export default function Banner() {
         navigator.clipboard.writeText('NEW20');
     };
 
+    if (!mounted) return null;
+
     return isOpen && (
-        <div className="w-full px-3 sm:px-4 md:px-6 py-2 sm:py-3 font-medium text-xs sm:text-sm text-white text-center bg-gradient-to-r from-violet-500 via-[#9938CA] to-[#E0724A]">
+        <div className="w-full px-3 sm:px-4 md:px-6 py-2 sm:py-3 font-medium text-xs sm:text-sm text-white text-center bg-gradient-to-r from-violet-500 via-[#9938CA] to-[#E0724A]" suppressHydrationWarning>
             <div className='flex items-center justify-between gap-2 sm:gap-4 max-w-7xl mx-auto'>
                 <p className='flex-1 min-w-0'>Get 20% OFF on Your First Order!</p>
                 <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">

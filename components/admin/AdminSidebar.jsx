@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faHome, faShield, faStore, faPercent, faPalette, faBars, faXmark, faBell, faTruck } from '@fortawesome/free-solid-svg-icons'
+import { faHome, faShield, faStore, faPercent, faPalette, faBars, faXmark, faBell, faTruck, faExclamationCircle } from '@fortawesome/free-solid-svg-icons'
 import Image from "next/image"
 import Link from "next/link"
 import { assets } from "@/assets/assets"
@@ -20,6 +20,7 @@ const AdminSidebar = () => {
         { name: 'Stores', href: '/admin/stores', icon: faStore },
         { name: 'Approve Store', href: '/admin/approve', icon: faShield },
         { name: 'Announcements', href: '/admin/announcements', icon: faBell },
+        { name: 'Alerts', href: '/admin/alerts', icon: faExclamationCircle },
         { name: 'Coupons', href: '/admin/coupons', icon: faPercent  },
         { name: 'Order Settings', href: '/admin/order-settings', icon: faTruck  },
         { name: 'Personalize', href: '/admin/personalize', icon: faPalette  },

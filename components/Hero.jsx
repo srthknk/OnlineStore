@@ -11,10 +11,15 @@ const Hero = () => {
     const [settings, setSettings] = useState(null)
     const [loading, setLoading] = useState(true)
     const [bannerImage, setBannerImage] = useState(null)
+    const [mounted, setMounted] = useState(false)
     const router = useRouter()
 
     // Helper function to check if content is truly not empty (ignoring whitespace)
     const hasContent = (str) => str && typeof str === 'string' && str.trim().length > 0
+
+    useEffect(() => {
+        setMounted(true)
+    }, [])
 
     useEffect(() => {
         const fetchSettings = async () => {
@@ -68,7 +73,7 @@ const Hero = () => {
     
     const bannerLink = settings?.bannerLink1 || '/shop'
 
-    if (loading) {
+    if (!mounted || loading) {
         return (
             <div className='w-full'>
                 <div className='px-2 sm:px-4 md:px-6'>
@@ -93,7 +98,7 @@ const Hero = () => {
     }
 
     return (
-        <div className='w-full'>
+        <div className='w-full' suppressHydrationWarning>
             {/* Single Banner - Image Only, No Text */}
             <div className='px-2 sm:px-4 md:px-6 py-4 sm:py-6'>
                 <div className='w-full max-w-7xl mx-auto'>

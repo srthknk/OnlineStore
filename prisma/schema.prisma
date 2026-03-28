@@ -1,12 +1,10 @@
 generator client {
-    provider        = "prisma-client-js"
-    previewFeatures = ["driverAdapters"]
+    provider = "prisma-client-js"
 }
 
 datasource db {
     provider  = "postgresql"
     url       = env("DATABASE_URL")
-    directUrl = env("DIRECT_URL")
 }
 
 // Required for creating a User: id, name, email, image, cart (optional JSON string)
@@ -447,4 +445,32 @@ model OrderSettings {
     freeDeliveryMessage         String  @default("Yay! You unlocked free delivery") // Customizable message
     createdAt                   DateTime  @default(now())
     updatedAt                   DateTime  @updatedAt
+}
+
+// Alert/Notification Banner for dynamic alerts shown to users
+enum AlertType {
+    INFO        // General information
+    WARNING     // Warning messages
+    PROMOTION   // Promotional offers
+    URGENT      // Urgent alerts
+}
+
+model Alert {
+    id          String      @id @default(cuid())
+    title       String      // Main message (e.g., "500 Rs Off Today")
+    message     String      @db.Text // Detailed message (e.g., "Use code SAVE500 for 500 rs discount")
+    type        AlertType   @default(INFO)
+    bgColor     String      @default("from-emerald-600 to-green-600") // Tailwind gradient class
+    textColor   String      @default("text-white") // Tailwind text color class
+    isActive    Boolean     @default(true)
+    icon        String?     // Icon emoji or name (e.g., "🎉", "⚠️", "📢")
+    priority    Int         @default(1) // Higher number = higher priority (shown first)
+    createdBy   String      // Admin user ID
+    createdAt   DateTime    @default(now())
+    updatedAt   DateTime    @updatedAt
+    expiresAt   DateTime?   // Optional expiry date
+    
+    @@index([isActive])
+    @@index([priority])
+    @@index([createdAt])
 }

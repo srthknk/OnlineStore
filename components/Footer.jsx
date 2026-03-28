@@ -69,6 +69,7 @@ const Footer = () => {
             links: [
                 { text: "Home", path: '/', icon: null },
                 { text: "About Us", path: '/about', icon: null },
+                { text: "FAQ", path: '/faq', icon: null },
                 { text: "Contact Us", path: '/contact', icon: null },
                 { text: "Become Premium Member", path: '/pricing', icon: null },
                 { text: "Become a Supplier", path: '/create-store', icon: null },

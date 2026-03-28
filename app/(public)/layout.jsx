@@ -1,5 +1,5 @@
 'use client'
-import Banner from "@/components/Banner";
+import AlertBanner from "@/components/AlertBanner";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import FloatingCartButton from "@/components/FloatingCartButton";
@@ -42,7 +42,7 @@ export default function PublicLayout({ children }) {
 
     return (
         <>
-            <Banner />
+            <AlertBanner />
             <Navbar />
             <FloatingCartButton />
             {children}

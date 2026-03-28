@@ -51,11 +51,6 @@ export default function RootLayout({ children }) {
                         <Toaster />
                         {children}
                     </StoreProvider>
-                    {/* Razorpay Payment Gateway */}
-                    <Script 
-                        src="https://checkout.razorpay.com/v1/checkout.js" 
-                        strategy="lazyOnload"
-                    />
                 </body>
             </html>
         </ClerkProvider>

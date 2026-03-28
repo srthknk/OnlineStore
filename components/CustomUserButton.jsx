@@ -4,14 +4,19 @@ import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import axios from "axios"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faChartLine, faStore } from '@fortawesome/free-solid-svg-icons'
+import { faChartLine, faStore, faQuestionCircle } from '@fortawesome/free-solid-svg-icons'
 
-export default function CustomUserButton({ children }) {
+export default function CustomUserButton({ children, onFAQClick }) {
     const { user } = useUser()
     const { getToken } = useAuth()
     const router = useRouter()
     const [isAdmin, setIsAdmin] = useState(false)
     const [hasStore, setHasStore] = useState(false)
+    const [mounted, setMounted] = useState(false)
+
+    useEffect(() => {
+        setMounted(true)
+    }, [])
 
     useEffect(() => {
         const checkRoles = async () => {
@@ -49,10 +54,20 @@ export default function CustomUserButton({ children }) {
         checkRoles()
     }, [user, getToken])
 
+    // Only render UserButton after client-side hydration to prevent hydration mismatch
+    if (!mounted) {
+        return null
+    }
+
     return (
         <UserButton>
             <UserButton.MenuItems>
                 {children}
+                <UserButton.Action 
+                    labelIcon={<FontAwesomeIcon icon={faQuestionCircle}/>} 
+                    label="FAQ" 
+                    onClick={() => onFAQClick && onFAQClick()}
+                />
                 {isAdmin && (
                     <UserButton.Action 
                         labelIcon={<FontAwesomeIcon icon={faChartLine}/>} 
