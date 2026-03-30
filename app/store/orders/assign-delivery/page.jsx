@@ -16,13 +16,19 @@ import {
   faCheckCircle,
   faArrowRight,
   faSearch,
-  faFilter,
   faTimes,
   faSpinner,
-  faChartBar,
   faClipboardList,
+  faClock,
+  faRoute,
+  faBriefcase,
+  faShieldAlt,
+  faRefresh,
+  faFire,
+  faMapPin,
+  faCalendarAlt,
 } from '@fortawesome/free-solid-svg-icons';
-import styles from './delivery-assignment.module.css';
+import styles from './styles.module.css';
 
 export default function DeliveryAssignment() {
   const { getToken } = useAuth();
@@ -35,6 +41,7 @@ export default function DeliveryAssignment() {
   const [showAssignModal, setShowAssignModal] = useState(false);
   const [searchOrder, setSearchOrder] = useState('');
   const [searchPartner, setSearchPartner] = useState('');
+  const [sortBy, setSortBy] = useState('recent');
 
   // Fetch data on mount
   useEffect(() => {
@@ -90,7 +97,7 @@ export default function DeliveryAssignment() {
         }
       );
 
-      toast.success('Delivery partner assigned successfully!');
+      toast.success('🎉 Delivery partner assigned successfully!');
       setShowAssignModal(false);
       setSelectedOrder(null);
       setSelectedPartner(null);
@@ -103,13 +110,20 @@ export default function DeliveryAssignment() {
     }
   };
 
-  // Filter data based on search
-  const filteredOrders = unassignedOrders.filter(
-    (order) =>
-      order.id.toLowerCase().includes(searchOrder.toLowerCase()) ||
-      order.user?.name?.toLowerCase().includes(searchOrder.toLowerCase()) ||
-      order.total.toString().includes(searchOrder)
-  );
+  // Filter and sort data
+  const filteredOrders = unassignedOrders
+    .filter(
+      (order) =>
+        order.id.toLowerCase().includes(searchOrder.toLowerCase()) ||
+        order.user?.name?.toLowerCase().includes(searchOrder.toLowerCase()) ||
+        order.total.toString().includes(searchOrder)
+    )
+    .sort((a, b) => {
+      if (sortBy === 'recent') return new Date(b.createdAt) - new Date(a.createdAt);
+      if (sortBy === 'amount-high') return b.total - a.total;
+      if (sortBy === 'amount-low') return a.total - b.total;
+      return 0;
+    });
 
   const filteredPartners = deliveryPartners.filter(
     (partner) =>
@@ -122,8 +136,10 @@ export default function DeliveryAssignment() {
     return (
       <div className={styles.container}>
         <div className={styles.loadingSpinner}>
-          <FontAwesomeIcon icon={faSpinner} className={styles.spinIcon} />
-          <p>Loading delivery assignment interface...</p>
+          <div className={styles.spinnerContent}>
+            <FontAwesomeIcon icon={faTruck} className={styles.spinIcon} />
+            <p>Loading delivery assignment interface...</p>
+          </div>
         </div>
       </div>
     );
@@ -134,20 +150,48 @@ export default function DeliveryAssignment() {
       {/* Header */}
       <div className={styles.header}>
         <div className={styles.headerContent}>
-          <FontAwesomeIcon icon={faTruck} className={styles.headerIcon} />
+          <div className={styles.headerIcon}>
+            <FontAwesomeIcon icon={faTruck} />
+          </div>
           <div>
             <h1>Delivery Partner Assignment</h1>
-            <p>Assign delivery partners to orders intelligently</p>
+            <p>Efficiently assign delivery partners to pending orders</p>
           </div>
         </div>
-        <div className={styles.stats}>
-          <div className={styles.stat}>
+        <button className={styles.refreshBtn} onClick={fetchData} title="Refresh data">
+          <FontAwesomeIcon icon={faRefresh} /> Refresh
+        </button>
+      </div>
+
+      {/* Stats Overview */}
+      <div className={styles.statsGrid}>
+        <div className={styles.statCard}>
+          <div className={styles.statIcon} style={{ background: 'linear-gradient(135deg, #667eea, #764ba2)' }}>
             <FontAwesomeIcon icon={faBox} />
-            <span>{unassignedOrders.length} Pending Orders</span>
           </div>
-          <div className={styles.stat}>
-            <FontAwesomeIcon icon={faUser} />
-            <span>{deliveryPartners.length} Available Partners</span>
+          <div className={styles.statContent}>
+            <p className={styles.statLabel}>Pending Orders</p>
+            <p className={styles.statNumber}>{unassignedOrders.length}</p>
+          </div>
+        </div>
+
+        <div className={styles.statCard}>
+          <div className={styles.statIcon} style={{ background: 'linear-gradient(135deg, #f093fb, #f5576c)' }}>
+            <FontAwesomeIcon icon={faTruck} />
+          </div>
+          <div className={styles.statContent}>
+            <p className={styles.statLabel}>Available Partners</p>
+            <p className={styles.statNumber}>{deliveryPartners.length}</p>
+          </div>
+        </div>
+
+        <div className={styles.statCard}>
+          <div className={styles.statIcon} style={{ background: 'linear-gradient(135deg, #4facfe, #00f2fe)' }}>
+            <FontAwesomeIcon icon={faCheckCircle} />
+          </div>
+          <div className={styles.statContent}>
+            <p className={styles.statLabel}>Ready to Assign</p>
+            <p className={styles.statNumber}>{Math.min(filteredOrders.length, filteredPartners.length)}</p>
           </div>
         </div>
       </div>
@@ -157,9 +201,14 @@ export default function DeliveryAssignment() {
         {/* Left Section - Unassigned Orders */}
         <div className={styles.section}>
           <div className={styles.sectionHeader}>
-            <FontAwesomeIcon icon={faClipboardList} />
-            <h2>Unassigned Orders</h2>
-            <span className={styles.count}>{filteredOrders.length}</span>
+            <div className={styles.headerTitleGroup}>
+              <FontAwesomeIcon icon={faClipboardList} className={styles.headerIcon2} />
+              <div>
+                <h2>Unassigned Orders</h2>
+                <p className={styles.subtitle}>Select an order to proceed with partner assignment</p>
+              </div>
+            </div>
+            <span className={styles.badge}>{filteredOrders.length}</span>
           </div>
 
           <div className={styles.searchBox}>
@@ -173,48 +222,64 @@ export default function DeliveryAssignment() {
             />
           </div>
 
+          <div className={styles.sortBar}>
+            <span>Sort by:</span>
+            <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} className={styles.sortSelect}>
+              <option value="recent">Most Recent</option>
+              <option value="amount-high">Highest Amount</option>
+              <option value="amount-low">Lowest Amount</option>
+            </select>
+          </div>
+
           {filteredOrders.length === 0 ? (
             <div className={styles.emptyState}>
-              <FontAwesomeIcon icon={faCheckCircle} />
-              <p>All orders have been assigned!</p>
+              <div className={styles.emptyIcon}>
+                <FontAwesomeIcon icon={faCheckCircle} />
+              </div>
+              <p className={styles.emptyTitle}>All orders assigned!</p>
+              <p className={styles.emptySubtitle}>No pending orders at the moment</p>
             </div>
           ) : (
             <div className={styles.ordersList}>
               {filteredOrders.map((order) => (
-                <div key={order.id} className={styles.orderCard}>
-                  <div className={styles.orderHeader}>
-                    <div className={styles.orderInfo}>
-                      <h4>Order {order.id.slice(0, 8).toUpperCase()}</h4>
-                      <p className={styles.customerName}>
-                        <FontAwesomeIcon icon={faUser} /> {order.user?.name}
-                      </p>
+                <div
+                  key={order.id}
+                  className={`${styles.orderCard} ${selectedOrder?.id === order.id ? styles.active : ''}`}
+                  onClick={() => setSelectedOrder(order)}
+                >
+                  <div className={styles.orderCardHeader}>
+                    <div className={styles.orderCardTitle}>
+                      <span className={styles.orderBadge}>
+                        <FontAwesomeIcon icon={faBox} /> {order.id.slice(0, 8)}
+                      </span>
+                      <h4>{order.user?.name}</h4>
                     </div>
-                    <div className={styles.orderAmount}>₹{order.total.toFixed(2)}</div>
+                    <div className={styles.orderAmount}>
+                      <span>₹</span>
+                      <strong>{order.total.toFixed(0)}</strong>
+                    </div>
                   </div>
 
-                  <div className={styles.orderDetails}>
-                    <div className={styles.detail}>
+                  <div className={styles.orderCardBody}>
+                    <div className={styles.orderDetail}>
                       <FontAwesomeIcon icon={faEnvelope} />
                       <small>{order.user?.email}</small>
                     </div>
-                    <div className={styles.detail}>
-                      <FontAwesomeIcon icon={faMapMarkerAlt} />
-                      <small>
-                        {order.address?.address}, {order.address?.city}
-                      </small>
+                    <div className={styles.orderDetail}>
+                      <FontAwesomeIcon icon={faMapPin} />
+                      <small>{order.address?.city}</small>
                     </div>
-                    <div className={styles.detail}>
+                    <div className={styles.orderDetail}>
                       <FontAwesomeIcon icon={faBox} />
                       <small>{order.orderItems?.length} Items</small>
                     </div>
                   </div>
 
-                  <button
-                    className={styles.assignBtn}
-                    onClick={() => setSelectedOrder(order)}
-                  >
-                    <FontAwesomeIcon icon={faArrowRight} /> Assign Partner
-                  </button>
+                  {selectedOrder?.id === order.id && (
+                    <div className={styles.selectedIndicator}>
+                      <FontAwesomeIcon icon={faCheckCircle} />
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
@@ -224,9 +289,14 @@ export default function DeliveryAssignment() {
         {/* Right Section - Delivery Partners */}
         <div className={styles.section}>
           <div className={styles.sectionHeader}>
-            <FontAwesomeIcon icon={faTruck} />
-            <h2>Available Partners</h2>
-            <span className={styles.count}>{filteredPartners.length}</span>
+            <div className={styles.headerTitleGroup}>
+              <FontAwesomeIcon icon={faRoute} className={styles.headerIcon2} />
+              <div>
+                <h2>Available Partners</h2>
+                <p className={styles.subtitle}>Select a partner to complete the assignment</p>
+              </div>
+            </div>
+            <span className={styles.badge}>{filteredPartners.length}</span>
           </div>
 
           <div className={styles.searchBox}>
@@ -242,58 +312,78 @@ export default function DeliveryAssignment() {
 
           {filteredPartners.length === 0 ? (
             <div className={styles.emptyState}>
-              <FontAwesomeIcon icon={faFilter} />
-              <p>No delivery partners available</p>
+              <div className={styles.emptyIcon}>
+                <FontAwesomeIcon icon={faTruck} />
+              </div>
+              <p className={styles.emptyTitle}>No partners found</p>
+              <p className={styles.emptySubtitle}>Try adjusting your search or creating new partners</p>
+            </div>
+          ) : !selectedOrder ? (
+            <div className={styles.emptyState}>
+              <div className={styles.emptyIcon}>
+                <FontAwesomeIcon icon={faArrowRight} />
+              </div>
+              <p className={styles.emptyTitle}>Select an order first</p>
+              <p className={styles.emptySubtitle}>Pick an order from the left to see matching partners</p>
             </div>
           ) : (
             <div className={styles.partnersList}>
               {filteredPartners.map((partner) => (
                 <div key={partner.id} className={styles.partnerCard}>
-                  {partner.photo && (
-                    <img src={partner.photo} alt={partner.firstName} className={styles.partnerPhoto} />
-                  )}
-
-                  <div className={styles.partnerInfo}>
-                    <h4 className={styles.partnerName}>
-                      {partner.firstName} {partner.lastName}
-                    </h4>
-
-                    <div className={styles.partnerMeta}>
-                      <div className={styles.metaItem}>
-                        <FontAwesomeIcon icon={faPhone} />
-                        <span>{partner.phone}</span>
+                  <div className={styles.partnerCardHeader}>
+                    {partner.photo && (
+                      <img src={partner.photo} alt={partner.firstName} className={styles.partnerPhoto} />
+                    )}
+                    {!partner.photo && (
+                      <div className={styles.partnerPhotoPlaceholder}>
+                        <FontAwesomeIcon icon={faUser} />
                       </div>
-                      <div className={styles.metaItem}>
-                        <FontAwesomeIcon icon={faEnvelope} />
-                        <span>{partner.email}</span>
-                      </div>
-                    </div>
-
-                    <div className={styles.stats}>
-                      <div className={styles.statBadge}>
-                        <FontAwesomeIcon icon={faChartBar} />
-                        <span>{partner.stats.totalDeliveries} Deliveries</span>
-                      </div>
-                      <div className={styles.statBadge}>
+                    )}
+                    <div className={styles.partnerBasicInfo}>
+                      <h4 className={styles.partnerName}>
+                        {partner.firstName} {partner.lastName}
+                      </h4>
+                      <div className={styles.partnerRating}>
                         <FontAwesomeIcon icon={faStar} className={styles.starIcon} />
-                        <span>{partner.stats.rating.toFixed(1)}</span>
+                        <span>{partner.stats?.rating?.toFixed(1) || 0}</span>
                       </div>
                     </div>
-
-                    <button
-                      className={styles.selectBtn}
-                      onClick={() => {
-                        if (selectedOrder) {
-                          handleAssignPartner(selectedOrder, partner);
-                        } else {
-                          toast.error('Please select an order first');
-                        }
-                      }}
-                      disabled={!selectedOrder}
-                    >
-                      <FontAwesomeIcon icon={faCheckCircle} /> Assign to Order
-                    </button>
                   </div>
+
+                  <div className={styles.partnerDetails}>
+                    <div className={styles.partnerMetaItem}>
+                      <FontAwesomeIcon icon={faPhone} />
+                      <span>{partner.phone}</span>
+                    </div>
+                    <div className={styles.partnerMetaItem}>
+                      <FontAwesomeIcon icon={faEnvelope} />
+                      <span>{partner.email}</span>
+                    </div>
+                  </div>
+
+                  <div className={styles.partnerStats}>
+                    <div className={styles.partnerStatItem}>
+                      <FontAwesomeIcon icon={faRoute} />
+                      <div>
+                        <span>{partner.stats?.totalDeliveries || 0}</span>
+                        <p>Deliveries</p>
+                      </div>
+                    </div>
+                    <div className={styles.partnerStatItem}>
+                      <FontAwesomeIcon icon={faClock} />
+                      <div>
+                        <span>{partner.stats?.avgTime || '—'}</span>
+                        <p>Avg Time</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <button
+                    className={styles.assignPartnerBtn}
+                    onClick={() => handleAssignPartner(selectedOrder, partner)}
+                  >
+                    <FontAwesomeIcon icon={faCheckCircle} /> Assign to Order
+                  </button>
                 </div>
               ))}
             </div>
@@ -301,22 +391,31 @@ export default function DeliveryAssignment() {
         </div>
       </div>
 
-      {/* Selected Order Info */}
+      {/* Selected Order Info Bar */}
       {selectedOrder && (
         <div className={styles.selectedOrderBar}>
-          <div className={styles.selectedOrderInfo}>
-            <FontAwesomeIcon icon={faBox} />
-            <div>
-              <strong>Selected Order:</strong>
-              <span> {selectedOrder.id.slice(0, 8).toUpperCase()}</span>
+          <div className={styles.selectedOrderContent}>
+            <div className={styles.selectedInfo}>
+              <div className={styles.selectedIcon}>
+                <FontAwesomeIcon icon={faBox} />
+              </div>
+              <div>
+                <p className={styles.selectedLabel}>Selected Order</p>
+                <p className={styles.selectedValue}>
+                  {selectedOrder.id.slice(0, 8).toUpperCase()} • {selectedOrder.user?.name}
+                </p>
+              </div>
             </div>
+            <button
+              className={styles.clearBtn}
+              onClick={() => {
+                setSelectedOrder(null);
+                setSelectedPartner(null);
+              }}
+            >
+              <FontAwesomeIcon icon={faTimes} /> Clear
+            </button>
           </div>
-          <button
-            className={styles.clearBtn}
-            onClick={() => setSelectedOrder(null)}
-          >
-            <FontAwesomeIcon icon={faTimes} /> Clear
-          </button>
         </div>
       )}
 
@@ -325,10 +424,12 @@ export default function DeliveryAssignment() {
         <div className={styles.modalOverlay} onClick={() => setShowAssignModal(false)}>
           <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
             <div className={styles.modalHeader}>
-              <FontAwesomeIcon icon={faTruck} />
-              <h3>Confirm Assignment</h3>
+              <div className={styles.modalTitle}>
+                <FontAwesomeIcon icon={faTruck} className={styles.modalIcon} />
+                <h3>Confirm Assignment</h3>
+              </div>
               <button
-                className={styles.closeBtn}
+                className={styles.modalCloseBtn}
                 onClick={() => setShowAssignModal(false)}
               >
                 <FontAwesomeIcon icon={faTimes} />
@@ -336,48 +437,77 @@ export default function DeliveryAssignment() {
             </div>
 
             <div className={styles.modalContent}>
-              <div className={styles.assignmentSummary}>
-                <div className={styles.summaryItem}>
-                  <label>Order</label>
-                  <p>{selectedOrder.id.slice(0, 8).toUpperCase()}</p>
-                  <small>{selectedOrder.user?.name}</small>
+              <div className={styles.assignmentFlow}>
+                <div className={styles.flowItem}>
+                  <div className={styles.flowIcon} style={{ background: '#667eea' }}>
+                    <FontAwesomeIcon icon={faBox} />
+                  </div>
+                  <div className={styles.flowContent}>
+                    <p className={styles.flowLabel}>Order</p>
+                    <p className={styles.flowValue}>{selectedOrder.id.slice(0, 8).toUpperCase()}</p>
+                    <small>{selectedOrder.user?.name}</small>
+                  </div>
                 </div>
 
-                <FontAwesomeIcon icon={faArrowRight} className={styles.arrowIcon} />
+                <div className={styles.flowArrow}>
+                  <FontAwesomeIcon icon={faArrowRight} />
+                </div>
 
-                <div className={styles.summaryItem}>
-                  <label>Delivery Partner</label>
-                  <p>{selectedPartner.firstName} {selectedPartner.lastName}</p>
-                  <small>Rating: {selectedPartner.stats.rating.toFixed(1)} ⭐</small>
+                <div className={styles.flowItem}>
+                  <div className={styles.flowIcon} style={{ background: '#f5576c' }}>
+                    <FontAwesomeIcon icon={faTruck} />
+                  </div>
+                  <div className={styles.flowContent}>
+                    <p className={styles.flowLabel}>Partner</p>
+                    <p className={styles.flowValue}>{selectedPartner.firstName} {selectedPartner.lastName}</p>
+                    <small>{selectedPartner.phone}</small>
+                  </div>
                 </div>
               </div>
 
-              <div className={styles.deliveryAddress}>
-                <FontAwesomeIcon icon={faMapMarkerAlt} />
-                <div>
-                  <strong>Delivery Address:</strong>
-                  <p>{selectedOrder.address?.address}</p>
-                  <p>{selectedOrder.address?.city}, {selectedOrder.address?.state}</p>
+              <div className={styles.assignmentDetails}>
+                <div className={styles.detailRow}>
+                  <span className={styles.detailLabel}>
+                    <FontAwesomeIcon icon={faCalendarAlt} /> Order Date
+                  </span>
+                  <span className={styles.detailValue}>
+                    {new Date(selectedOrder.createdAt).toLocaleDateString()}
+                  </span>
+                </div>
+                <div className={styles.detailRow}>
+                  <span className={styles.detailLabel}>
+                    <FontAwesomeIcon icon={faMapMarkerAlt} /> Delivery Location
+                  </span>
+                  <span className={styles.detailValue}>
+                    {selectedOrder.address?.city}
+                  </span>
+                </div>
+                <div className={styles.detailRow}>
+                  <span className={styles.detailLabel}>
+                    <FontAwesomeIcon icon={faStar} /> Partner Rating
+                  </span>
+                  <span className={styles.detailValue}>
+                    {selectedPartner.stats?.rating?.toFixed(1) || 0}/5.0
+                  </span>
                 </div>
               </div>
             </div>
 
-            <div className={styles.modalFooter}>
+            <div className={styles.modalActions}>
               <button
-                className={styles.cancelBtn}
+                className={styles.modalCancelBtn}
                 onClick={() => setShowAssignModal(false)}
               >
                 Cancel
               </button>
               <button
-                className={styles.confirmBtn}
+                className={styles.modalConfirmBtn}
                 onClick={confirmAssignment}
                 disabled={assigning}
               >
                 {assigning ? (
                   <>
-                    <FontAwesomeIcon icon={faSpinner} className={styles.spinIcon} />
-                    Assigning...
+                    <FontAwesomeIcon icon={faSpinner} className={styles.spinnerSmall} /> Assigning...
                   </>
                 ) : (
                   <>

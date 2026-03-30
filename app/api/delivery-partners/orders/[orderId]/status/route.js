@@ -16,7 +16,7 @@ export async function PUT(req, { params }) {
       );
     }
 
-    const orderId = params.orderId;
+    const { orderId } = await params;
     const { deliveryStatus } = await req.json();
 
     if (!deliveryStatus) {

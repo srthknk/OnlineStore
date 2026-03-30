@@ -4,19 +4,57 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHome, faList, faPen, faPlus, faBars, faXmark, faBell, faTruck } from '@fortawesome/free-solid-svg-icons'
 import Image from "next/image"
 import Link from "next/link"
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import axios from "axios"
+import { useAuth } from "@clerk/nextjs"
 
 const StoreSidebar = ({storeInfo}) => {
 
     const pathname = usePathname()
+    const { getToken } = useAuth()
     const [mobileOpen, setMobileOpen] = useState(false)
+    const [pendingOrdersCount, setPendingOrdersCount] = useState(0)
+    const [unassignedDeliveryCount, setUnassignedDeliveryCount] = useState(0)
+
+    // Fetch badge counts
+    useEffect(() => {
+        const fetchBadgeCounts = async () => {
+            try {
+                const token = await getToken()
+                
+                // Fetch pending orders count
+                const ordersRes = await axios.get('/api/store/orders', {
+                    headers: { Authorization: `Bearer ${token}` }
+                })
+                const pendingCount = ordersRes.data.orders?.filter(o => 
+                    !o.isCancelled && (o.status === 'ORDER_PLACED' || o.status === 'PROCESSING')
+                ).length || 0
+                setPendingOrdersCount(pendingCount)
+
+                // Fetch unassigned delivery orders count
+                const deliveryRes = await axios.get('/api/store/orders/unassigned', {
+                    headers: { Authorization: `Bearer ${token}` }
+                })
+                const unassignedCount = deliveryRes.data.orders?.length || 0
+                setUnassignedDeliveryCount(unassignedCount)
+            } catch (error) {
+                console.error('Error fetching badge counts:', error)
+            }
+        }
+
+        fetchBadgeCounts()
+        
+        // Refresh badge counts every 10 seconds
+        const interval = setInterval(fetchBadgeCounts, 10000)
+        return () => clearInterval(interval)
+    }, [getToken])
 
     const sidebarLinks = [
         { name: 'Dashboard', href: '/store', icon: faHome },
         { name: 'Add Product', href: '/store/add-product', icon: faPlus },
         { name: 'Manage Product', href: '/store/manage-product', icon: faPen },
-        { name: 'Orders', href: '/store/orders', icon: faList },
-        { name: 'Assign Delivery', href: '/store/orders/assign-delivery', icon: faTruck },
+        { name: 'Orders', href: '/store/orders', icon: faList, badge: pendingOrdersCount },
+        { name: 'Assign Delivery', href: '/store/orders/assign-delivery', icon: faTruck, badge: unassignedDeliveryCount },
         { name: 'Announcements', href: '/store/announcements', icon: faBell },
     ]
 
@@ -43,7 +81,12 @@ const StoreSidebar = ({storeInfo}) => {
                                 }`}
                             >
                                 <FontAwesomeIcon icon={link.icon} className="text-lg flex-shrink-0 transition-transform duration-300 group-hover:scale-110" />
-                                <p className="text-sm">{link.name}</p>
+                                <p className="text-sm flex-1">{link.name}</p>
+                                {link.badge > 0 && (
+                                    <span className="inline-flex items-center justify-center min-w-6 h-6 px-1.5 ml-auto text-xs font-bold text-white bg-red-500 rounded-full shadow-md animate-pulse">
+                                        {link.badge > 99 ? '99+' : link.badge}
+                                    </span>
+                                )}
                                 {pathname === link.href && <span className="absolute right-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-gradient-to-b from-green-500 to-blue-500 rounded-l-full shadow-lg"></span>}
                             </Link>
                         ))
@@ -91,7 +134,7 @@ const StoreSidebar = ({storeInfo}) => {
                                 <Link 
                                     key={index} 
                                     href={link.href} 
-                                    className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 transform ${
+                                    className={`relative flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 transform ${
                                         mobileOpen ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'
                                     } ${
                                         pathname === link.href 
@@ -104,7 +147,12 @@ const StoreSidebar = ({storeInfo}) => {
                                     onClick={() => setMobileOpen(false)}
                                 >
                                     <FontAwesomeIcon icon={link.icon} className="text-lg flex-shrink-0 transition-transform duration-300 group-hover:scale-110" />
-                                    <p className="text-sm font-medium">{link.name}</p>
+                                    <p className="text-sm font-medium flex-1">{link.name}</p>
+                                    {link.badge > 0 && (
+                                        <span className="inline-flex items-center justify-center min-w-6 h-6 px-1.5 text-xs font-bold text-white bg-red-500 rounded-full shadow-md animate-pulse">
+                                            {link.badge > 99 ? '99+' : link.badge}
+                                        </span>
+                                    )}
                                 </Link>
                             ))
                         }

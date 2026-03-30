@@ -61,18 +61,12 @@ export async function POST(request){
          let orderIds = [];
          let fullAmount = 0;
 
-         let isShippingFeeAdded = false
-
          // Create orders for each seller
          for(const [storeId, sellerItems] of ordersByStore.entries()){
             let total = sellerItems.reduce((acc, item)=>acc + (item.price * item.quantity), 0)
 
             if(couponCode){
                 total -= (total * coupon.discount) / 100;
-            }
-            if(!isPlusMember && !isShippingFeeAdded){
-                total += 5;
-                isShippingFeeAdded = true
             }
 
             // Add delivery charges to total

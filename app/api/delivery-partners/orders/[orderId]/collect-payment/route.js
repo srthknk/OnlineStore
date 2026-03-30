@@ -8,7 +8,7 @@ import prisma from '@/lib/prisma';
 export async function POST(req, { params }) {
   try {
     const { userId } = await auth();
-    const { orderId } = params;
+    const { orderId } = await params;
 
     if (!userId) {
       return Response.json(

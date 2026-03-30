@@ -49,6 +49,8 @@ export default function DeliveryPartnerDashboard() {
     completed: 0,
     totalEarnings: 0,
   })
+  const [updatingOrder, setUpdatingOrder] = useState(null)
+  const [targetStatus, setTargetStatus] = useState(null)
 
   // Check if user is delivery partner
   useEffect(() => {
@@ -140,6 +142,8 @@ export default function DeliveryPartnerDashboard() {
   const handleStatusUpdate = async (orderId, newStatus) => {
     try {
       setUpdating(prev => ({ ...prev, [orderId]: true }))
+      setUpdatingOrder(orderId)
+      setTargetStatus(newStatus)
       const token = await getToken()
 
       await axios.put(
@@ -164,6 +168,8 @@ export default function DeliveryPartnerDashboard() {
       toast.error(error.response?.data?.message || 'Failed to update status')
     } finally {
       setUpdating(prev => ({ ...prev, [orderId]: false }))
+      setUpdatingOrder(null)
+      setTargetStatus(null)
     }
   }
 
@@ -513,6 +519,120 @@ export default function DeliveryPartnerDashboard() {
                   >
                     Close
                   </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Status Update Loading Modal */}
+        {updatingOrder && targetStatus && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div className="bg-gradient-to-br from-white via-emerald-50 to-teal-50 rounded-2xl shadow-2xl max-w-md w-full overflow-hidden animate-in fade-in zoom-in duration-300">
+              {/* Header */}
+              <div className="bg-gradient-to-r from-emerald-600 to-teal-600 px-6 py-8 text-center">
+                <div className="mb-4 flex justify-center">
+                  <div className="p-4 bg-white/20 rounded-full animate-bounce">
+                    {targetStatus === 'DELIVERED' ? (
+                      <FontAwesomeIcon icon={faCheckCircle} className="text-4xl text-white" />
+                    ) : targetStatus === 'IN_TRANSIT' ? (
+                      <FontAwesomeIcon icon={faTruck} className="text-4xl text-white animate-pulse" />
+                    ) : targetStatus === 'PICKED_UP' ? (
+                      <FontAwesomeIcon icon={faBox} className="text-4xl text-white animate-pulse" />
+                    ) : (
+                      <FontAwesomeIcon icon={faClock} className="text-4xl text-white animate-pulse" />
+                    )}
+                  </div>
+                </div>
+                <h2 className="text-2xl font-bold text-white mb-2">
+                  {targetStatus === 'DELIVERED' ? '✅ Marking as Delivered' :
+                   targetStatus === 'IN_TRANSIT' ? '🚚 Marking as In Transit' :
+                   targetStatus === 'PICKED_UP' ? '📦 Marking as Picked Up' :
+                   '📌 Updating Status'}
+                </h2>
+                <p className="text-emerald-100 text-sm font-medium">Please wait while we update the order status...</p>
+              </div>
+
+              {/* Progress Section */}
+              <div className="px-6 py-8">
+                {/* Status Flow */}
+                <div className="space-y-4 mb-8">
+                  {/* From Status */}
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center flex-shrink-0">
+                      <FontAwesomeIcon icon={faClock} className="text-slate-600 text-lg" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-slate-700">Current Status</p>
+                      <p className="text-xs text-slate-500">Processing</p>
+                    </div>
+                  </div>
+
+                  {/* Arrow Animation */}
+                  <div className="flex justify-center">
+                    <div className="w-1 h-6 bg-gradient-to-b from-slate-300 via-emerald-400 to-transparent animate-pulse"></div>
+                  </div>
+
+                  {/* To Status */}
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center flex-shrink-0 animate-pulse">
+                      {targetStatus === 'DELIVERED' ? (
+                        <FontAwesomeIcon icon={faCheckCircle} className="text-white text-lg" />
+                      ) : targetStatus === 'IN_TRANSIT' ? (
+                        <FontAwesomeIcon icon={faTruck} className="text-white text-lg" />
+                      ) : targetStatus === 'PICKED_UP' ? (
+                        <FontAwesomeIcon icon={faBox} className="text-white text-lg" />
+                      ) : (
+                        <FontAwesomeIcon icon={faClock} className="text-white text-lg" />
+                      )}
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-emerald-700">New Status</p>
+                      <p className="text-xs text-emerald-600">
+                        {targetStatus === 'DELIVERED' ? 'Delivered' :
+                         targetStatus === 'IN_TRANSIT' ? 'In Transit' :
+                         targetStatus === 'PICKED_UP' ? 'Picked Up' :
+                         'Updated'}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Loading Spinner */}
+                <div className="flex justify-center mb-6">
+                  <div className="relative w-12 h-12">
+                    <div className="absolute inset-0 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 animate-spin"></div>
+                    <div className="absolute inset-1 rounded-full bg-gradient-to-br from-white via-emerald-50 to-teal-50"></div>
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <FontAwesomeIcon icon={faSpinner} className="text-emerald-600 animate-spin" />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Progress Bar */}
+                <div className="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
+                  <div className="bg-gradient-to-r from-emerald-500 to-teal-500 h-full rounded-full animate-pulse" style={{width: '65%'}}></div>
+                </div>
+
+                {/* Status Message */}
+                <div className="mt-6 p-4 bg-emerald-100 rounded-lg border border-emerald-300">
+                  <p className="text-sm text-emerald-800 text-center font-medium">
+                    {targetStatus === 'DELIVERED' ? 
+                      '🎉 Marking this order as successfully delivered...' :
+                      '⏳ Updating order status in the system...'}
+                  </p>
+                </div>
+
+                {/* Tips */}
+                <div className="mt-6 space-y-2 text-xs text-slate-600">
+                  <div className="flex items-start gap-2">
+                    <FontAwesomeIcon icon={faInfoCircle} className="text-emerald-600 mt-0.5 flex-shrink-0" />
+                    <p>Do not close this window during the update</p>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <FontAwesomeIcon icon={faInfoCircle} className="text-emerald-600 mt-0.5 flex-shrink-0" />
+                    <p>This usually takes a few seconds</p>
+                  </div>
                 </div>
               </div>
             </div>
