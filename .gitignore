@@ -1,102 +1,179 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
-# dependencies
-/node_modules
+# Dependencies
+node_modules/
 /.pnp
-.pnp.*
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/versions
+.pnp.js
+package-lock.json
+yarn.lock
 
-# testing
-/coverage
+# Testing
+/.coverage
+/.nyc_output
 
-# next.js
+# Next.js
 /.next/
 /out/
+*.rsc
 
-# production
-/build
+# Nuxt.js
+.nuxt/
+dist/
 
-# misc
+# Gatsby
+public/
+.cache/
+
+# Vuepress
+.vuepress/dist
+
+# Vite
+dist/
+
+# Production
+build/
+.nuxt/dist/
+
+# Misc
+*.pem
 .DS_Store
 *.pem
 
-# debug
+# Debug
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (NEVER COMMIT - contains sensitive API keys!)
+# Local env files
 .env
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
 .env*.local
+.env.example.local
 
-# vercel
-.vercel
-
-# typescript
-*.tsbuildinfo
-next-env.d.ts
-
-/app/generated/prisma
-
-# IDE and Editor
+# IDE
 .vscode/
 .idea/
 *.swp
 *.swo
-*~
+*.swn
+.sublime-project
 .sublime-workspace
-.project
-.classpath
-.c9/
-*.launch
-.settings/
-*.sublime-workspace
 
-# OS files
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS
+.DS_Store
 Thumbs.db
+
+# Turbopack
+.turbo/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+.venv/
+venv/
+ENV/
+env/
+.env
+.venv
+
+# Prisma
+prisma/migrations
+.prisma/
+
+# Test files
+test-*.mjs
+test-*.js
+verify-*.js
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage
+.nyc_output/
+coverage/
+
+# Misc
+.cache/
+.parcel-cache
+.eslintcache
+.stylelintcache
+*.tsbuildinfo
+
+# System files
+.DS_Store
 .AppleDouble
 .LSOverride
 ._*
 .Spotlight-V100
 .Trashes
+ehthumbs.db
+desktop.ini
 
-# Prisma
-prisma/dev.db
-prisma/dev.db-journal
-
-# Turbo
-.turbo/
-
-# ESLint cache
-.eslintcache
-
-# Local environment
-.env.*.local
+# Archives
+*.zip
+*.rar
+*.7z
+*.tar.gz
 
 # Temporary files
-tmp/
-temp/
 *.tmp
+*.temp
+*.bak
+*.swp
+*.swo
 
-# Logs
-logs/
-*.log
+# IDE temp files
+.c9/
+*.iml
 
-# Docker
-.dockerignore
-Dockerfile
+# Firebase
+.firebase/
+.firebaserc
 
-# Git
-.gitmodules
-.env.example
-MDFiles
-RunMANUAL.pdf
+# Vercel
+.vercel/
+.output
+
+# Production bundle analysis
+.next/analyze
