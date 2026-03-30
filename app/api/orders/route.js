@@ -3,18 +3,29 @@ import { getAuth } from "@clerk/nextjs/server";
 import { PaymentMethod } from "@prisma/client";
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
+import { sendSMS, formatOrderNotificationMessage } from "@/lib/twilio";
 
 
 export async function POST(request){
     try {
+        console.log('[Orders API] 🚀 Order creation started');
+        
         const { userId, has } = getAuth(request)
+        console.log('[Orders API] User ID:', userId);
+        
         if(!userId){
+            console.log('[Orders API] ❌ Not authorized');
             return NextResponse.json({ error: "not authorized" }, { status: 401 });
         }
         const { addressId, items, couponCode, paymentMethod, deliveryCharges } = await request.json()
+        
+        console.log('[Orders API] Payment method:', paymentMethod);
+        console.log('[Orders API] Items count:', items?.length);
+        console.log('[Orders API] 📝 Basic validation passed');
 
         // Check if all required fields are present
         if(!addressId || !paymentMethod || !items || !Array.isArray(items) || items.length === 0){
+           console.log('[Orders API] ❌ Missing order details');
            return NextResponse.json({ error: "missing order details." }, { status: 401 }); 
         }
 
@@ -91,9 +102,39 @@ export async function POST(request){
                             selectedVariant: item.selectedVariant || null
                         }))
                       }
+                },
+                include: {
+                    orderItems: true,
+                    user: true,
+                    store: true
                 }
             })
             orderIds.push(order.id)
+
+            // Send SMS notification to seller
+            try {
+                console.log('[Order SMS] 📱 Starting SMS notification process...');
+                console.log('[Order SMS] Order ID:', order.id);
+                console.log('[Order SMS] Store ID:', order.storeId);
+                console.log('[Order SMS] Store contact number:', order.store.contact);
+                
+                // Use store contact number (available on Store model)
+                const sellerPhone = order.store.contact;
+
+                if (sellerPhone) {
+                    console.log('[Order SMS] ✅ Phone found, sending SMS...');
+                    const message = formatOrderNotificationMessage(order, order.user);
+                    console.log('[Order SMS] Message:', message);
+                    const result = await sendSMS(sellerPhone, message);
+                    console.log(`[Order SMS] ✅ SMS sent to seller: ${sellerPhone}`, result?.sid);
+                } else {
+                    console.log('[Order SMS] ⚠️ Seller phone number not found in store contact');
+                }
+            } catch (smsError) {
+                console.error('[Order SMS] ❌ Failed to send SMS notification:', smsError.message);
+                console.error('[Order SMS] Full error:', smsError);
+                // Don't fail the order if SMS fails - continue with order creation
+            }
          }
 
          if(paymentMethod === 'STRIPE'){

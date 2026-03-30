@@ -6,12 +6,10 @@ import Image from "next/image"
 import Link from "next/link"
 import { useState, useEffect } from "react"
 import axios from "axios"
-import { useAuth } from "@clerk/nextjs"
 
 const StoreSidebar = ({storeInfo}) => {
 
     const pathname = usePathname()
-    const { getToken } = useAuth()
     const [mobileOpen, setMobileOpen] = useState(false)
     const [pendingOrdersCount, setPendingOrdersCount] = useState(0)
     const [unassignedDeliveryCount, setUnassignedDeliveryCount] = useState(0)
@@ -20,21 +18,15 @@ const StoreSidebar = ({storeInfo}) => {
     useEffect(() => {
         const fetchBadgeCounts = async () => {
             try {
-                const token = await getToken()
-                
-                // Fetch pending orders count
-                const ordersRes = await axios.get('/api/store/orders', {
-                    headers: { Authorization: `Bearer ${token}` }
-                })
+                // Fetch pending orders count (Clerk auth handled automatically via cookies)
+                const ordersRes = await axios.get('/api/store/orders')
                 const pendingCount = ordersRes.data.orders?.filter(o => 
                     !o.isCancelled && (o.status === 'ORDER_PLACED' || o.status === 'PROCESSING')
                 ).length || 0
                 setPendingOrdersCount(pendingCount)
 
                 // Fetch unassigned delivery orders count
-                const deliveryRes = await axios.get('/api/store/orders/unassigned', {
-                    headers: { Authorization: `Bearer ${token}` }
-                })
+                const deliveryRes = await axios.get('/api/store/orders/unassigned')
                 const unassignedCount = deliveryRes.data.orders?.length || 0
                 setUnassignedDeliveryCount(unassignedCount)
             } catch (error) {
@@ -47,7 +39,7 @@ const StoreSidebar = ({storeInfo}) => {
         // Refresh badge counts every 10 seconds
         const interval = setInterval(fetchBadgeCounts, 10000)
         return () => clearInterval(interval)
-    }, [getToken])
+    }, [])
 
     const sidebarLinks = [
         { name: 'Dashboard', href: '/store', icon: faHome },
