@@ -4,7 +4,8 @@ node_modules/
 .pnp.js
 package-lock.json
 yarn.lock
-
+MDFiles
+RunMANUAL.pdf
 # Testing
 /.coverage
 /.nyc_output
@@ -177,3 +178,4 @@ desktop.ini
 
 # Production bundle analysis
 .next/analyze
+.env.example

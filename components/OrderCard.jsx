@@ -3,8 +3,8 @@ import Image from "next/image";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMapPin, faCalendarDays, faEye, faTruck } from '@fortawesome/free-solid-svg-icons';
 import { useState } from "react";
-import TrackingModal from "./TrackingModal";
 import DetailModal from "./DetailModal";
+import TrackingModal from "./TrackingModal";
 
 // Helper function to title case text
 const toTitleCase = (str) => {

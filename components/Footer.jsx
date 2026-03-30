@@ -2,7 +2,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import axios from "axios"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEnvelope, faPhone, faMapPin } from "@fortawesome/free-solid-svg-icons";
+import { faEnvelope, faPhone, faMapPin, faTruck } from "@fortawesome/free-solid-svg-icons";
 import { faFacebook, faInstagram, faTwitter, faLinkedin } from "@fortawesome/free-brands-svg-icons";
 
 const Footer = () => {
@@ -73,6 +73,7 @@ const Footer = () => {
                 { text: "Contact Us", path: '/contact', icon: null },
                 { text: "Become Premium Member", path: '/pricing', icon: null },
                 { text: "Become a Supplier", path: '/create-store', icon: null },
+                { text: "Delivery Partner", path: '/deliverypartner', icon: faTruck },
             ]
         },
         {

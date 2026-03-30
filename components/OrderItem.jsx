@@ -66,7 +66,7 @@ const OrderItem = ({ order, onOrderCancelled }) => {
                     <div
                         className={`flex items-center justify-center gap-1 rounded-full p-1 cursor-pointer hover:shadow-md transition-all ${
                             order.status === 'CANCELLED' ? 'text-red-500 bg-red-100'
-                            : order.status === 'confirmed'
+                            : order.status === 'PROCESSING'
                                 ? 'text-yellow-500 bg-yellow-100'
                                 : order.status === 'DELIVERED'
                                     ? 'text-green-500 bg-green-100'

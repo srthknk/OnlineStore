@@ -19,6 +19,7 @@ model User {
     ratings     Rating[]
     Address     Address[]
     store       Store?
+    deliveryPartner DeliveryPartner?
     buyerOrders Order[]   @relation("BuyerRelation")
     invoices    Invoice[] @relation("InvoiceUser")
 }
@@ -95,6 +96,14 @@ enum OrderStatus {
     CANCELLED
 }
 
+enum DeliveryStatus {
+    ASSIGNED       // Order assigned to delivery partner
+    PICKED_UP      // Delivery partner picked up the order
+    IN_TRANSIT     // Order is on the way
+    DELIVERED      // Order delivered successfully
+    FAILED         // Delivery failed
+}
+
 enum CancellationReason {
     CHANGED_MIND
     FOUND_CHEAPER
@@ -148,11 +157,20 @@ model Order {
     cancelledBy           String?                 // "buyer" or "seller"
     cancelledAt           DateTime?
 
+    // Delivery Partner Assignment
+    deliveryPartnerId     String?                 // Assigned delivery partner
+    deliveryStatus        DeliveryStatus?         // Status of delivery
+    deliveryStartedAt     DateTime?               // When delivery started
+    deliveryCompletedAt   DateTime?               // When delivery was completed
+
     // Relations
     user    User    @relation("BuyerRelation", fields: [userId], references: [id])
     store   Store   @relation(fields: [storeId], references: [id])
     address Address @relation(fields: [addressId], references: [id])
+    deliveryPartner DeliveryPartner? @relation(fields: [deliveryPartnerId], references: [id])
     invoice Invoice?
+    
+    @@index([status])
 }
 
 // Required for creating an OrderItem: orderId, productId, quantity, price
@@ -210,7 +228,7 @@ model Address {
     // Relations
     Order Order[]
     user  User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-
+    
     @@unique([userId, id]) // Ensure user can have multiple addresses
     @@index([userId])
 }
@@ -254,12 +272,14 @@ model Store {
     createdAt   DateTime @default(now())
     updatedAt   DateTime @updatedAt
 
+
     Product Product[]
     Order   Order[]
     user    User      @relation(fields: [userId], references: [id])
     announcementStores AnnouncementStore[]
     announcementReads  AnnouncementRead[]
     invoices Invoice[]
+    deliveryPartners DeliveryPartner[] @relation("DeliveryPartnerStore")
     
     @@index([isActive])
     @@index([status])
@@ -472,5 +492,57 @@ model Alert {
     
     @@index([isActive])
     @@index([priority])
+    @@index([createdAt])
+}
+
+// Delivery Partner Status Enum
+enum DeliveryPartnerStatus {
+    PENDING      // Awaiting admin approval
+    APPROVED     // Approved by admin
+    REJECTED     // Rejected by admin
+    ACTIVE       // Currently active
+    INACTIVE     // Temporarily inactive
+    SUSPENDED    // Suspended for violations
+}
+
+// Delivery Partner Model
+model DeliveryPartner {
+    id                      String                  @id @default(cuid())
+    userId                  String                  @unique
+    firstName               String
+    lastName                String
+    email                   String                  @unique
+    phone                   String
+    
+    // Address
+    address                 String                  @db.Text
+    photoUrl                String?                 // Registration photo
+    
+    // Store Assignment
+    selectedStoreId         String
+    selectedStore           Store                   @relation("DeliveryPartnerStore", fields: [selectedStoreId], references: [id], onDelete: Restrict)
+    
+    // Status & Approval
+    status                  DeliveryPartnerStatus   @default(PENDING)
+    approvedAt              DateTime?               // When admin approved
+    approvedBy              String?                 // Admin user ID who approved
+    rejectionReason         String?                 // If rejected, reason why
+    
+    // Performance
+    totalDeliveries         Int                     @default(0)
+    successfulDeliveries    Int                     @default(0)
+    averageRating           Float                   @default(5.0)
+    
+    // Metadata
+    createdAt               DateTime                @default(now())
+    updatedAt               DateTime                @updatedAt
+    
+    // Relations
+    user                    User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
+    assignedOrders          Order[]                 // Orders assigned to this delivery partner
+    
+    @@index([status])
+    @@index([selectedStoreId])
+    @@index([email])
     @@index([createdAt])
 }

@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 
 // Helper function to generate unique invoice number
 const generateInvoiceNumber = async () => {
-    // Format: INV-YYYY-XXXXX (e.g., INV-2026-00001)
+    // Format: INV-YYYY-##### (e.g., INV-2026-00001)
     const date = new Date();
     const year = date.getFullYear();
     const count = await prisma.invoice.count();

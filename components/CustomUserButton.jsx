@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import axios from "axios"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faChartLine, faStore, faQuestionCircle } from '@fortawesome/free-solid-svg-icons'
+import { faChartLine, faStore, faQuestionCircle, faTruck } from '@fortawesome/free-solid-svg-icons'
 
 export default function CustomUserButton({ children, onFAQClick }) {
     const { user } = useUser()
@@ -12,6 +12,7 @@ export default function CustomUserButton({ children, onFAQClick }) {
     const router = useRouter()
     const [isAdmin, setIsAdmin] = useState(false)
     const [hasStore, setHasStore] = useState(false)
+    const [isDeliveryPartner, setIsDeliveryPartner] = useState(false)
     const [mounted, setMounted] = useState(false)
 
     useEffect(() => {
@@ -45,6 +46,18 @@ export default function CustomUserButton({ children, onFAQClick }) {
                 if (sellerRes?.data?.isSeller && sellerRes?.data?.storeId) {
                     setHasStore(true)
                     console.log('✅ User has Store')
+                }
+
+                // Check if delivery partner
+                const dpRes = await axios.get('/api/delivery-partners/is-delivery-partner', {
+                    headers: { Authorization: `Bearer ${token}` }
+                }).catch(() => ({ data: { isDeliveryPartner: false } }))
+                
+                console.log('🔍 Delivery Partner Response:', dpRes?.data)
+                
+                if (dpRes?.data?.isDeliveryPartner) {
+                    setIsDeliveryPartner(true)
+                    console.log('✅ User is Delivery Partner')
                 }
             } catch (error) {
                 console.error('Error checking roles:', error)
@@ -80,6 +93,13 @@ export default function CustomUserButton({ children, onFAQClick }) {
                         labelIcon={<FontAwesomeIcon icon={faStore}/>} 
                         label="My Store" 
                         onClick={() => router.push('/store')}
+                    />
+                )}
+                {isDeliveryPartner && (
+                    <UserButton.Action 
+                        labelIcon={<FontAwesomeIcon icon={faTruck}/>} 
+                        label="Delivery Dashboard" 
+                        onClick={() => router.push('/delivery-partner/dashboard')}
                     />
                 )}
             </UserButton.MenuItems>

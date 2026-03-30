@@ -10,7 +10,7 @@ const SIZE_GUIDE = {
     L: { chest: '42-44"', waist: '36-38"', length: '28-29"' },
     XL: { chest: '46-48"', waist: '40-42"', length: '29-30"' },
     XXL: { chest: '50-52"', waist: '44-46"', length: '30-31"' },
-    XXXL: { chest: '54-56"', waist: '48-50"', length: '31-32"' },
+    XXXXL: { chest: '54-56"', waist: '48-50"', length: '31-32"' },
 }
 
 export default function SizeGuide() {

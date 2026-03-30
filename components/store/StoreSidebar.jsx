@@ -1,7 +1,7 @@
 'use client'
 import { usePathname } from "next/navigation"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faHome, faList, faPen, faPlus, faBars, faXmark, faBell } from '@fortawesome/free-solid-svg-icons'
+import { faHome, faList, faPen, faPlus, faBars, faXmark, faBell, faTruck } from '@fortawesome/free-solid-svg-icons'
 import Image from "next/image"
 import Link from "next/link"
 import { useState } from "react"
@@ -16,6 +16,7 @@ const StoreSidebar = ({storeInfo}) => {
         { name: 'Add Product', href: '/store/add-product', icon: faPlus },
         { name: 'Manage Product', href: '/store/manage-product', icon: faPen },
         { name: 'Orders', href: '/store/orders', icon: faList },
+        { name: 'Assign Delivery', href: '/store/orders/assign-delivery', icon: faTruck },
         { name: 'Announcements', href: '/store/announcements', icon: faBell },
     ]
 

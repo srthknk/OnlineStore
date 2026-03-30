@@ -6,7 +6,7 @@ import { useMemo } from "react"
 export default function SizeAnalytics({ orders }) {
     const sizeStats = useMemo(() => {
         const stats = {}
-        const CLOTHING_SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL']
+        const CLOTHING_SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXXL']
 
         orders.forEach(order => {
             if (!order.isCancelled) {

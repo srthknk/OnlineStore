@@ -20,7 +20,7 @@ export default function ReturnRequestModal({ isOpen, onClose, orderItem, onSucce
     const [returnType, setReturnType] = useState('return')
     const [loading, setLoading] = useState(false)
 
-    const CLOTHING_SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL']
+    const CLOTHING_SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXXL']
 
     const handleSubmit = async (e) => {
         e.preventDefault()

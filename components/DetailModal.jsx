@@ -96,40 +96,69 @@ const DetailModal = ({ order, onClose }) => {
                         
                         <div className="space-y-3 bg-gray-50 rounded p-4">
                             <div>
-                                <p className="text-xs text-gray-500 font-semibold mb-1">Name</p>
-                                <p className="text-sm text-black font-semibold">{order.address.name}</p>
+                                <p className="text-xs text-gray-500 font-semibold mb-1">Address Name</p>
+                                <p className="text-sm text-black font-semibold">{order.address.name || order.address.street || 'N/A'}</p>
                             </div>
                             
-                            <div>
-                                <p className="text-xs text-gray-500 font-semibold mb-1">Street Address</p>
-                                <p className="text-sm text-black">{order.address.street}</p>
-                            </div>
+                            {/* House/Building Info */}
+                            {(order.address.house || order.address.street) && (
+                                <div>
+                                    <p className="text-xs text-gray-500 font-semibold mb-1">House/Building</p>
+                                    <p className="text-sm text-black">{order.address.house || order.address.street || 'N/A'}</p>
+                                </div>
+                            )}
 
-                            <div className="grid grid-cols-2 gap-3">
+                            {/* Area/Street Info */}
+                            {order.address.area && (
+                                <div>
+                                    <p className="text-xs text-gray-500 font-semibold mb-1">Area/Street</p>
+                                    <p className="text-sm text-black">{order.address.area}</p>
+                                </div>
+                            )}
+
+                            {/* Landmark */}
+                            {order.address.landmark && (
+                                <div>
+                                    <p className="text-xs text-gray-500 font-semibold mb-1">📍 Landmark</p>
+                                    <p className="text-sm text-black">{order.address.landmark}</p>
+                                </div>
+                            )}
+
+                            <div className="grid grid-cols-2 gap-3 border-t border-gray-200 pt-3">
+                                {/* City */}
                                 <div>
                                     <p className="text-xs text-gray-500 font-semibold mb-1">City</p>
-                                    <p className="text-sm text-black">{order.address.city}</p>
+                                    <p className="text-sm text-black">{order.address.city || 'N/A'}</p>
                                 </div>
+
+                                {/* District - Fallback to State if not available */}
+                                <div>
+                                    <p className="text-xs text-gray-500 font-semibold mb-1">District</p>
+                                    <p className="text-sm text-black">{order.address.district || order.address.state || 'N/A'}</p>
+                                </div>
+
+                                {/* State */}
                                 <div>
                                     <p className="text-xs text-gray-500 font-semibold mb-1">State</p>
-                                    <p className="text-sm text-black">{order.address.state}</p>
+                                    <p className="text-sm text-black">{order.address.state || 'N/A'}</p>
                                 </div>
+
+                                {/* PIN Code - Handle both pin and zip */}
                                 <div>
                                     <p className="text-xs text-gray-500 font-semibold mb-1">PIN Code</p>
-                                    <p className="text-sm text-black">{order.address.zip}</p>
-                                </div>
-                                <div>
-                                    <p className="text-xs text-gray-500 font-semibold mb-1">Country</p>
-                                    <p className="text-sm text-black">{order.address.country}</p>
+                                    <p className="text-sm text-black">{order.address.pin || order.address.zip || 'N/A'}</p>
                                 </div>
                             </div>
 
-                            <div className="border-t border-gray-200 pt-3">
-                                <p className="text-xs text-gray-500 font-semibold mb-1 flex items-center gap-1">
+                            <div className="border-t border-gray-200 pt-3 space-y-2">
+                                <p className="text-xs text-gray-500 font-semibold mb-2 flex items-center gap-1">
                                     <FontAwesomeIcon icon={faPhone} className="w-3 h-3" />
-                                    Contact
+                                    Contact Details
                                 </p>
-                                <p className="text-sm font-semibold text-black">{order.address.phone}</p>
+                                {order.address.email && (
+                                    <p className="text-sm text-black"><span className="font-semibold">Email:</span> {order.address.email}</p>
+                                )}
+                                <p className="text-sm font-semibold text-black">{order.address.phone || 'N/A'}</p>
                             </div>
                         </div>
                     </div>
