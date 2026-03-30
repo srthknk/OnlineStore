@@ -1,7 +1,7 @@
 'use client'
 import React from 'react'
 import Title from './Title'
-import ProductCard from './ProductCard'
+import GroceryProductCard from './GroceryProductCard'
 import { useSelector } from 'react-redux'
 import Link from 'next/link'
 
@@ -51,7 +51,7 @@ const CategoryWiseProducts = () => {
                             
                             <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4 md:gap-6 lg:gap-12'>
                                 {categoryProducts.slice(0, productsPerCategory).map((product, idx) => (
-                                    <ProductCard key={idx} product={product} hideStockAndTags={true} />
+                                    <GroceryProductCard key={idx} product={product} />
                                 ))}
                             </div>
 

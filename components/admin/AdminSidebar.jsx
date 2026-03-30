@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faHome, faShield, faStore, faPercent, faPalette, faBars, faXmark, faBell, faTruck, faExclamationCircle, faBox } from '@fortawesome/free-solid-svg-icons'
+import { faHome, faShield, faStore, faPercent, faPalette, faBars, faXmark, faBell, faTruck, faExclamationCircle, faBox, faImage } from '@fortawesome/free-solid-svg-icons'
 import Image from "next/image"
 import Link from "next/link"
 import { assets } from "@/assets/assets"
@@ -15,6 +15,26 @@ const AdminSidebar = () => {
     const [mobileOpen, setMobileOpen] = useState(false)
     const pathname = usePathname()
 
+    const scrollbarStyles = `
+        .admin-sidebar-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+        .admin-sidebar-scroll::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .admin-sidebar-scroll::-webkit-scrollbar-thumb {
+            background: #22c55e;
+            border-radius: 3px;
+        }
+        .admin-sidebar-scroll::-webkit-scrollbar-thumb:hover {
+            background: #16a34a;
+        }
+        .admin-sidebar-scroll {
+            scrollbar-width: thin;
+            scrollbar-color: #22c55e transparent;
+        }
+    `
+
     const sidebarLinks = [
         { name: 'Dashboard', href: '/admin', icon: faHome },
         { name: 'Stores', href: '/admin/stores', icon: faStore },
@@ -25,13 +45,15 @@ const AdminSidebar = () => {
         { name: 'Order Management', href: '/admin/orders', icon: faBox },
         { name: 'Coupons', href: '/admin/coupons', icon: faPercent  },
         { name: 'Order Settings', href: '/admin/order-settings', icon: faTruck  },
+        { name: 'Hero Products', href: '/admin/hero-categories', icon: faImage  },
         { name: 'Personalize', href: '/admin/personalize', icon: faPalette  },
     ]
 
     return user && (
         <>
+            <style>{scrollbarStyles}</style>
             {/* Desktop Sidebar */}
-            <div className="hidden md:inline-flex h-full flex-col gap-5 border-r border-slate-200 md:min-w-60 overflow-y-auto">
+            <div className="admin-sidebar-scroll hidden md:inline-flex h-screen flex-col gap-5 border-r border-slate-200 md:min-w-60 overflow-y-auto pb-32">
                 <div className="flex flex-col gap-2 justify-center items-center pt-8 animate-fadeIn">
                     <Image className="w-14 h-14 rounded-full shadow-md hover:shadow-lg transition-shadow duration-300" src={user.imageUrl} alt="" width={80} height={80} />
                     <p className="text-slate-700 font-medium text-center px-4 text-sm">{user.fullName}</p>

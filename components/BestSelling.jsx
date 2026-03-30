@@ -1,6 +1,6 @@
 'use client'
 import Title from './Title'
-import ProductCard from './ProductCard'
+import GroceryProductCard from './GroceryProductCard'
 import { useSelector } from 'react-redux'
 
 const BestSelling = () => {
@@ -19,7 +19,7 @@ const BestSelling = () => {
             <Title title='Best Selling' description={`Showing ${validProducts.length < displayQuantity ? validProducts.length : displayQuantity} of ${validProducts.length} products`} href='/shop' />
             <div className='mt-8 sm:mt-12 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4 md:gap-6 lg:gap-12'>
                 {validProducts.slice().sort((a, b) => b.rating.length - a.rating.length).slice(0, displayQuantity).map((product, index) => (
-                    <ProductCard key={index} product={product} hideStockAndTags={true} />
+                    <GroceryProductCard key={index} product={product} />
                 ))}
             </div>
         </div>

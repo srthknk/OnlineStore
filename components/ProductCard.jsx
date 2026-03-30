@@ -229,32 +229,6 @@ const ProductCard = ({ product, hideStockAndTags = false }) => {
                             <span className='text-xs font-semibold text-lime-700'>Vegan</span>
                         </motion.div>
                     )}
-                    
-                    {/* Premium Stock Indicator Bar */}
-                    {!hideStockAndTags && !outOfStock && (
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            whileInView={{ opacity: 1 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.3, delay: 0.2 }}
-                            className='mt-2 pt-2 border-t border-slate-200 w-full'
-                        >
-                            <div className='h-2 bg-slate-200 rounded-full overflow-hidden shadow-sm'>
-                                <motion.div 
-                                    initial={{ width: 0 }}
-                                    whileInView={{ width: `${Math.min(100, (product.totalUnits / Math.max(product.totalUnits, 50)) * 100)}%` }}
-                                    viewport={{ once: true }}
-                                    transition={{ duration: 0.6, delay: 0.3 }}
-                                    className={`h-full transition-all duration-300 ${
-                                        lowStock ? 'bg-gradient-to-r from-amber-400 to-amber-500' : 'bg-gradient-to-r from-emerald-400 to-emerald-500'
-                                    }`}
-                                />
-                            </div>
-                            <p className={`text-xs font-light mt-1.5 ${lowStock ? 'text-amber-600' : 'text-slate-500'}`}>
-                                {lowStock ? `Only ${product.totalUnits} left` : 'Stock Available'}
-                            </p>
-                        </motion.div>
-                    )}
                 </motion.div>
             </motion.div>
         </Link>

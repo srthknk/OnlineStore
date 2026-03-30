@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPills, faDog, faBaby } from '@fortawesome/free-solid-svg-icons'
 import CategoriesMarquee from './CategoriesMarquee'
+import HeroCategoriesCarousel from './HeroCategoriesCarousel'
 
 const Hero = () => {
     const [settings, setSettings] = useState(null)
@@ -212,6 +213,9 @@ const Hero = () => {
             </div>
 
             <CategoriesMarquee />
+
+            {/* Hero Categories Carousel */}
+            <HeroCategoriesCarousel />
         </div>
     )
 }

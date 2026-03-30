@@ -179,3 +179,4 @@ desktop.ini
 # Production bundle analysis
 .next/analyze
 .env.example
+Android/
