@@ -7,13 +7,33 @@ const nextConfig = {
         imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
         minimumCacheTTL: 60000,
         remotePatterns: [
+            // ImageKit domain
+            {
+                protocol: 'https',
+                hostname: 'ik.imagekit.io',
+            },
+            // Unsplash domain
+            {
+                protocol: 'https',
+                hostname: 'images.unsplash.com',
+            },
+            // dfordelhi domain
+            {
+                protocol: 'https',
+                hostname: 'dfordelhi.in',
+            },
+            // Broad wildcard for any HTTPS domain
             {
                 protocol: 'https',
                 hostname: '**',
             },
             {
                 protocol: 'http',
-                hostname: '**',
+                hostname: 'localhost',
+            },
+            {
+                protocol: 'http',
+                hostname: '127.0.0.1',
             }
         ]
     },
@@ -32,6 +52,7 @@ const nextConfig = {
         'localhost',
         '127.0.0.1',
         '192.168.31.184',
+        '10.81.154.200',
     ]
 };
 

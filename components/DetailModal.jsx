@@ -241,15 +241,72 @@ const DetailModal = ({ order, onClose }) => {
                         {/* Payment & Status */}
                         <div className="mt-3 pt-3 border-t border-gray-200 space-y-2 text-xs">
                             <div className="flex justify-between">
-                                <span className="text-gray-600">Payment Status</span>
-                                <span className="font-semibold text-black">{order.isPaid ? 'Paid' : 'Pending'}</span>
+                                <span className="text-gray-600">Payment Method</span>
+                                <span className="font-semibold text-black">{order.paymentMethod === 'COD' ? 'Cash on Delivery' : order.paymentMethod || 'Not Specified'}</span>
                             </div>
                             <div className="flex justify-between">
-                                <span className="text-gray-600">Payment Method</span>
-                                <span className="font-semibold text-black">{order.paymentMethod === 'COD' ? 'Cash on Delivery' : 'Stripe'}</span>
+                                <span className="text-gray-600">Payment Status</span>
+                                <span className={`font-semibold px-2 py-0.5 rounded text-xs ${order.isPaid ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
+                                    {order.isPaid ? '✓ Paid' : 'Pending'}
+                                </span>
                             </div>
+                            
+                            {/* Refund Status for Cancelled Orders */}
+                            {order.isCancelled && (
+                                <div className="flex justify-between pt-2 border-t border-gray-200 mt-2">
+                                    <span className="text-gray-600">Refund Status</span>
+                                    <span className={`font-semibold px-2 py-0.5 rounded text-xs ${
+                                        order.refundStatus === 'SUCCESS' ? 'bg-green-100 text-green-700' :
+                                        order.refundStatus === 'FAILED' ? 'bg-red-100 text-red-700' :
+                                        'bg-yellow-100 text-yellow-700'
+                                    }`}>
+                                        {order.refundStatus === 'SUCCESS' ? '✓ Refunded' : order.refundStatus === 'FAILED' ? '✗ Failed' : 'Processing'}
+                                    </span>
+                                </div>
+                            )}
+
+
                         </div>
                     </div>
+
+                    {/* Cancellation Details */}
+                    {order.isCancelled && (
+                        <div className="border border-red-200 rounded-lg p-5 bg-red-50">
+                            <h3 className="text-sm font-bold text-red-700 mb-4">
+                                ❌ Order Cancellation Details
+                            </h3>
+                            <div className="space-y-3 text-xs">
+                                <div className="flex justify-between pb-2 border-b border-red-200">
+                                    <span className="text-red-600">Cancelled By</span>
+                                    <span className="font-semibold text-red-700">{order.cancelledBy === 'buyer' ? 'Customer' : 'Seller'}</span>
+                                </div>
+                                {order.cancellationReason && (
+                                    <div className="flex justify-between pb-2 border-b border-red-200">
+                                        <span className="text-red-600">Reason</span>
+                                        <span className="font-semibold text-red-700">{order.cancellationReason.replace(/_/g, ' ')}</span>
+                                    </div>
+                                )}
+                                {order.cancellationDescription && (
+                                    <div className="pb-2 border-b border-red-200">
+                                        <span className="text-red-600 block font-semibold mb-1">Description</span>
+                                        <p className="text-red-700 italic">{order.cancellationDescription}</p>
+                                    </div>
+                                )}
+                                {order.cancelledAt && (
+                                    <div className="flex justify-between">
+                                        <span className="text-red-600">Cancelled On</span>
+                                        <span className="font-semibold text-red-700">{new Date(order.cancelledAt).toLocaleString()}</span>
+                                    </div>
+                                )}
+                                <div className="flex justify-between pt-2 border-t border-red-300 mt-2 font-semibold">
+                                    <span className="text-red-600">Refund Amount</span>
+                                    <span className="text-red-700">₹{order.total.toFixed(2)}</span>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+
                 </div>
 
                 {/* Footer */}

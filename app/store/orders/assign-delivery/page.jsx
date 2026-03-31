@@ -21,14 +21,10 @@ import {
   faClipboardList,
   faClock,
   faRoute,
-  faBriefcase,
-  faShieldAlt,
   faRefresh,
-  faFire,
   faMapPin,
   faCalendarAlt,
 } from '@fortawesome/free-solid-svg-icons';
-import styles from './styles.module.css';
 
 export default function DeliveryAssignment() {
   const { getToken } = useAuth();
@@ -41,9 +37,8 @@ export default function DeliveryAssignment() {
   const [showAssignModal, setShowAssignModal] = useState(false);
   const [searchOrder, setSearchOrder] = useState('');
   const [searchPartner, setSearchPartner] = useState('');
-  const [sortBy, setSortBy] = useState('recent');
+  const [step, setStep] = useState('orders'); // 'orders' or 'partners'
 
-  // Fetch data on mount
   useEffect(() => {
     fetchData();
   }, []);
@@ -66,17 +61,11 @@ export default function DeliveryAssignment() {
       setDeliveryPartners(partnersRes.data.deliveryPartners || []);
     } catch (error) {
       console.error('Error fetching data:', error);
-      const errorMessage = error?.response?.data?.error || error?.response?.data?.message || error.message || 'Failed to load data';
+      const errorMessage = error?.response?.data?.error || 'Failed to load data';
       toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleAssignPartner = (order, partner) => {
-    setSelectedOrder(order);
-    setSelectedPartner(partner);
-    setShowAssignModal(true);
   };
 
   const confirmAssignment = async () => {
@@ -97,11 +86,12 @@ export default function DeliveryAssignment() {
         }
       );
 
-      toast.success('🎉 Delivery partner assigned successfully!');
+      toast.success('✓ Delivery partner assigned successfully!');
       setShowAssignModal(false);
       setSelectedOrder(null);
       setSelectedPartner(null);
-      fetchData(); // Refresh data
+      setStep('orders');
+      fetchData();
     } catch (error) {
       console.error('Error assigning partner:', error);
       toast.error(error?.response?.data?.message || 'Failed to assign delivery partner');
@@ -110,20 +100,12 @@ export default function DeliveryAssignment() {
     }
   };
 
-  // Filter and sort data
-  const filteredOrders = unassignedOrders
-    .filter(
-      (order) =>
-        order.id.toLowerCase().includes(searchOrder.toLowerCase()) ||
-        order.user?.name?.toLowerCase().includes(searchOrder.toLowerCase()) ||
-        order.total.toString().includes(searchOrder)
-    )
-    .sort((a, b) => {
-      if (sortBy === 'recent') return new Date(b.createdAt) - new Date(a.createdAt);
-      if (sortBy === 'amount-high') return b.total - a.total;
-      if (sortBy === 'amount-low') return a.total - b.total;
-      return 0;
-    });
+  const filteredOrders = unassignedOrders.filter(
+    (order) =>
+      order.id.toLowerCase().includes(searchOrder.toLowerCase()) ||
+      order.user?.name?.toLowerCase().includes(searchOrder.toLowerCase()) ||
+      order.total.toString().includes(searchOrder)
+  );
 
   const filteredPartners = deliveryPartners.filter(
     (partner) =>
@@ -134,384 +116,361 @@ export default function DeliveryAssignment() {
 
   if (loading) {
     return (
-      <div className={styles.container}>
-        <div className={styles.loadingSpinner}>
-          <div className={styles.spinnerContent}>
-            <FontAwesomeIcon icon={faTruck} className={styles.spinIcon} />
-            <p>Loading delivery assignment interface...</p>
-          </div>
+      <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
+        <div style={{ textAlign: 'center', color: 'white' }}>
+          <FontAwesomeIcon icon={faTruck} style={{ fontSize: '48px', marginBottom: '20px', color: '#10B981' }} />
+          <p style={{ fontSize: '16px', fontWeight: '500' }}>Loading delivery interface...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className={styles.container}>
+    <div style={{ minHeight: '100vh', background: '#f8f9fa', paddingBottom: '20px' }}>
       {/* Header */}
-      <div className={styles.header}>
-        <div className={styles.headerContent}>
-          <div className={styles.headerIcon}>
-            <FontAwesomeIcon icon={faTruck} />
+      <div style={{ background: '#1a1a1a', color: 'white', padding: '20px', borderBottom: '3px solid #10B981' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '15px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <FontAwesomeIcon icon={faTruck} style={{ fontSize: '28px', color: '#10B981' }} />
+            <div>
+              <h1 style={{ margin: '0', fontSize: '22px', fontWeight: '700' }}>Assign Delivery</h1>
+              <p style={{ margin: '4px 0', fontSize: '13px', color: '#ccc' }}>Quick delivery partner assignment</p>
+            </div>
           </div>
+          <button
+            onClick={fetchData}
+            style={{
+              background: '#10B981',
+              border: 'none',
+              color: 'white',
+              width: '40px',
+              height: '40px',
+              borderRadius: '50%',
+              fontSize: '16px',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+            title="Refresh"
+          >
+            <FontAwesomeIcon icon={faRefresh} />
+          </button>
+        </div>
+
+        {/* Stats */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+          <div style={{ background: '#2d2d2d', padding: '12px', borderRadius: '10px', borderLeft: '3px solid #10B981' }}>
+            <p style={{ margin: '0', fontSize: '12px', color: '#aaa' }}>Pending Orders</p>
+            <p style={{ margin: '8px 0 0 0', fontSize: '24px', fontWeight: '700', color: '#10B981' }}>{filteredOrders.length}</p>
+          </div>
+          <div style={{ background: '#2d2d2d', padding: '12px', borderRadius: '10px', borderLeft: '3px solid #10B981' }}>
+            <p style={{ margin: '0', fontSize: '12px', color: '#aaa' }}>Available Partners</p>
+            <p style={{ margin: '8px 0 0 0', fontSize: '24px', fontWeight: '700', color: '#10B981' }}>{filteredPartners.length}</p>
+          </div>
+        </div>
+      </div>
+
+      <div style={{ padding: '16px' }}>
+        {/* Select Order Section */}
+        {step === 'orders' && (
           <div>
-            <h1>Delivery Partner Assignment</h1>
-            <p>Efficiently assign delivery partners to pending orders</p>
-          </div>
-        </div>
-        <button className={styles.refreshBtn} onClick={fetchData} title="Refresh data">
-          <FontAwesomeIcon icon={faRefresh} /> Refresh
-        </button>
-      </div>
-
-      {/* Stats Overview */}
-      <div className={styles.statsGrid}>
-        <div className={styles.statCard}>
-          <div className={styles.statIcon} style={{ background: 'linear-gradient(135deg, #667eea, #764ba2)' }}>
-            <FontAwesomeIcon icon={faBox} />
-          </div>
-          <div className={styles.statContent}>
-            <p className={styles.statLabel}>Pending Orders</p>
-            <p className={styles.statNumber}>{unassignedOrders.length}</p>
-          </div>
-        </div>
-
-        <div className={styles.statCard}>
-          <div className={styles.statIcon} style={{ background: 'linear-gradient(135deg, #f093fb, #f5576c)' }}>
-            <FontAwesomeIcon icon={faTruck} />
-          </div>
-          <div className={styles.statContent}>
-            <p className={styles.statLabel}>Available Partners</p>
-            <p className={styles.statNumber}>{deliveryPartners.length}</p>
-          </div>
-        </div>
-
-        <div className={styles.statCard}>
-          <div className={styles.statIcon} style={{ background: 'linear-gradient(135deg, #4facfe, #00f2fe)' }}>
-            <FontAwesomeIcon icon={faCheckCircle} />
-          </div>
-          <div className={styles.statContent}>
-            <p className={styles.statLabel}>Ready to Assign</p>
-            <p className={styles.statNumber}>{Math.min(filteredOrders.length, filteredPartners.length)}</p>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Content */}
-      <div className={styles.mainContent}>
-        {/* Left Section - Unassigned Orders */}
-        <div className={styles.section}>
-          <div className={styles.sectionHeader}>
-            <div className={styles.headerTitleGroup}>
-              <FontAwesomeIcon icon={faClipboardList} className={styles.headerIcon2} />
-              <div>
-                <h2>Unassigned Orders</h2>
-                <p className={styles.subtitle}>Select an order to proceed with partner assignment</p>
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{ display: 'block', fontSize: '14px', fontWeight: '600', color: '#1a1a1a', marginBottom: '8px' }}>
+                <FontAwesomeIcon icon={faClipboardList} /> Select Order
+              </label>
+              <div style={{ position: 'relative' }}>
+                <FontAwesomeIcon icon={faSearch} style={{ position: 'absolute', left: '12px', top: '12px', color: '#999', fontSize: '16px' }} />
+                <input
+                  type="text"
+                  placeholder="Search by Order ID or Customer..."
+                  value={searchOrder}
+                  onChange={(e) => setSearchOrder(e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '12px 12px 12px 40px',
+                    border: '2px solid #e0e0e0',
+                    borderRadius: '10px',
+                    fontSize: '14px',
+                    boxSizing: 'border-box'
+                  }}
+                />
               </div>
             </div>
-            <span className={styles.badge}>{filteredOrders.length}</span>
-          </div>
 
-          <div className={styles.searchBox}>
-            <FontAwesomeIcon icon={faSearch} className={styles.searchIcon} />
-            <input
-              type="text"
-              placeholder="Search by Order ID, Customer Name, or Amount..."
-              value={searchOrder}
-              onChange={(e) => setSearchOrder(e.target.value)}
-              className={styles.searchInput}
-            />
-          </div>
-
-          <div className={styles.sortBar}>
-            <span>Sort by:</span>
-            <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} className={styles.sortSelect}>
-              <option value="recent">Most Recent</option>
-              <option value="amount-high">Highest Amount</option>
-              <option value="amount-low">Lowest Amount</option>
-            </select>
-          </div>
-
-          {filteredOrders.length === 0 ? (
-            <div className={styles.emptyState}>
-              <div className={styles.emptyIcon}>
-                <FontAwesomeIcon icon={faCheckCircle} />
+            {filteredOrders.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: '40px 20px', background: 'white', borderRadius: '12px', border: '2px dashed #e0e0e0' }}>
+                <FontAwesomeIcon icon={faCheckCircle} style={{ fontSize: '48px', color: '#10B981', marginBottom: '12px' }} />
+                <p style={{ margin: '0', fontSize: '16px', fontWeight: '600', color: '#1a1a1a' }}>All Orders Assigned!</p>
+                <p style={{ margin: '6px 0 0 0', fontSize: '13px', color: '#666' }}>No pending orders to assign</p>
               </div>
-              <p className={styles.emptyTitle}>All orders assigned!</p>
-              <p className={styles.emptySubtitle}>No pending orders at the moment</p>
-            </div>
-          ) : (
-            <div className={styles.ordersList}>
-              {filteredOrders.map((order) => (
-                <div
-                  key={order.id}
-                  className={`${styles.orderCard} ${selectedOrder?.id === order.id ? styles.active : ''}`}
-                  onClick={() => setSelectedOrder(order)}
-                >
-                  <div className={styles.orderCardHeader}>
-                    <div className={styles.orderCardTitle}>
-                      <span className={styles.orderBadge}>
-                        <FontAwesomeIcon icon={faBox} /> {order.id.slice(0, 8)}
-                      </span>
-                      <h4>{order.user?.name}</h4>
-                    </div>
-                    <div className={styles.orderAmount}>
-                      <span>₹</span>
-                      <strong>{order.total.toFixed(0)}</strong>
-                    </div>
-                  </div>
-
-                  <div className={styles.orderCardBody}>
-                    <div className={styles.orderDetail}>
-                      <FontAwesomeIcon icon={faEnvelope} />
-                      <small>{order.user?.email}</small>
-                    </div>
-                    <div className={styles.orderDetail}>
-                      <FontAwesomeIcon icon={faMapPin} />
-                      <small>{order.address?.city}</small>
-                    </div>
-                    <div className={styles.orderDetail}>
-                      <FontAwesomeIcon icon={faBox} />
-                      <small>{order.orderItems?.length} Items</small>
-                    </div>
-                  </div>
-
-                  {selectedOrder?.id === order.id && (
-                    <div className={styles.selectedIndicator}>
-                      <FontAwesomeIcon icon={faCheckCircle} />
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Right Section - Delivery Partners */}
-        <div className={styles.section}>
-          <div className={styles.sectionHeader}>
-            <div className={styles.headerTitleGroup}>
-              <FontAwesomeIcon icon={faRoute} className={styles.headerIcon2} />
-              <div>
-                <h2>Available Partners</h2>
-                <p className={styles.subtitle}>Select a partner to complete the assignment</p>
-              </div>
-            </div>
-            <span className={styles.badge}>{filteredPartners.length}</span>
-          </div>
-
-          <div className={styles.searchBox}>
-            <FontAwesomeIcon icon={faSearch} className={styles.searchIcon} />
-            <input
-              type="text"
-              placeholder="Search by Name, Email, or Phone..."
-              value={searchPartner}
-              onChange={(e) => setSearchPartner(e.target.value)}
-              className={styles.searchInput}
-            />
-          </div>
-
-          {filteredPartners.length === 0 ? (
-            <div className={styles.emptyState}>
-              <div className={styles.emptyIcon}>
-                <FontAwesomeIcon icon={faTruck} />
-              </div>
-              <p className={styles.emptyTitle}>No partners found</p>
-              <p className={styles.emptySubtitle}>Try adjusting your search or creating new partners</p>
-            </div>
-          ) : !selectedOrder ? (
-            <div className={styles.emptyState}>
-              <div className={styles.emptyIcon}>
-                <FontAwesomeIcon icon={faArrowRight} />
-              </div>
-              <p className={styles.emptyTitle}>Select an order first</p>
-              <p className={styles.emptySubtitle}>Pick an order from the left to see matching partners</p>
-            </div>
-          ) : (
-            <div className={styles.partnersList}>
-              {filteredPartners.map((partner) => (
-                <div key={partner.id} className={styles.partnerCard}>
-                  <div className={styles.partnerCardHeader}>
-                    {partner.photo && (
-                      <img src={partner.photo} alt={partner.firstName} className={styles.partnerPhoto} />
-                    )}
-                    {!partner.photo && (
-                      <div className={styles.partnerPhotoPlaceholder}>
-                        <FontAwesomeIcon icon={faUser} />
-                      </div>
-                    )}
-                    <div className={styles.partnerBasicInfo}>
-                      <h4 className={styles.partnerName}>
-                        {partner.firstName} {partner.lastName}
-                      </h4>
-                      <div className={styles.partnerRating}>
-                        <FontAwesomeIcon icon={faStar} className={styles.starIcon} />
-                        <span>{partner.stats?.rating?.toFixed(1) || 0}</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className={styles.partnerDetails}>
-                    <div className={styles.partnerMetaItem}>
-                      <FontAwesomeIcon icon={faPhone} />
-                      <span>{partner.phone}</span>
-                    </div>
-                    <div className={styles.partnerMetaItem}>
-                      <FontAwesomeIcon icon={faEnvelope} />
-                      <span>{partner.email}</span>
-                    </div>
-                  </div>
-
-                  <div className={styles.partnerStats}>
-                    <div className={styles.partnerStatItem}>
-                      <FontAwesomeIcon icon={faRoute} />
-                      <div>
-                        <span>{partner.stats?.totalDeliveries || 0}</span>
-                        <p>Deliveries</p>
-                      </div>
-                    </div>
-                    <div className={styles.partnerStatItem}>
-                      <FontAwesomeIcon icon={faClock} />
-                      <div>
-                        <span>{partner.stats?.avgTime || '—'}</span>
-                        <p>Avg Time</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <button
-                    className={styles.assignPartnerBtn}
-                    onClick={() => handleAssignPartner(selectedOrder, partner)}
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                {filteredOrders.map((order) => (
+                  <div
+                    key={order.id}
+                    onClick={() => {
+                      setSelectedOrder(order);
+                      setStep('partners');
+                      setSearchPartner('');
+                    }}
+                    style={{
+                      background: 'white',
+                      padding: '14px',
+                      borderRadius: '10px',
+                      cursor: 'pointer',
+                      border: selectedOrder?.id === order.id ? '3px solid #10B981' : '2px solid #f0f0f0',
+                      transition: 'all 0.3s'
+                    }}
                   >
-                    <FontAwesomeIcon icon={faCheckCircle} /> Assign to Order
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Selected Order Info Bar */}
-      {selectedOrder && (
-        <div className={styles.selectedOrderBar}>
-          <div className={styles.selectedOrderContent}>
-            <div className={styles.selectedInfo}>
-              <div className={styles.selectedIcon}>
-                <FontAwesomeIcon icon={faBox} />
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '10px' }}>
+                      <div>
+                        <span style={{ background: '#10B981', color: 'white', padding: '6px 10px', borderRadius: '6px', fontSize: '12px', fontWeight: '600', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                          <FontAwesomeIcon icon={faBox} /> {order.id.slice(0, 8).toUpperCase()}
+                        </span>
+                        <h4 style={{ margin: '8px 0 0 0', fontSize: '14px', fontWeight: '600', color: '#1a1a1a' }}>{order.user?.name}</h4>
+                      </div>
+                      <div style={{ textAlign: 'right' }}>
+                        <p style={{ margin: '0', fontSize: '18px', fontWeight: '700', color: '#10B981' }}>₹{order.total.toFixed(0)}</p>
+                      </div>
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '12px', color: '#666' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <FontAwesomeIcon icon={faMapPin} style={{ color: '#10B981', width: '14px' }} />
+                        <span>{order.address?.city}</span>
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <FontAwesomeIcon icon={faBox} style={{ color: '#10B981', width: '14px' }} />
+                        <span>{order.orderItems?.length} Items</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
-              <div>
-                <p className={styles.selectedLabel}>Selected Order</p>
-                <p className={styles.selectedValue}>
-                  {selectedOrder.id.slice(0, 8).toUpperCase()} • {selectedOrder.user?.name}
-                </p>
-              </div>
-            </div>
-            <button
-              className={styles.clearBtn}
-              onClick={() => {
-                setSelectedOrder(null);
-                setSelectedPartner(null);
-              }}
-            >
-              <FontAwesomeIcon icon={faTimes} /> Clear
-            </button>
+            )}
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Assignment Confirmation Modal */}
-      {showAssignModal && selectedOrder && selectedPartner && (
-        <div className={styles.modalOverlay} onClick={() => setShowAssignModal(false)}>
-          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-            <div className={styles.modalHeader}>
-              <div className={styles.modalTitle}>
-                <FontAwesomeIcon icon={faTruck} className={styles.modalIcon} />
-                <h3>Confirm Assignment</h3>
+        {/* Select Partner Section */}
+        {step === 'partners' && selectedOrder && (
+          <div>
+            <div style={{ background: '#10B981', color: 'white', padding: '14px', borderRadius: '10px', marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div>
+                <p style={{ margin: '0', fontSize: '12px', opacity: '0.9' }}>Selected Order</p>
+                <p style={{ margin: '6px 0 0 0', fontSize: '14px', fontWeight: '600' }}>{selectedOrder.id.slice(0, 8).toUpperCase()} • {selectedOrder.user?.name}</p>
               </div>
               <button
-                className={styles.modalCloseBtn}
-                onClick={() => setShowAssignModal(false)}
+                onClick={() => {
+                  setSelectedOrder(null);
+                  setStep('orders');
+                }}
+                style={{ background: 'rgba(255,255,255,0.2)', border: 'none', color: 'white', width: '36px', height: '36px', borderRadius: '50%', fontSize: '16px', cursor: 'pointer' }}
               >
                 <FontAwesomeIcon icon={faTimes} />
               </button>
             </div>
 
-            <div className={styles.modalContent}>
-              <div className={styles.assignmentFlow}>
-                <div className={styles.flowItem}>
-                  <div className={styles.flowIcon} style={{ background: '#667eea' }}>
-                    <FontAwesomeIcon icon={faBox} />
-                  </div>
-                  <div className={styles.flowContent}>
-                    <p className={styles.flowLabel}>Order</p>
-                    <p className={styles.flowValue}>{selectedOrder.id.slice(0, 8).toUpperCase()}</p>
-                    <small>{selectedOrder.user?.name}</small>
-                  </div>
-                </div>
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{ display: 'block', fontSize: '14px', fontWeight: '600', color: '#1a1a1a', marginBottom: '8px' }}>
+                <FontAwesomeIcon icon={faTruck} /> Select Delivery Partner
+              </label>
+              <div style={{ position: 'relative' }}>
+                <FontAwesomeIcon icon={faSearch} style={{ position: 'absolute', left: '12px', top: '12px', color: '#999', fontSize: '16px' }} />
+                <input
+                  type="text"
+                  placeholder="Search partner name or phone..."
+                  value={searchPartner}
+                  onChange={(e) => setSearchPartner(e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '12px 12px 12px 40px',
+                    border: '2px solid #e0e0e0',
+                    borderRadius: '10px',
+                    fontSize: '14px',
+                    boxSizing: 'border-box'
+                  }}
+                />
+              </div>
+            </div>
 
-                <div className={styles.flowArrow}>
-                  <FontAwesomeIcon icon={faArrowRight} />
-                </div>
+            {filteredPartners.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: '40px 20px', background: 'white', borderRadius: '12px', border: '2px dashed #e0e0e0' }}>
+                <FontAwesomeIcon icon={faTruck} style={{ fontSize: '48px', color: '#999', marginBottom: '12px' }} />
+                <p style={{ margin: '0', fontSize: '16px', fontWeight: '600', color: '#1a1a1a' }}>No Partners Available</p>
+                <p style={{ margin: '6px 0 0 0', fontSize: '13px', color: '#666' }}>Try adjusting your search</p>
+              </div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                {filteredPartners.map((partner) => (
+                  <div
+                    key={partner.id}
+                    onClick={() => {
+                      setSelectedPartner(partner);
+                      setShowAssignModal(true);
+                    }}
+                    style={{
+                      background: selectedPartner?.id === partner.id ? '#10B981' : 'white',
+                      padding: '14px',
+                      borderRadius: '10px',
+                      cursor: 'pointer',
+                      border: selectedPartner?.id === partner.id ? 'none' : '2px solid #f0f0f0',
+                      transition: 'all 0.3s',
+                      color: selectedPartner?.id === partner.id ? 'white' : 'inherit'
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '10px' }}>
+                      <div style={{
+                        width: '48px',
+                        height: '48px',
+                        borderRadius: '50%',
+                        background: partner.photo ? `url(${partner.photo})` : '#2d2d2d',
+                        backgroundSize: 'cover',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: 'white',
+                        fontSize: '24px',
+                        flexShrink: 0
+                      }}>
+                        {!partner.photo && <FontAwesomeIcon icon={faUser} />}
+                      </div>
+                      <div style={{ flex: 1 }}>
+                        <h4 style={{ margin: '0', fontSize: '14px', fontWeight: '600' }}>
+                          {partner.firstName} {partner.lastName}
+                        </h4>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginTop: '4px', fontSize: '13px' }}>
+                          <FontAwesomeIcon icon={faStar} style={{ color: '#FFB800' }} />
+                          <span>{partner.stats?.rating?.toFixed(1) || 0}/5.0</span>
+                        </div>
+                      </div>
+                      <FontAwesomeIcon icon={faArrowRight} style={{ fontSize: '18px' }} />
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', marginBottom: '6px' }}>
+                      <FontAwesomeIcon icon={faPhone} style={{ width: '14px', opacity: '0.7' }} />
+                      <span>{partner.phone}</span>
+                    </div>
+                    <div style={{ display: 'flex', gap: '8px', fontSize: '12px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flex: 1 }}>
+                        <FontAwesomeIcon icon={faRoute} style={{ opacity: '0.7' }} />
+                        <span>{partner.stats?.totalDeliveries || 0} Deliveries</span>
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flex: 1 }}>
+                        <FontAwesomeIcon icon={faClock} style={{ opacity: '0.7' }} />
+                        <span>{partner.stats?.avgTime || '—'}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
 
-                <div className={styles.flowItem}>
-                  <div className={styles.flowIcon} style={{ background: '#f5576c' }}>
-                    <FontAwesomeIcon icon={faTruck} />
-                  </div>
-                  <div className={styles.flowContent}>
-                    <p className={styles.flowLabel}>Partner</p>
-                    <p className={styles.flowValue}>{selectedPartner.firstName} {selectedPartner.lastName}</p>
-                    <small>{selectedPartner.phone}</small>
-                  </div>
+      {/* Confirmation Modal */}
+      {showAssignModal && selectedOrder && selectedPartner && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0,0,0,0.7)',
+          display: 'flex',
+          alignItems: 'flex-end',
+          zIndex: 1000
+        }} onClick={() => setShowAssignModal(false)}>
+          <div style={{
+            background: 'white',
+            width: '100%',
+            borderTopLeftRadius: '20px',
+            borderTopRightRadius: '20px',
+            padding: '24px 16px',
+            maxHeight: '90vh',
+            overflow: 'auto'
+          }} onClick={(e) => e.stopPropagation()}>
+            <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', margin: '0 0 12px 0' }}>
+                <FontAwesomeIcon icon={faTruck} style={{ fontSize: '28px', color: '#10B981' }} />
+                <h2 style={{ margin: '0', fontSize: '20px', fontWeight: '700', color: '#1a1a1a' }}>Confirm Assignment</h2>
+              </div>
+              <p style={{ margin: '0', fontSize: '13px', color: '#666' }}>Please review before confirming</p>
+            </div>
+
+            <div style={{ background: '#f8f9fa', padding: '16px', borderRadius: '12px', marginBottom: '20px' }}>
+              <div style={{ marginBottom: '16px' }}>
+                <p style={{ margin: '0 0 8px 0', fontSize: '12px', fontWeight: '600', color: '#666' }}>
+                  <FontAwesomeIcon icon={faBox} /> ORDER DETAILS
+                </p>
+                <div style={{ background: 'white', padding: '12px', borderRadius: '8px', borderLeft: '3px solid #10B981' }}>
+                  <p style={{ margin: '0', fontSize: '14px', fontWeight: '600', color: '#1a1a1a' }}>{selectedOrder.id.slice(0, 8).toUpperCase()}</p>
+                  <p style={{ margin: '4px 0 0 0', fontSize: '13px', color: '#666' }}>{selectedOrder.user?.name}</p>
+                  <p style={{ margin: '6px 0 0 0', fontSize: '16px', fontWeight: '700', color: '#10B981' }}>₹{selectedOrder.total.toFixed(0)}</p>
                 </div>
               </div>
 
-              <div className={styles.assignmentDetails}>
-                <div className={styles.detailRow}>
-                  <span className={styles.detailLabel}>
-                    <FontAwesomeIcon icon={faCalendarAlt} /> Order Date
-                  </span>
-                  <span className={styles.detailValue}>
-                    {new Date(selectedOrder.createdAt).toLocaleDateString()}
-                  </span>
-                </div>
-                <div className={styles.detailRow}>
-                  <span className={styles.detailLabel}>
-                    <FontAwesomeIcon icon={faMapMarkerAlt} /> Delivery Location
-                  </span>
-                  <span className={styles.detailValue}>
-                    {selectedOrder.address?.city}
-                  </span>
-                </div>
-                <div className={styles.detailRow}>
-                  <span className={styles.detailLabel}>
-                    <FontAwesomeIcon icon={faStar} /> Partner Rating
-                  </span>
-                  <span className={styles.detailValue}>
-                    {selectedPartner.stats?.rating?.toFixed(1) || 0}/5.0
-                  </span>
+              <div>
+                <p style={{ margin: '0 0 8px 0', fontSize: '12px', fontWeight: '600', color: '#666' }}>
+                  <FontAwesomeIcon icon={faTruck} /> PARTNER DETAILS
+                </p>
+                <div style={{ background: 'white', padding: '12px', borderRadius: '8px', borderLeft: '3px solid #10B981' }}>
+                  <p style={{ margin: '0', fontSize: '14px', fontWeight: '600', color: '#1a1a1a' }}>
+                    {selectedPartner.firstName} {selectedPartner.lastName}
+                  </p>
+                  <p style={{ margin: '4px 0 0 0', fontSize: '13px', color: '#666' }}>{selectedPartner.phone}</p>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginTop: '6px', fontSize: '13px' }}>
+                    <FontAwesomeIcon icon={faStar} style={{ color: '#FFB800' }} />
+                    <span style={{ fontWeight: '600', color: '#1a1a1a' }}>{selectedPartner.stats?.rating?.toFixed(1) || 0}/5.0</span>
+                  </div>
                 </div>
               </div>
             </div>
 
-            <div className={styles.modalActions}>
+            <div style={{ display: 'flex', gap: '10px' }}>
               <button
-                className={styles.modalCancelBtn}
                 onClick={() => setShowAssignModal(false)}
+                style={{
+                  flex: 1,
+                  background: '#e0e0e0',
+                  border: 'none',
+                  color: '#1a1a1a',
+                  padding: '14px',
+                  borderRadius: '10px',
+                  fontSize: '15px',
+                  fontWeight: '600',
+                  cursor: 'pointer'
+                }}
               >
                 Cancel
               </button>
               <button
-                className={styles.modalConfirmBtn}
                 onClick={confirmAssignment}
                 disabled={assigning}
+                style={{
+                  flex: 1,
+                  background: assigning ? '#999' : '#10B981',
+                  border: 'none',
+                  color: 'white',
+                  padding: '14px',
+                  borderRadius: '10px',
+                  fontSize: '15px',
+                  fontWeight: '600',
+                  cursor: assigning ? 'not-allowed' : 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px'
+                }}
               >
                 {assigning ? (
                   <>
-                    <FontAwesomeIcon icon={faSpinner} className={styles.spinnerSmall} /> Assigning...
+                    <FontAwesomeIcon icon={faSpinner} style={{ animation: 'spin 1s linear infinite' }} />
+                    Assigning...
                   </>
                 ) : (
                   <>
-                    <FontAwesomeIcon icon={faCheckCircle} /> Confirm Assignment
+                    <FontAwesomeIcon icon={faCheckCircle} />
+                    Confirm
                   </>
                 )}
               </button>
@@ -519,6 +478,13 @@ export default function DeliveryAssignment() {
           </div>
         </div>
       )}
+
+      <style>{`
+        @keyframes spin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+      `}</style>
     </div>
   );
 }

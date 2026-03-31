@@ -74,20 +74,20 @@ const StatisticsSection = () => {
     ]
 
     return (
-        <section className="bg-gradient-to-r from-slate-50 to-slate-100 py-12 sm:py-16 md:py-20 px-4 sm:px-6 md:px-8">
+        <section className="bg-gradient-to-r from-slate-50 to-slate-100 py-8 sm:py-16 md:py-20 px-2 sm:px-6 md:px-8">
             <div className="max-w-7xl mx-auto">
                 {/* Section Title */}
-                <div className="text-center mb-12 md:mb-16">
-                    <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-800 mb-4">
+                <div className="text-center mb-8 sm:mb-12 md:mb-16">
+                    <h2 className="text-2xl sm:text-4xl md:text-5xl font-bold text-slate-800 mb-2 sm:mb-4">
                         Why <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-green-600">Choose Us</span>
                     </h2>
-                    <p className="text-slate-600 text-base sm:text-lg max-w-2xl mx-auto">
+                    <p className="text-slate-600 text-xs sm:text-lg max-w-2xl mx-auto px-2">
                         Trusted by thousands of customers worldwide. Experience the best in quality and service.
                     </p>
                 </div>
 
                 {/* Stats Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 mb-20">
+                <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 md:gap-8 mb-12 sm:mb-20">
                     {statItems.map((item, index) => (
                         <div 
                             key={index}
@@ -99,19 +99,19 @@ const StatisticsSection = () => {
                             {/* Card Shadow */}
                             <div className={`absolute inset-0 bg-gradient-to-r ${item.color} rounded-2xl opacity-0 group-hover:opacity-5 transition-all duration-300`} />
                             
-                            <div className={`relative bg-white rounded-2xl p-8 sm:p-10 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-slate-100 hover:border-slate-200`}>
+                            <div className={`relative bg-white rounded-lg sm:rounded-2xl p-4 sm:p-10 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-slate-100 hover:border-slate-200`}>
                                 {/* Icon container with shadow */}
-                                <div className={`inline-flex p-4 rounded-xl bg-gradient-to-r ${item.color} text-white mb-6 shadow-lg hover:shadow-xl transition-all duration-300 group-hover:scale-110`}>
+                                <div className={`inline-flex p-2 sm:p-4 rounded-lg sm:rounded-xl bg-gradient-to-r ${item.color} text-white mb-3 sm:mb-6 shadow-lg hover:shadow-xl transition-all duration-300 group-hover:scale-110`}>
                                     {item.icon}
                                 </div>
                                 
                                 {/* Number */}
-                                <h3 className={`text-4xl sm:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r ${item.color} mb-3 font-black`}>
+                                <h3 className={`text-2xl sm:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r ${item.color} mb-2 sm:mb-3 font-black`}>
                                     {item.value}
                                 </h3>
                                 
                                 {/* Label */}
-                                <p className="text-slate-600 font-semibold text-base sm:text-lg group-hover:text-slate-800 transition-all duration-300">
+                                <p className="text-slate-600 font-semibold text-xs sm:text-lg group-hover:text-slate-800 transition-all duration-300">
                                     {item.label}
                                 </p>
                                 
@@ -123,14 +123,14 @@ const StatisticsSection = () => {
                 </div>
 
                 {/* Trust Features */}
-                <div className="bg-white rounded-2xl p-10 sm:p-12 shadow-xl border border-slate-100 hover:shadow-2xl transition-all duration-300">
-                    <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-800 mb-4 text-center">
+                <div className="bg-white rounded-lg sm:rounded-2xl p-6 sm:p-12 shadow-xl border border-slate-100 hover:shadow-2xl transition-all duration-300">
+                    <h3 className="text-lg sm:text-3xl lg:text-4xl font-bold text-slate-800 mb-2 sm:mb-4 text-center">
                         Why Our Customers <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-green-600">Love Us</span>
                     </h3>
-                    <p className="text-slate-600 text-center mb-12 max-w-2xl mx-auto">
+                    <p className="text-slate-600 text-sm sm:text-base text-center mb-8 sm:mb-12 max-w-2xl mx-auto px-2">
                         We're committed to delivering excellence in every aspect of your shopping experience
                     </p>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+                    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 lg:gap-8">
                         {[
                             { 
                                 icon: faTruck, 
@@ -159,27 +159,27 @@ const StatisticsSection = () => {
                         ].map((feature, idx) => (
                             <div key={idx} className="relative group">
                                 {/* Glow effect background */}
-                                <div className={`absolute inset-0 bg-gradient-to-r ${feature.color} opacity-0 group-hover:opacity-10 rounded-xl blur-lg transition-all duration-300`} />
+                                <div className={`absolute inset-0 bg-gradient-to-r ${feature.color} opacity-0 group-hover:opacity-10 rounded-lg sm:rounded-xl blur-lg transition-all duration-300`} />
                                 
                                 {/* Card */}
-                                <div className="relative bg-gradient-to-br from-white to-slate-50 p-6 sm:p-8 rounded-xl border border-slate-200 shadow-lg group-hover:shadow-2xl group-hover:border-slate-300 transition-all duration-300 hover:-translate-y-1 h-full flex flex-col items-center text-center">
+                                <div className="relative bg-gradient-to-br from-white to-slate-50 p-3 sm:p-8 rounded-lg sm:rounded-xl border border-slate-200 shadow-lg group-hover:shadow-2xl group-hover:border-slate-300 transition-all duration-300 hover:-translate-y-1 h-full flex flex-col items-center text-center">
                                     {/* Icon container */}
-                                    <div className={`inline-flex p-4 sm:p-5 rounded-full bg-gradient-to-r ${feature.color} text-white mb-4 sm:mb-6 shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110`}>
-                                        <FontAwesomeIcon icon={feature.icon} className="text-xl sm:text-2xl" />
+                                    <div className={`inline-flex p-2.5 sm:p-5 rounded-full bg-gradient-to-r ${feature.color} text-white mb-2.5 sm:mb-6 shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110`}>
+                                        <FontAwesomeIcon icon={feature.icon} className="text-base sm:text-2xl" />
                                     </div>
                                     
                                     {/* Title */}
-                                    <h4 className="font-bold text-slate-800 mb-3 text-base sm:text-lg group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-indigo-600 group-hover:to-green-600 transition-all duration-300">
+                                    <h4 className="font-bold text-slate-800 mb-2 sm:mb-3 text-xs sm:text-lg group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-indigo-600 group-hover:to-green-600 transition-all duration-300">
                                         {feature.title}
                                     </h4>
                                     
                                     {/* Description */}
-                                    <p className="text-slate-600 text-sm leading-relaxed group-hover:text-slate-700 transition-all duration-300">
+                                    <p className="text-slate-600 text-xs sm:text-sm leading-relaxed group-hover:text-slate-700 transition-all duration-300">
                                         {feature.desc}
                                     </p>
                                     
                                     {/* Bottom accent line */}
-                                    <div className={`w-8 h-1 bg-gradient-to-r ${feature.color} rounded-full mt-4 opacity-0 group-hover:opacity-100 transition-all duration-300`} />
+                                    <div className={`w-6 sm:w-8 h-1 bg-gradient-to-r ${feature.color} rounded-full mt-2 sm:mt-4 opacity-0 group-hover:opacity-100 transition-all duration-300`} />
                                 </div>
                             </div>
                         ))}

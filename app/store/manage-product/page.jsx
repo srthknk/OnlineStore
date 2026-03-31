@@ -226,14 +226,14 @@ export default function StoreManageProducts() {
 
     return (
         <>
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-slate-800 mb-6">Manage <span className="text-slate-800 font-medium">Products</span></h1>
+            <h1 className="text-2xl sm:text-2xl md:text-4xl font-semibold text-slate-800 mb-6 md:mb-6 px-0 md:px-0">Manage <span className="text-slate-800 font-medium">Products</span></h1>
             
             {/* Product Cards Grid - Unified Layout */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 px-0 md:px-0">
                 {products.map((product) => (
-                    <div key={product.id} className="bg-white border border-slate-200 rounded-lg overflow-hidden hover:shadow-lg transition-all duration-300 flex flex-col">
+                    <div key={product.id} className="bg-white border border-slate-200 rounded-lg md:rounded-lg overflow-hidden hover:shadow-lg transition-all duration-300 flex flex-col">
                         {/* Product Image */}
-                        <div className="relative w-full h-40 md:h-48 bg-slate-100 overflow-hidden">
+                        <div className="relative w-full h-56 md:h-48 bg-slate-100 overflow-hidden">
                             <Image 
                                 width={300} 
                                 height={200} 
@@ -242,8 +242,8 @@ export default function StoreManageProducts() {
                                 alt={product.name} 
                             />
                             {/* Stock Status Badge */}
-                            <div className="absolute top-2 right-2">
-                                <span className={`px-2.5 py-1 text-xs font-semibold rounded-full ${product.inStock ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                            <div className="absolute top-2 md:top-2 right-2 md:right-2">
+                                <span className={`px-3 md:px-2.5 py-1.5 md:py-1 text-xs md:text-xs font-semibold rounded-full ${product.inStock ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
                                     {product.inStock ? 'In Stock' : 'Out of Stock'}
                                 </span>
                             </div>
@@ -268,35 +268,35 @@ export default function StoreManageProducts() {
                         </div>
 
                         {/* Card Body */}
-                        <div className="p-4 flex flex-col flex-1">
+                        <div className="p-4 md:p-4 flex flex-col flex-1">
                             {/* Product Name */}
-                            <h3 className="text-sm md:text-base font-semibold text-slate-800 mb-1 line-clamp-2">{product.name}</h3>
+                            <h3 className="text-base md:text-base font-semibold text-slate-800 mb-2 md:mb-1 line-clamp-2">{product.name}</h3>
                             
                             {/* Description */}
-                            <p className="text-xs md:text-sm text-slate-600 mb-3 line-clamp-2">{product.description}</p>
+                            <p className="text-sm md:text-sm text-slate-600 mb-4 md:mb-3 line-clamp-2">{product.description}</p>
 
                             {/* Prices */}
-                            <div className="bg-gradient-to-r from-slate-50 to-slate-100 rounded-lg p-3 mb-3 border border-slate-200">
+                            <div className="bg-gradient-to-r from-slate-50 to-slate-100 rounded-lg p-4 md:p-3 mb-4 md:mb-3 border border-slate-200">
                                 <div className="flex items-center justify-between gap-2">
                                     <div>
-                                        <p className="text-xs text-slate-600 mb-0.5">MRP</p>
-                                        <p className="text-sm font-semibold text-slate-700 line-through">{currency} {product.mrp.toLocaleString()}</p>
+                                        <p className="text-xs md:text-xs text-slate-600 mb-1 md:mb-0.5">MRP</p>
+                                        <p className="text-sm md:text-sm font-semibold text-slate-700 line-through">{currency} {product.mrp.toLocaleString()}</p>
                                     </div>
                                     <div className="text-right">
-                                        <p className="text-xs text-slate-600 mb-0.5">Price</p>
-                                        <p className="text-lg font-bold text-green-600">{currency} {product.price.toLocaleString()}</p>
+                                        <p className="text-xs md:text-xs text-slate-600 mb-1 md:mb-0.5">Price</p>
+                                        <p className="text-xl md:text-lg font-bold text-green-600">{currency} {product.price.toLocaleString()}</p>
                                     </div>
                                 </div>
                             </div>
 
                             {/* Variants Preview */}
                             {product.productVariants && product.productVariants.length > 0 && (
-                                <div className="mb-3 pb-3 border-b border-slate-200">
-                                    <p className="text-xs font-medium text-slate-700 mb-2 flex items-center gap-1">
+                                <div className="mb-4 md:mb-3 pb-4 md:pb-3 border-b border-slate-200">
+                                    <p className="text-xs md:text-xs font-medium text-slate-700 mb-3 md:mb-2 flex items-center gap-1">
                                         <FontAwesomeIcon icon={faTag} className="text-slate-600 text-xs" />
                                         Variants ({product.productVariants.length})
                                     </p>
-                                    <div className="space-y-2">
+                                    <div className="space-y-2 md:space-y-2">
                                         {product.productVariants.slice(0, 3).map((variant) => {
                                             const stockPercentage = (variant.availableUnits / variant.totalUnits) * 100;
                                             const stockStatus = variant.availableUnits === 0 ? 'Out' : variant.availableUnits <= 5 ? 'Low' : 'OK';
@@ -304,14 +304,14 @@ export default function StoreManageProducts() {
                                             
                                             return (
                                                 <div key={variant.id} className="flex items-center gap-2">
-                                                    <span className="text-xs bg-blue-50 text-blue-700 px-2 py-1 rounded border border-blue-200 flex-shrink-0">
+                                                    <span className="text-xs md:text-xs bg-blue-50 text-blue-700 px-2.5 md:px-2 py-1.5 md:py-1 rounded border border-blue-200 flex-shrink-0">
                                                         {variant.quantity}{variant.quantityUnit === 'PIECE' ? 'x' : variant.quantityUnit === 'KG' ? 'kg' : variant.quantityUnit === 'GRAM' ? 'g' : variant.quantityUnit === 'LITER' ? 'L' : variant.quantityUnit === 'MILLILITER' ? 'ml' : variant.quantityUnit}
                                                     </span>
                                                     <div className="flex-1 flex items-center gap-1.5">
-                                                        <div className="flex-1 bg-slate-200 rounded-full h-1.5 overflow-hidden">
+                                                        <div className="flex-1 bg-slate-200 rounded-full h-2 md:h-1.5 overflow-hidden">
                                                             <div className={`h-full ${stockColor}`} style={{ width: `${Math.max(5, stockPercentage)}%` }}></div>
                                                         </div>
-                                                        <span className="text-xs font-medium text-slate-600 min-w-12 text-right">{variant.availableUnits}</span>
+                                                        <span className="text-xs md:text-xs font-medium text-slate-600 min-w-12 text-right">{variant.availableUnits}</span>
                                                     </div>
                                                 </div>
                                             );
@@ -339,27 +339,27 @@ export default function StoreManageProducts() {
                             ) : null}
 
                             {/* Category */}
-                            <p className="text-xs text-slate-600 mb-3">
+                            <p className="text-xs md:text-xs text-slate-600 mb-4 md:mb-3">
                                 <span className="font-medium text-slate-700">Category:</span> {product.category}
                             </p>
 
                             {/* Action Buttons */}
-                            <div className="flex gap-2 mt-auto">
+                            <div className="flex gap-3 md:gap-2 mt-auto">
                                 <button
                                     onClick={() => openEditModal(product)}
-                                    className="flex-1 py-2 px-3 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-lg font-medium text-sm flex items-center justify-center gap-2 transition-colors duration-300 border border-blue-200"
+                                    className="flex-1 py-3 md:py-2 px-3 md:px-3 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-lg font-medium text-base md:text-sm flex items-center justify-center gap-2 transition-colors duration-300 border border-blue-200"
                                     title="Edit product"
                                 >
-                                    <FontAwesomeIcon icon={faPencil} className="text-sm" />
-                                    <span className="hidden sm:inline">Edit</span>
+                                    <FontAwesomeIcon icon={faPencil} className="text-base md:text-sm" />
+                                    <span className="md:inline">Edit</span>
                                 </button>
                                 <button
                                     onClick={() => deleteProduct(product.id, product.name)}
-                                    className="flex-1 py-2 px-3 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg font-medium text-sm flex items-center justify-center gap-2 transition-colors duration-300 border border-red-200"
+                                    className="flex-1 py-3 md:py-2 px-3 md:px-3 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg font-medium text-base md:text-sm flex items-center justify-center gap-2 transition-colors duration-300 border border-red-200"
                                     title="Delete product"
                                 >
-                                    <FontAwesomeIcon icon={faTrash} className="text-sm" />
-                                    <span className="hidden sm:inline">Delete</span>
+                                    <FontAwesomeIcon icon={faTrash} className="text-base md:text-sm" />
+                                    <span className="md:inline">Delete</span>
                                 </button>
                             </div>
                         </div>
@@ -369,78 +369,78 @@ export default function StoreManageProducts() {
 
             {/* Comprehensive Edit Product Modal */}
             {isEditModalOpen && editingProduct && editFormData && (
-                <div onClick={closeEditModal} className="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm z-50 p-4">
-                    <div onClick={e => e.stopPropagation()} className="bg-white rounded-lg shadow-xl max-w-3xl w-full max-h-[95vh] overflow-y-auto">
+                <div onClick={closeEditModal} className="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm z-50 p-2 md:p-4">
+                    <div onClick={e => e.stopPropagation()} className="bg-white rounded-lg md:rounded-lg shadow-xl max-w-3xl w-full max-h-[98vh] md:max-h-[95vh] overflow-y-auto">
                         {/* Modal Header */}
-                        <div className="sticky top-0 bg-gradient-to-r from-slate-50 to-blue-50 border-b border-slate-200 px-4 sm:px-6 py-4 flex items-center justify-between">
-                            <h2 className="text-lg sm:text-2xl font-semibold text-slate-800">Edit Product</h2>
-                            <button onClick={closeEditModal} className="text-slate-500 hover:text-slate-700 text-2xl font-light">&times;</button>
+                        <div className="sticky top-0 bg-gradient-to-r from-slate-50 to-blue-50 border-b border-slate-200 px-3 md:px-6 py-3 md:py-4 flex items-center justify-between gap-2">
+                            <h2 className="text-lg md:text-2xl font-semibold text-slate-800">Edit Product</h2>
+                            <button onClick={closeEditModal} className="text-slate-500 hover:text-slate-700 text-2xl font-light flex-shrink-0">&times;</button>
                         </div>
 
-                        <form onSubmit={submitEditProduct} className="p-4 sm:p-6 space-y-6">
+                        <form onSubmit={submitEditProduct} className="p-3 md:p-6 space-y-4 md:space-y-6">
                             {/* SECTION 1: Basic Information */}
-                            <div className="space-y-4">
-                                <h3 className="text-lg font-semibold text-slate-800 flex items-center gap-2">
-                                    <span className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold text-sm">1</span>
+                            <div className="space-y-3 md:space-y-4">
+                                <h3 className="text-base md:text-lg font-semibold text-slate-800 flex items-center gap-2">
+                                    <span className="w-6 md:w-8 h-6 md:h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold text-xs md:text-sm">1</span>
                                     Basic Information
                                 </h3>
                                 
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-1">Product Name</label>
+                                    <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1 md:mb-1">Product Name</label>
                                     <input
                                         type="text"
                                         name="name"
                                         value={editFormData.name}
                                         onChange={handleEditFormChange}
-                                        className="w-full p-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        className="w-full p-2 md:p-2.5 px-3 md:px-4 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base md:text-sm"
                                         required
                                     />
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-1">Description</label>
+                                    <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1 md:mb-1">Description</label>
                                     <textarea
                                         name="description"
                                         value={editFormData.description}
                                         onChange={handleEditFormChange}
-                                        rows={3}
-                                        className="w-full p-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                                        rows={2}
+                                        className="w-full p-2 md:p-2.5 px-3 md:px-4 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none text-base md:text-sm"
                                         required
                                     />
                                 </div>
 
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
                                     <div>
-                                        <label className="block text-sm font-medium text-slate-700 mb-1">Actual Price ({currency})</label>
+                                        <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1 md:mb-1">Actual Price ({currency})</label>
                                         <input
                                             type="number"
                                             name="mrp"
                                             value={editFormData.mrp}
                                             onChange={handleEditFormChange}
-                                            className="w-full p-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                            className="w-full p-2 md:p-2.5 px-3 md:px-4 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base md:text-sm"
                                             required
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-slate-700 mb-1">Offer Price ({currency})</label>
+                                        <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1 md:mb-1">Offer Price ({currency})</label>
                                         <input
                                             type="number"
                                             name="price"
                                             value={editFormData.price}
                                             onChange={handleEditFormChange}
-                                            className="w-full p-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                            className="w-full p-2 md:p-2.5 px-3 md:px-4 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base md:text-sm"
                                             required
                                         />
                                     </div>
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-1">Category</label>
+                                    <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1 md:mb-1">Category</label>
                                     <select
                                         name="category"
                                         value={editFormData.category}
                                         onChange={handleEditFormChange}
-                                        className="w-full p-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        className="w-full p-2 md:p-2.5 px-3 md:px-4 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base md:text-sm"
                                         required
                                     >
                                         <option value="">Select a category</option>
@@ -452,19 +452,19 @@ export default function StoreManageProducts() {
                             </div>
 
                             {/* SECTION 2: Images */}
-                            <div className="space-y-4 pb-4 border-b border-slate-200">
-                                <h3 className="text-lg font-semibold text-slate-800 flex items-center gap-2">
-                                    <span className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center text-purple-600 font-bold text-sm">2</span>
+                            <div className="space-y-3 md:space-y-4 pb-4 md:pb-4 border-b border-slate-200">
+                                <h3 className="text-base md:text-lg font-semibold text-slate-800 flex items-center gap-2">
+                                    <span className="w-6 md:w-8 h-6 md:h-8 bg-purple-100 rounded-full flex items-center justify-center text-purple-600 font-bold text-xs md:text-sm">2</span>
                                     Images
                                 </h3>
 
                                 {/* File Uploads */}
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-2 flex items-center gap-1">
-                                        <FontAwesomeIcon icon={faImage} className="text-purple-600" />
+                                    <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1.5 md:mb-2 flex items-center gap-1">
+                                        <FontAwesomeIcon icon={faImage} className="text-purple-600 text-xs md:text-sm" />
                                         File Uploads
                                     </label>
-                                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-2">
                                         {[1, 2, 3, 4].map((key) => (
                                             <label key={key} htmlFor={`edit-images${key}`}>
                                                 {editImages[key] || editingProduct.images[key-1] ? (
@@ -478,8 +478,8 @@ export default function StoreManageProducts() {
                                                 ) : (
                                                     <div className='w-full aspect-square border-2 border-dashed border-slate-300 rounded-lg cursor-pointer hover:border-purple-400 transition-colors flex items-center justify-center bg-slate-50'>
                                                         <div className="text-center">
-                                                            <FontAwesomeIcon icon={faPlus} className="text-slate-400 mb-1 text-lg" />
-                                                            <span className="text-xs text-slate-400">Add</span>
+                                                            <FontAwesomeIcon icon={faPlus} className="text-slate-400 mb-2 md:mb-1 text-xl md:text-lg" />
+                                                            <span className="text-xs md:text-xs text-slate-400">Add</span>
                                                         </div>
                                                     </div>
                                                 )}
@@ -501,7 +501,7 @@ export default function StoreManageProducts() {
                                         <FontAwesomeIcon icon={faLink} className="text-indigo-600" />
                                         Image URLs (from Internet)
                                     </label>
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-3">
                                         {[1, 2, 3, 4].map((key) => (
                                             <input
                                                 key={key}
@@ -509,7 +509,7 @@ export default function StoreManageProducts() {
                                                 placeholder={`Image URL ${key} (optional)`}
                                                 value={editImageUrls[key] || ''}
                                                 onChange={(e) => setEditImageUrls(prev => ({ ...prev, [key]: e.target.value }))}
-                                                className="w-full p-2 border border-indigo-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm"
+                                                className="w-full p-3 md:p-2 px-4 md:px-3 border border-indigo-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-base md:text-sm"
                                             />
                                         ))}
                                     </div>
@@ -527,23 +527,23 @@ export default function StoreManageProducts() {
                                     Dates & Manufacturer
                                 </h3>
 
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-4">
                                     <div>
-                                        <label className="block text-sm font-medium text-slate-700 mb-1">Manufacturing Date</label>
+                                        <label className="block text-sm md:text-sm font-medium text-slate-700 mb-2 md:mb-1">Manufacturing Date</label>
                                         <input
                                             type="date"
                                             value={editFormData.manufacturingDate}
                                             onChange={(e) => setEditFormData({ ...editFormData, manufacturingDate: e.target.value })}
-                                            className="w-full p-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                                            className="w-full p-3 md:p-2.5 px-4 md:px-4 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-base md:text-sm"
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-slate-700 mb-1">Expiry Date</label>
+                                        <label className="block text-sm md:text-sm font-medium text-slate-700 mb-2 md:mb-1">Expiry Date</label>
                                         <input
                                             type="date"
                                             value={editFormData.expiryDate}
                                             onChange={(e) => setEditFormData({ ...editFormData, expiryDate: e.target.value })}
-                                            className="w-full p-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                                            className="w-full p-3 md:p-2.5 px-4 md:px-4 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-base md:text-sm"
                                         />
                                     </div>
                                 </div>
@@ -555,41 +555,41 @@ export default function StoreManageProducts() {
                                         value={editFormData.manufacturer}
                                         onChange={(e) => setEditFormData({ ...editFormData, manufacturer: e.target.value })}
                                         placeholder="e.g., ABC Foods Ltd."
-                                        className="w-full p-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                                        className="w-full p-3 md:p-2.5 px-4 md:px-4 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-base md:text-sm"
                                     />
                                 </div>
                             </div>
 
                             {/* SECTION 4: Product Badges */}
-                            <div className="space-y-4 pb-4 border-b border-slate-200">
-                                <h3 className="text-lg font-semibold text-slate-800 flex items-center gap-2">
-                                    <span className="w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center text-amber-600 font-bold text-sm">4</span>
+                            <div className="space-y-3 md:space-y-4 pb-4 md:pb-4 border-b border-slate-200">
+                                <h3 className="text-base md:text-lg font-semibold text-slate-800 flex items-center gap-2">
+                                    <span className="w-6 md:w-8 h-6 md:h-8 bg-amber-100 rounded-full flex items-center justify-center text-amber-600 font-bold text-xs md:text-sm">4</span>
                                     Product Badges
                                 </h3>
 
-                                <div className="space-y-3">
-                                    <label className="flex items-center p-3 border border-green-200 rounded-lg bg-green-50 hover:bg-green-100 cursor-pointer transition-colors">
+                                <div className="space-y-2 md:space-y-3">
+                                    <label className="flex items-center p-3 md:p-3 border border-green-200 rounded-lg bg-green-50 hover:bg-green-100 cursor-pointer transition-colors gap-2">
                                         <input
                                             type="checkbox"
                                             checked={editFormData.isOrganic}
                                             onChange={(e) => setEditFormData({ ...editFormData, isOrganic: e.target.checked })}
-                                            className="w-4 h-4 text-green-600 rounded focus:ring-2 focus:ring-green-500 cursor-pointer"
+                                            className="w-5 md:w-4 h-5 md:h-4 text-green-600 rounded focus:ring-2 focus:ring-green-500 cursor-pointer flex-shrink-0"
                                         />
-                                        <span className="ml-3 flex items-center gap-2 font-medium text-green-700">
-                                            <FontAwesomeIcon icon={faLeaf} className="text-green-600" />
+                                        <span className="flex items-center gap-2 font-medium text-green-700 text-sm md:text-sm">
+                                            <FontAwesomeIcon icon={faLeaf} className="text-green-600 text-xs" />
                                             Organic Product
                                         </span>
                                     </label>
 
-                                    <label className="flex items-center p-3 border border-lime-200 rounded-lg bg-lime-50 hover:bg-lime-100 cursor-pointer transition-colors">
+                                    <label className="flex items-center p-3 md:p-3 border border-lime-200 rounded-lg bg-lime-50 hover:bg-lime-100 cursor-pointer transition-colors gap-2">
                                         <input
                                             type="checkbox"
                                             checked={editFormData.isVegan}
                                             onChange={(e) => setEditFormData({ ...editFormData, isVegan: e.target.checked })}
-                                            className="w-4 h-4 text-lime-600 rounded focus:ring-2 focus:ring-lime-500 cursor-pointer"
+                                            className="w-5 md:w-4 h-5 md:h-4 text-lime-600 rounded focus:ring-2 focus:ring-lime-500 cursor-pointer flex-shrink-0"
                                         />
-                                        <span className="ml-3 flex items-center gap-2 font-medium text-lime-700">
-                                            <FontAwesomeIcon icon={faLeaf} className="text-lime-600" />
+                                        <span className="flex items-center gap-2 font-medium text-lime-700 text-sm md:text-sm">
+                                            <FontAwesomeIcon icon={faLeaf} className="text-lime-600 text-xs" />
                                             Vegan Product
                                         </span>
                                     </label>
@@ -597,50 +597,50 @@ export default function StoreManageProducts() {
                             </div>
 
                             {/* SECTION 5: Variants */}
-                            <div className="space-y-4 pb-4 border-b border-slate-200">
-                                <h3 className="text-lg font-semibold text-slate-800 flex items-center gap-2">
-                                    <span className="w-8 h-8 bg-cyan-100 rounded-full flex items-center justify-center text-cyan-600 font-bold text-sm">5</span>
+                            <div className="space-y-3 md:space-y-4 pb-4 md:pb-4 border-b border-slate-200">
+                                <h3 className="text-base md:text-lg font-semibold text-slate-800 flex items-center gap-2">
+                                    <span className="w-6 md:w-8 h-6 md:h-8 bg-cyan-100 rounded-full flex items-center justify-center text-cyan-600 font-bold text-xs md:text-sm">5</span>
                                     Product Variants ({editingVariants.length})
                                 </h3>
 
                                 {editingVariants.length > 0 ? (
-                                    <div className="space-y-2 mb-4">
+                                    <div className="space-y-2 md:space-y-2 mb-4 md:mb-4">
                                         {editingVariants.map((variant, idx) => (
-                                            <div key={variant.id} className="flex items-center justify-between p-3 bg-cyan-50 border border-cyan-200 rounded-lg">
-                                                <span className="text-sm font-medium text-slate-700">
+                                            <div key={variant.id} className="flex items-center justify-between p-4 md:p-3 bg-cyan-50 border border-cyan-200 rounded-lg">
+                                                <span className="text-base md:text-sm font-medium text-slate-700">
                                                     {variant.quantity} {variant.quantityUnit === 'PIECE' ? 'pieces' : variant.quantityUnit === 'KG' ? 'kg' : variant.quantityUnit === 'GRAM' ? 'g' : variant.quantityUnit === 'LITER' ? 'L' : variant.quantityUnit === 'MILLILITER' ? 'ml' : variant.quantityUnit} 
-                                                    <span className="text-xs text-slate-500 ml-2">({variant.availableUnits} available)</span>
+                                                    <span className="text-xs md:text-xs text-slate-500 ml-2">({variant.availableUnits} available)</span>
                                                 </span>
                                                 <button
                                                     type="button"
                                                     onClick={() => setEditingVariants(prev => prev.filter((_, i) => i !== idx))}
-                                                    className="text-red-600 hover:text-red-700 p-1"
+                                                    className="text-red-600 hover:text-red-700 p-2 md:p-1"
                                                     title="Delete variant"
                                                 >
-                                                    <FontAwesomeIcon icon={faTrash} className="text-sm" />
+                                                    <FontAwesomeIcon icon={faTrash} className="text-base md:text-sm" />
                                                 </button>
                                             </div>
                                         ))}
                                     </div>
                                 ) : (
-                                    <p className="text-sm text-slate-600 italic">No variants added yet</p>
+                                    <p className="text-sm md:text-sm text-slate-600 italic">No variants added yet</p>
                                 )}
 
-                                <div className="p-3 bg-cyan-50 border border-cyan-200 rounded-lg space-y-3">
-                                    <p className="text-sm font-medium text-slate-700">Add New Variant</p>
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div className="p-4 md:p-3 bg-cyan-50 border border-cyan-200 rounded-lg space-y-3 md:space-y-3">
+                                    <p className="text-sm md:text-sm font-medium text-slate-700">Add New Variant</p>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-3">
                                         <input
                                             type="number"
                                             min="1"
                                             placeholder="Quantity"
                                             value={newVariant.quantity}
                                             onChange={(e) => setNewVariant({ ...newVariant, quantity: e.target.value })}
-                                            className="p-2 border border-cyan-200 rounded focus:outline-none focus:ring-2 focus:ring-cyan-500 text-sm"
+                                            className="p-3 md:p-2 px-4 md:px-3 border border-cyan-200 rounded focus:outline-none focus:ring-2 focus:ring-cyan-500 text-base md:text-sm"
                                         />
                                         <select
                                             value={newVariant.quantityUnit}
                                             onChange={(e) => setNewVariant({ ...newVariant, quantityUnit: e.target.value })}
-                                            className="p-2 border border-cyan-200 rounded focus:outline-none focus:ring-2 focus:ring-cyan-500 text-sm"
+                                            className="p-3 md:p-2 px-4 md:px-3 border border-cyan-200 rounded focus:outline-none focus:ring-2 focus:ring-cyan-500 text-base md:text-sm"
                                         >
                                             <option value="PIECE">Piece</option>
                                             <option value="KG">Kg</option>
@@ -658,7 +658,7 @@ export default function StoreManageProducts() {
                                             placeholder="Total Units"
                                             value={newVariant.totalUnits}
                                             onChange={(e) => setNewVariant({ ...newVariant, totalUnits: e.target.value })}
-                                            className="p-2 border border-cyan-200 rounded focus:outline-none focus:ring-2 focus:ring-cyan-500 text-sm sm:col-span-2"
+                                            className="p-3 md:p-2 px-4 md:px-3 border border-cyan-200 rounded focus:outline-none focus:ring-2 focus:ring-cyan-500 text-base md:text-sm md:col-span-2"
                                         />
                                     </div>
                                     <button
@@ -678,7 +678,7 @@ export default function StoreManageProducts() {
                                                 toast.error('Fill quantity and total units')
                                             }
                                         }}
-                                        className="w-full py-2 px-3 bg-cyan-500 hover:bg-cyan-600 text-white rounded font-medium text-sm transition-colors flex items-center justify-center gap-2"
+                                        className="w-full py-3 md:py-2 px-3 md:px-3 bg-cyan-500 hover:bg-cyan-600 text-white rounded font-medium text-base md:text-sm transition-colors flex items-center justify-center gap-2"
                                     >
                                         <FontAwesomeIcon icon={faPlus} className="text-sm" />
                                         Add Variant
@@ -687,9 +687,9 @@ export default function StoreManageProducts() {
                             </div>
 
                             {/* SECTION 6: Stock Management */}
-                            <div className="space-y-4 pb-4 border-b border-slate-200">
-                                <h3 className="text-lg font-semibold text-slate-800 flex items-center gap-2">
-                                    <span className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center text-orange-600 font-bold text-sm">6</span>
+                            <div className="space-y-3 md:space-y-4 pb-4 md:pb-4 border-b border-slate-200">
+                                <h3 className="text-base md:text-lg font-semibold text-slate-800 flex items-center gap-2">
+                                    <span className="w-6 md:w-8 h-6 md:h-8 bg-orange-100 rounded-full flex items-center justify-center text-orange-600 font-bold text-xs md:text-sm">6</span>
                                     Stock Management
                                 </h3>
 
@@ -708,16 +708,16 @@ export default function StoreManageProducts() {
                                                 </div>
                                             </>
                                         ) : (
-                                            <div className="bg-orange-50 rounded p-4 border border-orange-200">
-                                                <p className="text-xs text-slate-600 mb-2">Current stock:</p>
-                                                <p className="text-3xl font-bold text-orange-600">{editingProduct?.totalUnits || 0}</p>
-                                                <p className="text-xs text-slate-500 mt-1">Units available</p>
+                                                <div className="bg-orange-50 rounded p-4 md:p-4 border border-orange-200">
+                                                <p className="text-xs md:text-xs text-slate-600 mb-2 md:mb-2">Current stock:</p>
+                                                <p className="text-4xl md:text-3xl font-bold text-orange-600">{editingProduct?.totalUnits || 0}</p>
+                                                <p className="text-xs md:text-xs text-slate-500 mt-2 md:mt-1">Units available</p>
                                             </div>
                                         )}
                                         <button
                                             type="button"
                                             onClick={() => setIsEditingStock(true)}
-                                            className="w-full py-2 px-3 bg-orange-100 hover:bg-orange-200 text-orange-700 rounded font-medium text-sm transition-colors mt-3"
+                                            className="w-full py-3 md:py-2 px-3 md:px-3 bg-orange-100 hover:bg-orange-200 text-orange-700 rounded font-medium text-base md:text-sm transition-colors mt-3 md:mt-3"
                                         >
                                             Update Stock
                                         </button>
@@ -725,18 +725,18 @@ export default function StoreManageProducts() {
                                 ) : (
                                     <div className="space-y-3">
                                         {editingProduct?.productVariants && editingProduct?.productVariants.length > 0 ? (
-                                            <div className="space-y-3">
-                                                <p className="text-sm text-slate-600">Update units for each variant:</p>
-                                                <div className="grid grid-cols-2 gap-2">
+                                            <div className="space-y-3 md:space-y-3">
+                                                <p className="text-sm md:text-sm text-slate-600">Update units for each variant:</p>
+                                                <div className="grid grid-cols-2 md:grid-cols-2 gap-3 md:gap-2">
                                                     {editingProduct?.productVariants?.map((pv) => (
                                                         <div key={pv.id}>
-                                                            <label className="text-xs font-medium text-slate-700 block mb-1">{pv.quantity}{pv.quantityUnit === 'PIECE' ? 'x' : pv.quantityUnit === 'KG' ? 'kg' : pv.quantityUnit === 'GRAM' ? 'g' : pv.quantityUnit === 'LITER' ? 'L' : pv.quantityUnit === 'MILLILITER' ? 'ml' : pv.quantityUnit}</label>
+                                                            <label className="text-xs md:text-xs font-medium text-slate-700 block mb-2 md:mb-1">{pv.quantity}{pv.quantityUnit === 'PIECE' ? 'x' : pv.quantityUnit === 'KG' ? 'kg' : pv.quantityUnit === 'GRAM' ? 'g' : pv.quantityUnit === 'LITER' ? 'L' : pv.quantityUnit === 'MILLILITER' ? 'ml' : pv.quantityUnit}</label>
                                                             <input
                                                                 type="number"
                                                                 min="0"
                                                                 value={stockData[pv.id] || 0}
                                                                 onChange={(e) => handleStockChange(pv.id, e.target.value)}
-                                                                className="w-full p-2 border border-orange-200 rounded text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                                                                className="w-full p-3 md:p-2 px-4 md:px-3 border border-orange-200 rounded text-base md:text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
                                                             />
                                                         </div>
                                                     ))}
@@ -744,21 +744,21 @@ export default function StoreManageProducts() {
                                             </div>
                                         ) : (
                                             <div>
-                                                <label className="text-sm font-medium text-slate-700 block mb-2">Units Available</label>
+                                                <label className="text-sm md:text-sm font-medium text-slate-700 block mb-2 md:mb-2">Units Available</label>
                                                 <input
                                                     type="number"
                                                     min="0"
                                                     value={stockData.units || 0}
                                                     onChange={(e) => handleStockChange('units', e.target.value)}
-                                                    className="w-full p-2.5 border border-orange-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                                                    className="w-full p-3 md:p-2.5 px-4 md:px-4 border border-orange-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 text-base md:text-sm"
                                                 />
                                             </div>
                                         )}
-                                        <div className="flex gap-2 pt-2">
+                                        <div className="flex gap-3 md:gap-2 pt-3 md:pt-2">
                                             <button
                                                 type="button"
                                                 onClick={() => setIsEditingStock(false)}
-                                                className="flex-1 px-3 py-2 text-sm text-slate-700 bg-slate-200 hover:bg-slate-300 rounded font-medium transition-colors"
+                                                className="flex-1 px-3 py-3 md:py-2 text-base md:text-sm text-slate-700 bg-slate-200 hover:bg-slate-300 rounded font-medium transition-colors"
                                             >
                                                 Cancel
                                             </button>
@@ -766,7 +766,7 @@ export default function StoreManageProducts() {
                                                 type="button"
                                                 onClick={submitStockUpdate}
                                                 disabled={editLoading}
-                                                className="flex-1 px-3 py-2 text-sm text-white bg-orange-500 hover:bg-orange-600 rounded font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                                className="flex-1 px-3 py-3 md:py-2 text-base md:text-sm text-white bg-orange-500 hover:bg-orange-600 rounded font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                                             >
                                                 {editLoading ? 'Updating...' : 'Update Stock'}
                                             </button>
@@ -776,18 +776,18 @@ export default function StoreManageProducts() {
                             </div>
 
                             {/* Form Buttons */}
-                            <div className="flex gap-2 justify-end sticky bottom-0 bg-white border-t border-slate-200 pt-4 -mx-6 px-6 pb-4">
+                            <div className="flex gap-2 md:gap-2 justify-end sticky bottom-0 bg-white border-t border-slate-200 pt-3 md:pt-4 -mx-3 md:-mx-6 px-3 md:px-6 pb-3 md:pb-4">
                                 <button
                                     type="button"
                                     onClick={closeEditModal}
-                                    className="px-4 py-2 text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg font-medium transition-colors"
+                                    className="px-3 md:px-4 py-2 md:py-2 text-sm md:text-sm text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg font-medium transition-colors"
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     type="submit"
                                     disabled={editLoading}
-                                    className="px-4 py-2 text-white bg-blue-600 hover:bg-blue-700 rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                    className="px-4 md:px-4 py-2 md:py-2 text-sm md:text-sm text-white bg-blue-600 hover:bg-blue-700 rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                                 >
                                     {editLoading ? "Saving..." : "Save Changes"}
                                 </button>

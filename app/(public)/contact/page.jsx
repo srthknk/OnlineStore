@@ -86,73 +86,73 @@ export default function Contact() {
     return (
         <main className="min-h-screen bg-white">
             {/* Hero Section */}
-            <section className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-24">
+            <section className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-4 md:px-6 lg:px-8 py-12 md:py-16 lg:py-24">
                 <div className="max-w-4xl mx-auto text-center">
-                    <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6">
+                    <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 md:mb-6">
                         Contact Us
                     </h1>
-                    <p className="text-base sm:text-lg lg:text-xl text-indigo-100">
+                    <p className="text-base md:text-lg lg:text-xl text-indigo-100">
                         Get in touch with the {storeName} team. We're here to help!
                     </p>
                 </div>
             </section>
 
-            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
+            <div className="max-w-6xl mx-auto px-4 md:px-6 lg:px-8 py-12 md:py-16 lg:py-20">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
                     {/* Contact Information */}
                     <div>
-                        <h2 className="text-2xl sm:text-3xl font-bold text-slate-800 mb-8">
+                        <h2 className="text-2xl md:text-3xl font-bold text-slate-800 mb-8 md:mb-8">
                             Get In Touch
                         </h2>
 
                         {/* Contact Cards */}
-                        <div className="space-y-6">
+                        <div className="space-y-8 md:space-y-6">
                             {/* Email */}
-                            <div className="flex gap-4 sm:gap-6">
+                            <div className="flex gap-4 md:gap-6">
                                 <div className="flex-shrink-0">
-                                    <FontAwesomeIcon icon={faEnvelope} className="w-6 h-6 sm:w-8 sm:h-8 text-indigo-600 mt-1" />
+                                    <FontAwesomeIcon icon={faEnvelope} className="w-7 h-7 md:w-8 md:h-8 text-indigo-600 mt-1" />
                                 </div>
                                 <div>
-                                    <h3 className="text-lg sm:text-xl font-semibold text-slate-800 mb-1">Email</h3>
+                                    <h3 className="text-lg md:text-xl font-semibold text-slate-800 mb-1">Email</h3>
                                     <a 
                                         href={`mailto:${settings.email}`}
-                                        className="text-base sm:text-lg text-indigo-600 hover:text-indigo-700 transition"
+                                        className="text-base md:text-lg text-indigo-600 hover:text-indigo-700 transition"
                                     >
                                         {settings.email}
                                     </a>
-                                    <p className="text-sm sm:text-base text-slate-500 mt-1">
+                                    <p className="text-sm md:text-base text-slate-500 mt-1">
                                         We'll respond within 24 hours
                                     </p>
                                 </div>
                             </div>
 
                             {/* Phone */}
-                            <div className="flex gap-4 sm:gap-6">
+                            <div className="flex gap-4 md:gap-6">
                                 <div className="flex-shrink-0">
-                                    <FontAwesomeIcon icon={faPhone} className="w-6 h-6 sm:w-8 sm:h-8 text-indigo-600 mt-1" />
+                                    <FontAwesomeIcon icon={faPhone} className="w-7 h-7 md:w-8 md:h-8 text-indigo-600 mt-1" />
                                 </div>
                                 <div>
-                                    <h3 className="text-lg sm:text-xl font-semibold text-slate-800 mb-1">Phone</h3>
+                                    <h3 className="text-lg md:text-xl font-semibold text-slate-800 mb-1">Phone</h3>
                                     <a 
                                         href={`tel:${settings.phone}`}
-                                        className="text-base sm:text-lg text-indigo-600 hover:text-indigo-700 transition"
+                                        className="text-base md:text-lg text-indigo-600 hover:text-indigo-700 transition"
                                     >
                                         {settings.phone}
                                     </a>
-                                    <p className="text-sm sm:text-base text-slate-500 mt-1">
+                                    <p className="text-sm md:text-base text-slate-500 mt-1">
                                         Mon-Sat, 9AM-6PM
                                     </p>
                                 </div>
                             </div>
 
                             {/* Address */}
-                            <div className="flex gap-4 sm:gap-6">
+                            <div className="flex gap-4 md:gap-6">
                                 <div className="flex-shrink-0">
-                                    <FontAwesomeIcon icon={faMapPin} className="w-6 h-6 sm:w-8 sm:h-8 text-indigo-600 mt-1" />
+                                    <FontAwesomeIcon icon={faMapPin} className="w-7 h-7 md:w-8 md:h-8 text-indigo-600 mt-1" />
                                 </div>
                                 <div>
-                                    <h3 className="text-lg sm:text-xl font-semibold text-slate-800 mb-1">Address</h3>
-                                    <p className="text-base sm:text-lg text-slate-600">
+                                    <h3 className="text-lg md:text-xl font-semibold text-slate-800 mb-1">Address</h3>
+                                    <p className="text-base md:text-lg text-slate-600">
                                         {settings.address}
                                     </p>
                                 </div>
@@ -160,11 +160,11 @@ export default function Contact() {
                         </div>
 
                         {/* Social Links */}
-                        <div className="mt-10 sm:mt-12">
-                            <h3 className="text-lg sm:text-xl font-semibold text-slate-800 mb-4 sm:mb-6">
+                        <div className="mt-10 md:mt-12">
+                            <h3 className="text-lg md:text-xl font-semibold text-slate-800 mb-6 md:mb-6">
                                 Follow Us
                             </h3>
-                            <div className="flex gap-4 sm:gap-6">
+                            <div className="flex gap-4 md:gap-6">
                                 <a href={settings.facebookUrl} target="_blank" rel="noopener noreferrer" className="p-3 bg-slate-100 hover:bg-indigo-600 hover:text-white rounded-lg transition">
                                     <FontAwesomeIcon icon={faFacebook} className="w-6 h-6" />
                                 </a>
@@ -182,15 +182,15 @@ export default function Contact() {
                     </div>
 
                     {/* Contact Form */}
-                    <form onSubmit={handleSubmit} className="bg-slate-50 p-6 sm:p-8 lg:p-10 rounded-lg shadow">
-                        <h2 className="text-2xl sm:text-3xl font-bold text-slate-800 mb-6 sm:mb-8">
+                    <form onSubmit={handleSubmit} className="bg-slate-50 p-6 md:p-8 lg:p-10 rounded-lg shadow">
+                        <h2 className="text-2xl md:text-3xl lg:text-3xl font-bold text-slate-800 mb-8 md:mb-6">
                             Send us a Message
                         </h2>
 
-                        <div className="space-y-4 sm:space-y-6">
+                        <div className="space-y-6 md:space-y-4">
                             {/* Name */}
                             <div>
-                                <label className="block text-sm sm:text-base font-medium text-slate-700 mb-2">
+                                <label className="block text-base md:text-sm font-medium text-slate-700 mb-3 md:mb-2">
                                     Your Name
                                 </label>
                                 <input
@@ -198,7 +198,7 @@ export default function Contact() {
                                     name="name"
                                     value={formData.name}
                                     onChange={handleInputChange}
-                                    className="w-full px-4 py-2 sm:py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm sm:text-base"
+                                    className="w-full px-4 py-3 md:py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-base md:text-sm"
                                     placeholder="John Doe"
                                     required
                                 />
@@ -206,7 +206,7 @@ export default function Contact() {
 
                             {/* Email */}
                             <div>
-                                <label className="block text-sm sm:text-base font-medium text-slate-700 mb-2">
+                                <label className="block text-base md:text-sm font-medium text-slate-700 mb-3 md:mb-2">
                                     Your Email
                                 </label>
                                 <input
@@ -214,7 +214,7 @@ export default function Contact() {
                                     name="email"
                                     value={formData.email}
                                     onChange={handleInputChange}
-                                    className="w-full px-4 py-2 sm:py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm sm:text-base"
+                                    className="w-full px-4 py-3 md:py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-base md:text-sm"
                                     placeholder="john@example.com"
                                     required
                                 />
@@ -222,7 +222,7 @@ export default function Contact() {
 
                             {/* Subject */}
                             <div>
-                                <label className="block text-sm sm:text-base font-medium text-slate-700 mb-2">
+                                <label className="block text-base md:text-sm font-medium text-slate-700 mb-3 md:mb-2">
                                     Subject
                                 </label>
                                 <input
@@ -230,7 +230,7 @@ export default function Contact() {
                                     name="subject"
                                     value={formData.subject}
                                     onChange={handleInputChange}
-                                    className="w-full px-4 py-2 sm:py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm sm:text-base"
+                                    className="w-full px-4 py-3 md:py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-base md:text-sm"
                                     placeholder="How can we help?"
                                     required
                                 />
@@ -238,15 +238,15 @@ export default function Contact() {
 
                             {/* Message */}
                             <div>
-                                <label className="block text-sm sm:text-base font-medium text-slate-700 mb-2">
+                                <label className="block text-base md:text-sm font-medium text-slate-700 mb-3 md:mb-2">
                                     Message
                                 </label>
                                 <textarea
                                     name="message"
                                     value={formData.message}
                                     onChange={handleInputChange}
-                                    rows="5"
-                                    className="w-full px-4 py-2 sm:py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none text-sm sm:text-base"
+                                    rows="7"
+                                    className="w-full px-4 py-3 md:py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none text-base md:text-sm"
                                     placeholder="Tell us more..."
                                     required
                                 />
@@ -256,7 +256,7 @@ export default function Contact() {
                             <button
                                 type="submit"
                                 disabled={submitting}
-                                className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-400 text-white font-semibold py-3 sm:py-4 rounded-lg transition text-sm sm:text-base"
+                                className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-400 text-white font-semibold py-4 md:py-3 rounded-lg transition text-base md:text-sm mt-2"
                             >
                                 {submitting ? 'Sending...' : 'Send Message'}
                             </button>

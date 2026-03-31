@@ -231,6 +231,13 @@ const InvoiceModal = ({ invoice, onClose, storeName, websiteName, autoDownload =
             doc.setTextColor(100, 100, 100);
             doc.text(`Payment Method: ${paymentMethod || 'Not specified'}  |  Status: ${isPaid ? '✓ Paid' : 'Pending'}`, margin, yPosition + 2);
 
+            // Add Refund Status for Cancelled Orders
+            if (order?.isCancelled) {
+                const refundStatusText = order?.refundStatus === 'REFUNDED' ? '✓ Refunded' : order?.refundStatus === 'FAILED' ? '✗ Failed' : 'Processing';
+                doc.text(`Refund Status: ${refundStatusText}  |  Refund Amount: ₹${total.toFixed(2)}`, margin, yPosition + 6);
+                yPosition += 4;
+            }
+
             yPosition += 8;
 
             // ==================== FOOTER ====================
@@ -413,6 +420,30 @@ const InvoiceModal = ({ invoice, onClose, storeName, websiteName, autoDownload =
                                         {isPaid ? 'Paid' : 'Pending'}
                                     </span>
                                 </div>
+
+                                {/* Refund Status - For Cancelled Orders */}
+                                {order?.isCancelled && (
+                                    <div className="flex justify-between pt-2 border-t border-gray-200">
+                                        <span className="text-gray-600">Refund Status:</span>
+                                        <span className={`font-medium px-2 py-1 rounded ${
+                                            order?.refundStatus === 'REFUNDED'
+                                                ? 'bg-green-100 text-green-800'
+                                                : order?.refundStatus === 'FAILED'
+                                                ? 'bg-red-100 text-red-800'
+                                                : 'bg-yellow-100 text-yellow-800'
+                                        }`}>
+                                            {order?.refundStatus === 'REFUNDED' ? '✓ Refunded' : order?.refundStatus === 'FAILED' ? '✗ Failed' : 'Processing'}
+                                        </span>
+                                    </div>
+                                )}
+
+                                {/* Refund Amount - For Cancelled Orders */}
+                                {order?.isCancelled && (
+                                    <div className="flex justify-between pt-2">
+                                        <span className="text-gray-600 font-medium">Refund Amount:</span>
+                                        <span className="font-bold text-red-600">₹{total.toFixed(2)}</span>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>

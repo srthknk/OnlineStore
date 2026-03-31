@@ -48,21 +48,22 @@ export async function POST(request){
         // Upload file-based images to ImageKit
         if(images.length > 0) {
             const uploadedImages = await Promise.all(images.map(async (image) => {
-                const buffer = Buffer.from(await image.arrayBuffer());
-                const response = await imagekit.upload({
-                    file: buffer,
-                    fileName: image.name,
-                    folder: "products",
-                })
-                const url = imagekit.url({
-                    path: response.filePath,
-                    transformation: [
-                        { quality: 'auto' },
-                        { format: 'webp' },
-                        { width: '1024' }
-                    ]
-                })
-                return url
+                try {
+                    const buffer = Buffer.from(await image.arrayBuffer());
+                    const response = await imagekit.upload({
+                        file: buffer,
+                        fileName: image.name,
+                        folder: "products",
+                    })
+                    // Use the direct URL from ImageKit response with transformations as query params
+                    const imageUrl = response.url || `${process.env.IMAGEKIT_URL_ENDPOINT}${response.filePath}`
+                    // Add transformations as query parameters
+                    const urlWithTransforms = `${imageUrl}?tr=q-auto,f-webp,w-1024`
+                    return urlWithTransforms
+                } catch (error) {
+                    console.error('Error uploading image to ImageKit:', error)
+                    throw new Error(`Failed to upload image: ${error.message}`)
+                }
             }))
             imagesUrl = [...imagesUrl, ...uploadedImages]
         }
@@ -197,21 +198,22 @@ export async function PUT(request){
         // Upload new file-based images if provided
         if(newImages.length > 0){
             const uploadedImages = await Promise.all(newImages.map(async (image) => {
-                const buffer = Buffer.from(await image.arrayBuffer());
-                const response = await imagekit.upload({
-                    file: buffer,
-                    fileName: image.name,
-                    folder: "products",
-                })
-                const url = imagekit.url({
-                    path: response.filePath,
-                    transformation: [
-                        { quality: 'auto' },
-                        { format: 'webp' },
-                        { width: '1024' }
-                    ]
-                })
-                return url
+                try {
+                    const buffer = Buffer.from(await image.arrayBuffer());
+                    const response = await imagekit.upload({
+                        file: buffer,
+                        fileName: image.name,
+                        folder: "products",
+                    })
+                    // Use the direct URL from ImageKit response with transformations as query params
+                    const imageUrl = response.url || `${process.env.IMAGEKIT_URL_ENDPOINT}${response.filePath}`
+                    // Add transformations as query parameters
+                    const urlWithTransforms = `${imageUrl}?tr=q-auto,f-webp,w-1024`
+                    return urlWithTransforms
+                } catch (error) {
+                    console.error('Error uploading image to ImageKit:', error)
+                    throw new Error(`Failed to upload image: ${error.message}`)
+                }
             }))
             imagesUrl = [...imagesUrl, ...uploadedImages]
         }

@@ -19,8 +19,7 @@ export default function Orders() {
 
     const router = useRouter()
 
-    useEffect(() => {
-       const fetchOrders = async () => {
+    const fetchOrders = async () => {
         try {
             const token = await getToken()
             const { data } = await axios.get('/api/orders', { headers: { Authorization: `Bearer ${token}` } })
@@ -29,7 +28,14 @@ export default function Orders() {
         } catch (error) {
             toast.error(error?.response?.data?.error || error.message)
         }
-       }
+    }
+
+    const handleOrderCancelled = (orderId) => {
+        // Remove cancelled order from the list
+        setOrders(prevOrders => prevOrders.filter(order => order.id !== orderId))
+    }
+
+    useEffect(() => {
        if(isLoaded){
         if(user){
             fetchOrders()
@@ -54,6 +60,7 @@ export default function Orders() {
                             <OrderCard 
                                 key={order.id} 
                                 order={order}
+                                onOrderCancelled={handleOrderCancelled}
                             />
                         ))}
                     </div>

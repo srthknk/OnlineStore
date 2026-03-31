@@ -8,11 +8,25 @@ import { useState } from 'react'
 export default function GroceryProductCard({ product }) {
     const dispatch = useDispatch()
     const [isAdding, setIsAdding] = useState(false)
+    const [imageError, setImageError] = useState(false)
 
     if (!product) return null
 
+    // Get product image - use images array if available, fallback to image
+    const productImage = (product.images && product.images.length > 0) 
+        ? product.images[0] 
+        : product.image
+    
+    if (!productImage && product.createdAt) {
+        // Only log if it's a recent product (last 7 days), not seed data
+        const daysSinceCreation = (Date.now() - new Date(product.createdAt)) / (1000 * 60 * 60 * 24)
+        if (daysSinceCreation < 7) {
+            console.warn('[GroceryProductCard] New product has no image:', product.name)
+        }
+    }
+
     // Calculate discount percentage
-    const originalPrice = product.basePrice || product.price
+    const originalPrice = product.basePrice || product.mrp || product.price
     const currentPrice = product.price
     const discountPercent = originalPrice > currentPrice 
         ? Math.round(((originalPrice - currentPrice) / originalPrice) * 100)
@@ -48,17 +62,27 @@ export default function GroceryProductCard({ product }) {
 
                     {/* Product Image */}
                     <div className='w-full h-full relative'>
-                        {product.image ? (
+                        {productImage && !imageError ? (
                             <Image
-                                src={product.image}
+                                src={productImage}
                                 alt={product.name}
                                 fill
                                 className='object-cover'
                                 sizes='(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw'
+                                unoptimized={true}
+                                onError={() => {
+                                    setImageError(true)
+                                }}
                             />
                         ) : (
-                            <div className='w-full h-full bg-slate-200 flex items-center justify-center'>
-                                <span className='text-slate-400 text-sm'>No Image</span>
+                            <div className='w-full h-full bg-gradient-to-br from-emerald-50 to-green-100 flex items-center justify-center'>
+                                <Image
+                                    src='/placeholder-product.svg'
+                                    alt='No product image'
+                                    fill
+                                    className='object-contain p-4'
+                                    unoptimized={true}
+                                />
                             </div>
                         )}
                     </div>

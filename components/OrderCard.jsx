@@ -1,10 +1,11 @@
 'use client'
 import Image from "next/image";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMapPin, faCalendarDays, faEye, faTruck } from '@fortawesome/free-solid-svg-icons';
+import { faMapPin, faCalendarDays, faEye, faTruck, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { useState } from "react";
 import DetailModal from "./DetailModal";
 import TrackingModal from "./TrackingModal";
+import CancelOrderModal from "./CancelOrderModal";
 
 // Helper function to title case text
 const toTitleCase = (str) => {
@@ -26,10 +27,11 @@ const getStatusConfig = (status) => {
     return configs[status] || configs['ORDER_PLACED'];
 };
 
-const OrderCard = ({ order }) => {
+const OrderCard = ({ order, onOrderCancelled }) => {
     const currency = process.env.NEXT_PUBLIC_CURRENCY_SYMBOL || '₹';
     const [showTracking, setShowTracking] = useState(false);
     const [showDetails, setShowDetails] = useState(false);
+    const [showCancelModal, setShowCancelModal] = useState(false);
 
     const statusConfig = getStatusConfig(order.status);
     const orderDate = new Date(order.createdAt);
@@ -37,6 +39,12 @@ const OrderCard = ({ order }) => {
 
     // Get first product image
     const firstProductImage = order.orderItems[0]?.product?.images[0];
+
+    // Check if order can be cancelled (only ORDER_PLACED and PROCESSING)
+    const canBeCancelled = order.status === 'ORDER_PLACED' || order.status === 'PROCESSING';
+
+    // Check if order is cancelled
+    const isCancelled = order.isCancelled;
 
     return (
         <>
@@ -64,10 +72,17 @@ const OrderCard = ({ order }) => {
 
                 {/* Card Content */}
                 <div className="p-4 space-y-3">
-                    {/* Status Badge */}
-                    <div className={`inline-flex items-center gap-2 ${statusConfig.bg} ${statusConfig.text} ${statusConfig.border} border px-3 py-1.5 rounded text-xs font-semibold`}>
-                        <div className={`w-2 h-2 rounded-full ${statusConfig.dot} animate-pulse`}></div>
-                        {toTitleCase(order.status)}
+                    {/* Status & Cancelled Badge */}
+                    <div className="flex items-center gap-2 flex-wrap">
+                        <div className={`inline-flex items-center gap-2 ${statusConfig.bg} ${statusConfig.text} ${statusConfig.border} border px-3 py-1.5 rounded text-xs font-semibold`}>
+                            <div className={`w-2 h-2 rounded-full ${statusConfig.dot} animate-pulse`}></div>
+                            {toTitleCase(order.status)}
+                        </div>
+                        {isCancelled && (
+                            <div className="inline-flex items-center gap-1 bg-red-100 text-red-700 border border-red-200 px-3 py-1.5 rounded text-xs font-semibold">
+                                Order Cancelled
+                            </div>
+                        )}
                     </div>
 
                     {/* Order ID */}
@@ -94,22 +109,33 @@ const OrderCard = ({ order }) => {
                         <span className="truncate">{toTitleCase(order.address.city)}, {order.address.state}</span>
                     </div>
 
-                    {/* Buttons */}
-                    <div className="grid grid-cols-2 gap-2 pt-2">
+                    {/* Buttons - Neatly positioned based on state */}
+                    <div className="flex flex-wrap gap-2 pt-2">
                         <button 
                             onClick={() => setShowDetails(true)}
-                            className="px-3 py-2 bg-black text-white text-xs font-bold rounded hover:bg-gray-900 transition-colors active:scale-95 flex items-center justify-center gap-1"
+                            className="flex-1 min-w-[70px] px-3 py-2 bg-black text-white text-xs font-bold rounded hover:bg-gray-900 transition-colors active:scale-95 flex items-center justify-center gap-1"
                         >
                             <FontAwesomeIcon icon={faEye} className="w-3 h-3" />
-                            View Details
+                            <span className="hidden sm:inline">View</span>
                         </button>
-                        <button 
-                            onClick={() => setShowTracking(true)}
-                            className="px-3 py-2 bg-gray-800 text-white text-xs font-bold rounded hover:bg-black transition-colors active:scale-95 flex items-center justify-center gap-1"
-                        >
-                            <FontAwesomeIcon icon={faTruck} className="w-3 h-3" />
-                            Track
-                        </button>
+                        {!isCancelled && order.status !== 'CANCELLED' && (
+                            <button 
+                                onClick={() => setShowTracking(true)}
+                                className="flex-1 min-w-[70px] px-3 py-2 bg-gray-800 text-white text-xs font-bold rounded hover:bg-black transition-colors active:scale-95 flex items-center justify-center gap-1"
+                            >
+                                <FontAwesomeIcon icon={faTruck} className="w-3 h-3" />
+                                <span className="hidden sm:inline">Track</span>
+                            </button>
+                        )}
+                        {canBeCancelled && (
+                            <button 
+                                onClick={() => setShowCancelModal(true)}
+                                className="flex-1 min-w-[70px] px-3 py-2 bg-red-600 text-white text-xs font-bold rounded hover:bg-red-700 transition-colors active:scale-95 flex items-center justify-center gap-1"
+                            >
+                                <FontAwesomeIcon icon={faTrash} className="w-3 h-3" />
+                                <span className="hidden sm:inline">Cancel</span>
+                            </button>
+                        )}
                     </div>
                 </div>
             </div>
@@ -117,6 +143,7 @@ const OrderCard = ({ order }) => {
             {/* Modals */}
             {showTracking && <TrackingModal order={order} onClose={() => setShowTracking(false)} />}
             {showDetails && <DetailModal order={order} onClose={() => setShowDetails(false)} />}
+            {showCancelModal && <CancelOrderModal order={order} onClose={() => setShowCancelModal(false)} onCancelSuccess={() => onOrderCancelled?.(order.id)} />}
         </>
     )
 }

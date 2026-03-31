@@ -13,6 +13,7 @@ const Hero = () => {
     const [loading, setLoading] = useState(true)
     const [bannerImage, setBannerImage] = useState(null)
     const [mounted, setMounted] = useState(false)
+    const [windowSize, setWindowSize] = useState(null)
     const router = useRouter()
 
     // Helper function to check if content is truly not empty (ignoring whitespace)
@@ -20,6 +21,13 @@ const Hero = () => {
 
     useEffect(() => {
         setMounted(true)
+        setWindowSize(typeof window !== 'undefined' ? window.innerWidth : null)
+        
+        const handleResize = () => {
+            setWindowSize(window.innerWidth)
+        }
+        window.addEventListener('resize', handleResize)
+        return () => window.removeEventListener('resize', handleResize)
     }, [])
 
     useEffect(() => {
@@ -80,12 +88,12 @@ const Hero = () => {
                 <div className='px-2 sm:px-4 md:px-6'>
                     <div className='w-full max-w-7xl mx-auto'>
                         {/* Main Banner Skeleton */}
-                        <div className='w-full rounded-2xl overflow-hidden bg-gray-200 animate-pulse mb-6 sm:mb-8' style={{ aspectRatio: '3/1' }}></div>
+                        <div className='w-full rounded-2xl overflow-hidden bg-gray-200 animate-pulse mb-6 sm:mb-8' style={{ aspectRatio: '16/9' }}></div>
                         
-                        {/* Feature Cards Skeleton */}
-                        <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6'>
+                        {/* Feature Cards Skeleton - Hidden on Mobile */}
+                        <div className='hidden sm:grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6'>
                             {[1, 2, 3].map((i) => (
-                                <div key={i} className='h-48 sm:h-56 md:h-48 bg-gray-200 rounded-2xl animate-pulse'></div>
+                                <div key={i} className={`h-48 sm:h-56 md:h-48 bg-gray-200 rounded-2xl animate-pulse ${i === 3 ? 'hidden lg:block' : ''}`}></div>
                             ))}
                         </div>
                     </div>
@@ -108,8 +116,8 @@ const Hero = () => {
                         onClick={() => router.push(bannerLink)}
                         className='relative w-full rounded-3xl overflow-hidden shadow-xl cursor-pointer hover:shadow-2xl transition-all duration-300 active:scale-95'
                     >
-                        {/* Single Banner Image - responsive with 3:1 aspect ratio */}
-                        <div className='relative w-full' style={{ aspectRatio: '3/1' }}>
+                        {/* Single Banner Image - responsive with 1.3:1 aspect ratio on mobile, 3:1 on larger screens */}
+                        <div className='relative w-full' style={{ aspectRatio: (windowSize !== null && windowSize < 640) ? '1.3/1' : '3/1' }}>
                             <Image
                                 src={bannerImage}
                                 alt='Main Banner'
@@ -124,17 +132,17 @@ const Hero = () => {
                 </div>
             </div>
 
-            {/* Feature Cards Section */}
-            <div className='px-2 sm:px-4 md:px-6 pb-6 sm:pb-8 md:pb-12'>
+            {/* Feature Cards Section - Hidden on Mobile */}
+            <div className='hidden sm:block px-2 sm:px-4 md:px-6 pb-6 sm:pb-8 md:pb-12'>
                 <div className='w-full max-w-7xl mx-auto'>
-                    <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6'>
+                    <div className='grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6'>
                         {featureCards
                             .filter(card => hasContent(card.title) || hasContent(card.description) || card.image || hasContent(card.buttonText))
                             .map((card, index) => (
                             <div
                                 key={index}
                                 onClick={() => router.push(card.link)}
-                                className='relative group cursor-pointer rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 active:scale-95 text-left'
+                                className={`relative group cursor-pointer rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 active:scale-95 text-left ${index === 2 ? 'hidden lg:block' : ''}`}
                             >
                                 {/* If image exists, display it with overlay */}
                                 {card.image ? (

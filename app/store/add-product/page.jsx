@@ -182,22 +182,22 @@ export default function StoreAddProduct() {
     }
 
     return (
-        <form onSubmit={e => toast.promise(onSubmitHandler(e), { loading: "Adding Product..." })} className="text-slate-500 mb-28">
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-semibold">Add New <span className="text-slate-800 font-medium">Products</span></h1>
-            <p className="mt-6 sm:mt-8 text-slate-700 font-medium">Product Images</p>
+        <form onSubmit={e => toast.promise(onSubmitHandler(e), { loading: "Adding Product..." })} className="text-slate-500 mb-28 p-4 md:p-0">
+            <h1 className="text-2xl sm:text-2xl md:text-4xl font-semibold">Add New <span className="text-slate-800 font-medium">Products</span></h1>
+            <p className="mt-8 md:mt-6 text-slate-700 font-medium text-sm md:text-base">Product Images</p>
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 mt-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-3 mt-6 md:mt-4">
                 {Object.keys(images).map((key) => (
                     <label key={key} htmlFor={`images${key}`} className="relative group">
                         <Image
                             width={300}
                             height={300}
-                            className='h-20 sm:h-24 w-full object-cover border-2 border-slate-200 rounded-lg cursor-pointer hover:border-slate-300 transition-colors'
+                            className='h-28 md:h-24 w-full object-cover border-2 border-slate-200 rounded-lg cursor-pointer hover:border-slate-300 transition-colors'
                             src={imageUrls[key] ? imageUrls[key] : (images[key] ? URL.createObjectURL(images[key]) : assets.upload_area)}
                             alt=""
                         />
                         <div className="absolute inset-0 bg-black bg-opacity-50 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                            <FontAwesomeIcon icon={faImage} className="text-white text-lg" />
+                            <FontAwesomeIcon icon={faImage} className="text-white text-xl md:text-lg" />
                         </div>
                         <input
                             type="file"
@@ -210,9 +210,9 @@ export default function StoreAddProduct() {
                 ))}
             </div>
 
-            <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                <p className="text-sm font-medium text-slate-700 mb-3"><FontAwesomeIcon icon={faLink} className="mr-2" />Or Add Image URLs</p>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
+            <div className="mt-6 md:mt-6 p-4 md:p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <p className="text-sm md:text-xs font-medium text-slate-700 mb-4 md:mb-3"><FontAwesomeIcon icon={faLink} className="mr-2" />Or Add Image URLs</p>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-3">
                     {Object.keys(imageUrls).map((key) => (
                         <input
                             key={key}
@@ -220,37 +220,37 @@ export default function StoreAddProduct() {
                             placeholder={`Image ${key} URL`}
                             value={imageUrls[key]}
                             onChange={(e) => setImageUrls({...imageUrls, [key]: e.target.value})}
-                            className="p-2 px-3 outline-none border border-blue-200 rounded-lg focus:border-blue-400 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-10 text-xs"
+                            className="p-3 md:p-2 px-3 md:px-3 outline-none border border-blue-200 rounded-lg focus:border-blue-400 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-10 text-base md:text-xs"
                         />
                     ))}
                 </div>
-                <p className="text-xs text-slate-500 mt-2">Tip: Paste image URLs from internet. Supported formats: jpg, png, webp</p>
+                <p className="text-xs md:text-xs text-slate-500 mt-3 md:mt-2">Tip: Paste image URLs from internet. Supported formats: jpg, png, webp</p>
             </div>
 
-            <label className="flex flex-col gap-2 my-6">
-                <span className="font-medium text-slate-700">Product Name</span>
-                <input type="text" name="name" onChange={onChangeHandler} value={productInfo.name} placeholder="Enter product name" className="w-full p-2.5 px-4 outline-none border border-slate-200 rounded-lg focus:border-slate-400 focus:ring-2 focus:ring-green-500 focus:ring-opacity-10 transition-all" required />
+            <label className="flex flex-col gap-2 my-6 md:my-6">
+                <span className="font-medium text-slate-700 text-sm md:text-sm">Product Name</span>
+                <input type="text" name="name" onChange={onChangeHandler} value={productInfo.name} placeholder="Enter product name" className="w-full p-3 md:p-2.5 px-4 md:px-4 outline-none border border-slate-200 rounded-lg focus:border-slate-400 focus:ring-2 focus:ring-green-500 focus:ring-opacity-10 transition-all text-base md:text-sm" required />
             </label>
 
-            <label className="flex flex-col gap-2 my-6">
-                <span className="font-medium text-slate-700">Description</span>
-                <textarea name="description" onChange={onChangeHandler} value={productInfo.description} placeholder="Enter product description" rows={4} className="w-full p-2.5 px-4 outline-none border border-slate-200 rounded-lg focus:border-slate-400 focus:ring-2 focus:ring-green-500 focus:ring-opacity-10 transition-all resize-none" required />
+            <label className="flex flex-col gap-2 my-6 md:my-6">
+                <span className="font-medium text-slate-700 text-sm md:text-sm">Description</span>
+                <textarea name="description" onChange={onChangeHandler} value={productInfo.description} placeholder="Enter product description" rows={5} className="w-full p-3 md:p-2.5 px-4 md:px-4 outline-none border border-slate-200 rounded-lg focus:border-slate-400 focus:ring-2 focus:ring-green-500 focus:ring-opacity-10 transition-all resize-none text-base md:text-sm" required />
             </label>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
                 <label className="flex flex-col gap-2">
-                    <span className="font-medium text-slate-700">Actual Price (₹)</span>
-                    <input type="number" name="mrp" onChange={onChangeHandler} value={productInfo.mrp} placeholder="0" className="w-full p-2.5 px-4 outline-none border border-slate-200 rounded-lg focus:border-slate-400 focus:ring-2 focus:ring-green-500 focus:ring-opacity-10 transition-all" required />
+                    <span className="font-medium text-slate-700 text-sm md:text-sm">Actual Price (₹)</span>
+                    <input type="number" name="mrp" onChange={onChangeHandler} value={productInfo.mrp} placeholder="0" className="w-full p-3 md:p-2.5 px-4 md:px-4 outline-none border border-slate-200 rounded-lg focus:border-slate-400 focus:ring-2 focus:ring-green-500 focus:ring-opacity-10 transition-all text-base md:text-sm" required />
                 </label>
                 <label className="flex flex-col gap-2">
-                    <span className="font-medium text-slate-700">Offer Price (₹)</span>
-                    <input type="number" name="price" onChange={onChangeHandler} value={productInfo.price} placeholder="0" className="w-full p-2.5 px-4 outline-none border border-slate-200 rounded-lg focus:border-slate-400 focus:ring-2 focus:ring-green-500 focus:ring-opacity-10 transition-all" required />
+                    <span className="font-medium text-slate-700 text-sm md:text-sm">Offer Price (₹)</span>
+                    <input type="number" name="price" onChange={onChangeHandler} value={productInfo.price} placeholder="0" className="w-full p-3 md:p-2.5 px-4 md:px-4 outline-none border border-slate-200 rounded-lg focus:border-slate-400 focus:ring-2 focus:ring-green-500 focus:ring-opacity-10 transition-all text-base md:text-sm" required />
                 </label>
             </div>
 
-            <label className="flex flex-col gap-2 my-6">
-                <span className="font-medium text-slate-700">Category</span>
-                <select onChange={e => setProductInfo({ ...productInfo, category: e.target.value })} value={productInfo.category} className="w-full p-2.5 px-4 outline-none border border-slate-200 rounded-lg focus:border-slate-400 focus:ring-2 focus:ring-green-500 focus:ring-opacity-10 transition-all" required>
+            <label className="flex flex-col gap-2 my-6 md:my-6">
+                <span className="font-medium text-slate-700 text-sm md:text-sm">Category</span>
+                <select onChange={e => setProductInfo({ ...productInfo, category: e.target.value })} value={productInfo.category} className="w-full p-3 md:p-2.5 px-4 md:px-4 outline-none border border-slate-200 rounded-lg focus:border-slate-400 focus:ring-2 focus:ring-green-500 focus:ring-opacity-10 transition-all text-base md:text-sm" required>
                     <option value="">Select a category</option>
                     {categories.map((category) => (
                         <option key={category} value={category}>{category}</option>
@@ -259,93 +259,93 @@ export default function StoreAddProduct() {
             </label>
 
             {/* Grocery-specific Fields */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5 mt-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5 mt-6 md:mt-6">
                 <label className="flex flex-col gap-2">
-                    <span className="font-medium text-slate-700">Manufacturing Date (Optional)</span>
+                    <span className="font-medium text-slate-700 text-sm md:text-sm">Manufacturing Date (Optional)</span>
                     <input 
                         type="date" 
                         name="manufacturingDate" 
                         onChange={onChangeHandler} 
                         value={productInfo.manufacturingDate} 
-                        className="w-full p-2.5 px-4 outline-none border border-slate-200 rounded-lg focus:border-slate-400 focus:ring-2 focus:ring-green-500 focus:ring-opacity-10 transition-all" 
+                        className="w-full p-3 md:p-2.5 px-4 md:px-4 outline-none border border-slate-200 rounded-lg focus:border-slate-400 focus:ring-2 focus:ring-green-500 focus:ring-opacity-10 transition-all text-base md:text-sm" 
                     />
                 </label>
                 <label className="flex flex-col gap-2">
-                    <span className="font-medium text-slate-700">Expiry Date (Optional)</span>
+                    <span className="font-medium text-slate-700 text-sm md:text-sm">Expiry Date (Optional)</span>
                     <input 
                         type="date" 
                         name="expiryDate" 
                         onChange={onChangeHandler} 
                         value={productInfo.expiryDate} 
-                        className="w-full p-2.5 px-4 outline-none border border-slate-200 rounded-lg focus:border-slate-400 focus:ring-2 focus:ring-green-500 focus:ring-opacity-10 transition-all" 
+                        className="w-full p-3 md:p-2.5 px-4 md:px-4 outline-none border border-slate-200 rounded-lg focus:border-slate-400 focus:ring-2 focus:ring-green-500 focus:ring-opacity-10 transition-all text-base md:text-sm" 
                     />
                 </label>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5 mt-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5 mt-6 md:mt-6">
                 <label className="flex flex-col gap-2">
-                    <span className="font-medium text-slate-700">Manufacturer (Optional)</span>
+                    <span className="font-medium text-slate-700 text-sm md:text-sm">Manufacturer (Optional)</span>
                     <input 
                         type="text" 
                         name="manufacturer" 
                         onChange={onChangeHandler} 
                         value={productInfo.manufacturer} 
                         placeholder="Brand or manufacturer name"
-                        className="w-full p-2.5 px-4 outline-none border border-slate-200 rounded-lg focus:border-slate-400 focus:ring-2 focus:ring-green-500 focus:ring-opacity-10 transition-all" 
+                        className="w-full p-3 md:p-2.5 px-4 md:px-4 outline-none border border-slate-200 rounded-lg focus:border-slate-400 focus:ring-2 focus:ring-green-500 focus:ring-opacity-10 transition-all text-base md:text-sm" 
                     />
                 </label>
             </div>
 
             {/* Organic & Vegan Checkboxes */}
-            <div className="grid grid-cols-2 gap-4 mt-6">
-                <label className="flex items-center gap-3 p-3 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-4 mt-6 md:mt-6">
+                <label className="flex items-center gap-3 p-4 md:p-3 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors cursor-pointer">
                     <input 
                         type="checkbox" 
                         name="isOrganic" 
                         checked={productInfo.isOrganic} 
                         onChange={onChangeHandler}
-                        className="w-5 h-5 cursor-pointer accent-green-600"
+                        className="w-6 md:w-5 h-6 md:h-5 cursor-pointer accent-green-600"
                     />
-                    <span className="font-medium text-slate-700"><FontAwesomeIcon icon={faLeaf} className="mr-2 text-green-600" />Organic</span>
+                    <span className="font-medium text-slate-700 text-base md:text-sm"><FontAwesomeIcon icon={faLeaf} className="mr-2 text-green-600" />Organic</span>
                 </label>
-                <label className="flex items-center gap-3 p-3 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors">
+                <label className="flex items-center gap-3 p-4 md:p-3 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors cursor-pointer">
                     <input 
                         type="checkbox" 
                         name="isVegan" 
                         checked={productInfo.isVegan} 
                         onChange={onChangeHandler}
-                        className="w-5 h-5 cursor-pointer accent-green-600"
+                        className="w-6 md:w-5 h-6 md:h-5 cursor-pointer accent-green-600"
                     />
-                    <span className="font-medium text-slate-700"><FontAwesomeIcon icon={faLeaf} className="mr-2 text-lime-600" />Vegan</span>
+                    <span className="font-medium text-slate-700 text-base md:text-sm"><FontAwesomeIcon icon={faLeaf} className="mr-2 text-lime-600" />Vegan</span>
                 </label>
             </div>
 
             {/* Product Variants Toggle */}
-            <div className="my-6 p-4 border border-emerald-200 bg-emerald-50 rounded-lg">
-                <label className="flex items-center gap-3">
+            <div className="my-6 md:my-6 p-4 md:p-4 border border-emerald-200 bg-emerald-50 rounded-lg">
+                <label className="flex items-center gap-3 cursor-pointer">
                     <input 
                         type="checkbox" 
                         name="hasVariants" 
                         checked={productInfo.hasVariants} 
                         onChange={onChangeHandler}
-                        className="w-5 h-5 cursor-pointer accent-emerald-600"
+                        className="w-6 md:w-5 h-6 md:h-5 cursor-pointer accent-emerald-600"
                     />
-                    <span className="font-medium text-slate-700">This Product Has Multiple Variants</span>
+                    <span className="font-medium text-slate-700 text-base md:text-sm">This Product Has Multiple Variants</span>
                 </label>
-                <p className="text-xs text-slate-600 mt-2">Enable for products with different sizes/quantities (e.g., 500g, 1kg, 2kg)</p>
+                <p className="text-xs md:text-xs text-slate-600 mt-3 md:mt-2">Enable for products with different sizes/quantities (e.g., 500g, 1kg, 2kg)</p>
             </div>
 
             {/* Stock Units for Products without Variants */}
             {!productInfo.hasVariants && (
-                <label className="flex flex-col gap-2 my-6">
-                    <span className="font-medium text-slate-700">Available Units</span>
+                <label className="flex flex-col gap-2 my-6 md:my-6">
+                    <span className="font-medium text-slate-700 text-sm md:text-sm">Available Units</span>
                     <input 
                         type="number" 
                         name="units" 
                         onChange={onChangeHandler} 
                         value={productInfo.units} 
                         placeholder="0" 
-                        className="w-full p-2.5 px-4 outline-none border border-slate-200 rounded-lg focus:border-slate-400 focus:ring-2 focus:ring-green-500 focus:ring-opacity-10 transition-all" 
+                        className="w-full p-3 md:p-2.5 px-4 md:px-4 outline-none border border-slate-200 rounded-lg focus:border-slate-400 focus:ring-2 focus:ring-green-500 focus:ring-opacity-10 transition-all text-base md:text-sm" 
                         required 
                     />
                 </label>
@@ -353,40 +353,40 @@ export default function StoreAddProduct() {
 
             {/* Product Variants Section */}
             {productInfo.hasVariants && (
-                <div className="my-6 p-5 border-2 border-emerald-200 bg-emerald-50 rounded-lg">
-                    <div className="flex items-center justify-between mb-4">
-                        <h3 className="font-semibold text-slate-800">Product Variants & Stock</h3>
+                <div className="my-6 md:my-6 p-4 md:p-5 border-2 border-emerald-200 bg-emerald-50 rounded-lg">
+                    <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-5 md:mb-4 gap-4 md:gap-0">
+                        <h3 className="font-semibold text-slate-800 text-base md:text-base">Product Variants & Stock</h3>
                         <button 
                             type="button"
                             onClick={addVariant}
-                            className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg transition-all btn-animate"
+                            className="w-full md:w-auto flex items-center justify-center md:justify-start gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-3 md:px-4 md:py-2 rounded-lg transition-all btn-animate"
                         >
                             <FontAwesomeIcon icon={faPlus} /> Add Variant
                         </button>
                     </div>
 
                     {productVariants.length === 0 ? (
-                        <p className="text-slate-600 text-sm">No variants added yet. Click "Add Variant" to start.</p>
+                        <p className="text-slate-600 text-sm md:text-sm">No variants added yet. Click "Add Variant" to start.</p>
                     ) : (
-                        <div className="space-y-3">
+                        <div className="space-y-3 md:space-y-3">
                             {productVariants.map((variant, index) => (
-                                <div key={index} className="flex gap-3 items-end bg-white p-3 rounded-lg border border-slate-200">
+                                <div key={index} className="flex flex-col md:flex-row md:gap-3 md:items-end bg-white p-4 md:p-3 rounded-lg border border-slate-200 gap-3">
                                     <div className="flex-1">
-                                        <label className="text-xs font-medium text-slate-600">Quantity</label>
+                                        <label className="text-xs md:text-xs font-medium text-slate-600 block mb-2 md:mb-1">Quantity</label>
                                         <input 
                                             type="text" 
                                             placeholder="e.g., 500, 1, 2"
                                             value={variant.quantity}
                                             onChange={(e) => updateVariant(index, 'quantity', e.target.value)}
-                                            className="w-full p-2 px-3 outline-none border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:ring-opacity-10"
+                                            className="w-full p-3 md:p-2 px-3 md:px-3 outline-none border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:ring-opacity-10 text-base md:text-sm"
                                         />
                                     </div>
                                     <div className="flex-1">
-                                        <label className="text-xs font-medium text-slate-600">Unit</label>
+                                        <label className="text-xs md:text-xs font-medium text-slate-600 block mb-2 md:mb-1">Unit</label>
                                         <select 
                                             value={variant.quantityUnit}
                                             onChange={(e) => updateVariant(index, 'quantityUnit', e.target.value)}
-                                            className="w-full p-2 px-3 outline-none border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:ring-opacity-10"
+                                            className="w-full p-3 md:p-2 px-3 md:px-3 outline-none border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:ring-opacity-10 text-base md:text-sm"
                                         >
                                             <option value="">Select Unit</option>
                                             {QUANTITY_UNITS.map((unit) => (
@@ -395,20 +395,20 @@ export default function StoreAddProduct() {
                                         </select>
                                     </div>
                                     <div className="flex-1">
-                                        <label className="text-xs font-medium text-slate-600">Stock</label>
+                                        <label className="text-xs md:text-xs font-medium text-slate-600 block mb-2 md:mb-1">Stock</label>
                                         <input 
                                             type="number" 
                                             min="1"
                                             value={variant.totalUnits}
                                             onChange={(e) => updateVariant(index, 'totalUnits', e.target.value)}
                                             placeholder="0"
-                                            className="w-full p-2 px-3 outline-none border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:ring-opacity-10"
+                                            className="w-full p-3 md:p-2 px-3 md:px-3 outline-none border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:ring-opacity-10 text-base md:text-sm"
                                         />
                                     </div>
                                     <button
                                         type="button"
                                         onClick={() => removeVariant(index)}
-                                        className="p-2.5 bg-red-100 hover:bg-red-200 text-red-600 rounded-lg transition-all"
+                                        className="w-full md:w-auto p-3 md:p-2.5 bg-red-100 hover:bg-red-200 text-red-600 rounded-lg transition-all flex items-center justify-center md:block"
                                     >
                                         <FontAwesomeIcon icon={faTrash} />
                                     </button>
@@ -419,7 +419,7 @@ export default function StoreAddProduct() {
                 </div>
             )}
 
-            <button disabled={loading} className="w-full sm:w-auto bg-gradient-to-r from-emerald-700 to-emerald-900 text-white px-6 sm:px-8 py-2.5 mt-8 rounded-lg hover:shadow-lg active:scale-95 btn-animate transition-all duration-300 font-medium disabled:opacity-50 disabled:cursor-not-allowed">
+            <button disabled={loading} className="w-full md:w-auto bg-gradient-to-r from-emerald-700 to-emerald-900 text-white px-6 md:px-8 py-3 md:py-2.5 mt-8 md:mt-8 rounded-lg hover:shadow-lg active:scale-95 btn-animate transition-all duration-300 font-medium text-base md:text-base disabled:opacity-50 disabled:cursor-not-allowed">
                 {loading ? "Adding..." : "Add Product"}
             </button>
         </form>

@@ -12,8 +12,19 @@ const ProductCard = ({ product, hideStockAndTags = false }) => {
     const currency = process.env.NEXT_PUBLIC_CURRENCY_SYMBOL || '₹'
     const [isFavorite, setIsFavorite] = useState(false)
     const [isHovered, setIsHovered] = useState(false)
+    const [imageError, setImageError] = useState(false)
     const cardRef = useRef(null)
     const imageRef = useRef(null)
+
+    // Fallback image if product has no images
+    const productImage = product?.images && product.images.length > 0 
+        ? product.images[0] 
+        : '/placeholder-product.png'
+
+    // Debug logging
+    if (!product?.images || product.images.length === 0) {
+        console.warn('[ProductCard] Product has no images:', product?.name || product?.id)
+    }
 
     // calculate the average rating of the product
     const rating = product.rating?.length > 0 ? Math.round(product.rating.reduce((acc, curr) => acc + curr.rating, 0) / product.rating.length) : 0;
@@ -67,16 +78,31 @@ const ProductCard = ({ product, hideStockAndTags = false }) => {
                     />
                     
                     <div ref={imageRef}>
-                        <Image 
-                            width={500} 
-                            height={500} 
-                            className='max-h-24 sm:max-h-32 md:max-h-40 lg:max-h-48 w-auto' 
-                            src={product.images[0]} 
-                            alt={product.name}
-                            loading="lazy"
-                            placeholder="blur"
-                            blurDataURL="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 500 500'%3E%3Crect fill='%23e2e8f0' width='500' height='500'/%3E%3C/svg%3E"
-                        />
+                        {!imageError && productImage !== '/placeholder-product.png' ? (
+                            <Image 
+                                width={500} 
+                                height={500} 
+                                className='max-h-24 sm:max-h-32 md:max-h-40 lg:max-h-48 w-auto' 
+                                src={productImage} 
+                                alt={product.name}
+                                loading="lazy"
+                                unoptimized={true}
+                                placeholder="blur"
+                                blurDataURL="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 500 500'%3E%3Crect fill='%23e2e8f0' width='500' height='500'/%3E%3C/svg%3E"
+                                onError={() => {
+                                    setImageError(true)
+                                }}
+                            />
+                        ) : (
+                            <Image 
+                                width={500} 
+                                height={500} 
+                                className='max-h-24 sm:max-h-32 md:max-h-40 lg:max-h-48 w-auto' 
+                                src='/placeholder-product.svg' 
+                                alt='No product image'
+                                unoptimized={true}
+                            />
+                        )}
                     </div>
                     
                     {/* Premium Badges with Animation */}

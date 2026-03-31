@@ -8,7 +8,7 @@ import toast from "react-hot-toast"
 import SellerCancelOrderModal from "@/components/SellerCancelOrderModal"
 import InvoiceModal from "@/components/InvoiceModal"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faList, faGears, faTruck, faCheckCircle, faBan, faBell, faUser, faBox, faCreditCard, faSackDollar, faTicket, faRotate, faFileInvoice } from "@fortawesome/free-solid-svg-icons"
+import { faList, faGears, faTruck, faCheckCircle, faBan, faBell, faUser, faBox, faCreditCard, faSackDollar, faTicket, faRotate, faFileInvoice, faClipboard } from "@fortawesome/free-solid-svg-icons"
 
 export default function StoreOrders() {
     const [orders, setOrders] = useState([])
@@ -20,6 +20,7 @@ export default function StoreOrders() {
     const [showInvoice, setShowInvoice] = useState(false)
     const [loadingInvoice, setLoadingInvoice] = useState(false)
     const [websiteSettings, setWebsiteSettings] = useState({ storeName: 'E-Commerce Shop' })
+    const [activeTab, setActiveTab] = useState('all') // 'all', 'pending-cancellations'
 
     const { getToken } = useAuth()
 
@@ -64,6 +65,29 @@ export default function StoreOrders() {
        } catch (error) {
             toast.error(error?.response?.data?.error || error.message)
        }
+    }
+
+    const acknowledgeCancellation = async (orderId) => {
+        try {
+            const response = await axios.post('/api/orders/acknowledge-cancellation', { orderId })
+            if (response.data.success) {
+                toast.success('Cancellation acknowledged!')
+                // Update selected order
+                setSelectedOrder(prev => ({
+                    ...prev,
+                    pickupCompletedAt: new Date().toISOString()
+                }))
+                // Update orders list
+                setOrders(prev =>
+                    prev.map(order => 
+                        order.id === orderId ? {...order, pickupCompletedAt: new Date().toISOString()} : order
+                    )
+                )
+                closeModal()
+            }
+        } catch (error) {
+            toast.error(error?.response?.data?.error || 'Failed to acknowledge cancellation')
+        }
     }
 
     const openModal = (order) => {
@@ -112,6 +136,16 @@ export default function StoreOrders() {
 
     if (loading) return <Loading />
 
+    // Filter orders based on active tab
+    const getFilteredOrders = () => {
+        switch(activeTab) {
+            case 'pending-cancellations':
+                return orders.filter(o => o.isCancelled && !o.pickupCompletedAt)
+            default:
+                return orders
+        }
+    }
+
     // Calculate order statistics
     const orderStats = {
         total: orders.length,
@@ -119,7 +153,8 @@ export default function StoreOrders() {
         processing: orders.filter(o => !o.isCancelled && o.status === 'PROCESSING').length,
         shipped: orders.filter(o => !o.isCancelled && o.status === 'SHIPPED').length,
         delivered: orders.filter(o => !o.isCancelled && o.status === 'DELIVERED').length,
-        cancelled: orders.filter(o => o.isCancelled).length
+        cancelled: orders.filter(o => o.isCancelled).length,
+        pendingCancellations: orders.filter(o => o.isCancelled && !o.pickupCompletedAt).length
     }
 
     const getStatusColor = (status, isCancelled) => {
@@ -137,8 +172,37 @@ export default function StoreOrders() {
         <>
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-slate-800 mb-6">Store <span className="text-slate-800 font-medium">Orders</span></h1>
             
-            {/* Order Statistics Badges */}
-            {orders.length > 0 && (
+            {/* Tabs Navigation */}
+            <div className="flex flex-wrap gap-2 mb-6 border-b border-slate-200">
+                <button
+                    onClick={() => setActiveTab('all')}
+                    className={`px-4 py-2 font-medium flex items-center gap-2 border-b-2 transition-all ${
+                        activeTab === 'all' 
+                            ? 'border-slate-800 text-slate-800' 
+                            : 'border-transparent text-slate-600 hover:text-slate-800'
+                    }`}
+                >
+                    <FontAwesomeIcon icon={faClipboard} /> All Orders
+                </button>
+                <button
+                    onClick={() => setActiveTab('pending-cancellations')}
+                    className={`px-4 py-2 font-medium flex items-center gap-2 border-b-2 transition-all relative ${
+                        activeTab === 'pending-cancellations' 
+                            ? 'border-red-600 text-red-600' 
+                            : 'border-transparent text-slate-600 hover:text-slate-800'
+                    }`}
+                >
+                    <FontAwesomeIcon icon={faBan} /> Pending Cancellations
+                    {orderStats.pendingCancellations > 0 && (
+                        <span className="ml-2 px-2 py-0.5 text-xs bg-red-600 text-white rounded-full font-bold">
+                            {orderStats.pendingCancellations}
+                        </span>
+                    )}
+                </button>
+            </div>
+            
+            {/* Order Statistics Badges - Only show for All Orders tab */}
+            {activeTab === 'all' && orders.length > 0 && (
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-8">
                     <div className="bg-gradient-to-br from-slate-50 to-slate-100 rounded-lg p-4 border border-slate-200 text-center hover:shadow-md transition-shadow">
                         <p className="text-2xl sm:text-3xl font-bold text-slate-700">{orderStats.total}</p>
@@ -167,15 +231,18 @@ export default function StoreOrders() {
                 </div>
             )}
             
-            {orders.length === 0 ? (
+            {getFilteredOrders().length === 0 ? (
                 <div className="text-center py-12">
-                    <p className="text-slate-500 text-lg">No orders found</p>
+                    <p className="text-slate-500 text-lg">
+                        {activeTab === 'all' && 'No orders found'}
+                        {activeTab === 'pending-cancellations' && 'No pending cancellations'}
+                    </p>
                 </div>
             ) : (
                 <>
                     {/* Cards View - All Devices */}
                     <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-5">
-                        {orders.map((order, index) => {
+                        {getFilteredOrders().map((order, index) => {
                             const colors = getStatusColor(order.status, order.isCancelled)
                             const orderId = order.id.substring(0, 8).toUpperCase()
                             return (
@@ -325,6 +392,24 @@ export default function StoreOrders() {
                             )}
                             <p><span className="text-green-700 font-medium">Order Status:</span> <span className="font-semibold">{selectedOrder.status.replace(/_/g, ' ')}</span></p>
                             <p><span className="text-green-700 font-medium">Order Date:</span> <span className="font-semibold">{new Date(selectedOrder.createdAt).toLocaleString()}</span></p>
+                            
+                            {/* Refund Status for Cancelled Orders */}
+                            {selectedOrder.isCancelled && (
+                                <>
+                                    <div className="pt-3 border-t border-slate-200 mt-3">
+                                        <p><span className="text-red-700 font-medium"><FontAwesomeIcon icon={faBan} className="mr-2" />Refund Status:</span> 
+                                        <span className={`font-semibold ml-2 px-2 py-0.5 rounded text-xs ${
+                                            selectedOrder.refundStatus === 'SUCCESS' ? 'bg-green-100 text-green-700' :
+                                            selectedOrder.refundStatus === 'FAILED' ? 'bg-red-100 text-red-700' :
+                                            'bg-yellow-100 text-yellow-700'
+                                        }`}>
+                                            {selectedOrder.refundStatus === 'SUCCESS' ? '✓ Refunded' : selectedOrder.refundStatus === 'FAILED' ? '✗ Failed' : 'Processing'}
+                                        </span></p>
+                                    </div>
+                                    <p><span className="text-red-700 font-medium">Refund Amount:</span> <span className="font-semibold text-red-700">₹{selectedOrder.total?.toLocaleString()}</span></p>
+                                </>
+                            )}
+                            
                             <div className="border-t border-slate-200 pt-3 mt-3 font-bold text-lg">
                                 <p><span className="text-green-700">Total: </span>₹{selectedOrder.total?.toLocaleString()}</p>
                             </div>
@@ -340,6 +425,20 @@ export default function StoreOrders() {
                                 )}
                                 {selectedOrder.cancellationDescription && (
                                     <p className="text-red-600 text-sm mt-1"><span className="font-semibold">Message:</span> {selectedOrder.cancellationDescription}</p>
+                                )}
+                                
+                                {/* OK Button for Pending Cancellations */}
+                                {!selectedOrder.pickupCompletedAt && (
+                                    <button
+                                        onClick={() => acknowledgeCancellation(selectedOrder.id)}
+                                        className="mt-4 px-6 py-2 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors"
+                                    >
+                                        ✓ OK
+                                    </button>
+                                )}
+                                
+                                {selectedOrder.pickupCompletedAt && (
+                                    <p className="text-green-600 text-sm mt-4 font-semibold"><FontAwesomeIcon icon={faCheckCircle} className="mr-2" />Acknowledged on {new Date(selectedOrder.pickupCompletedAt).toLocaleString()}</p>
                                 )}
                             </div>
                         )}

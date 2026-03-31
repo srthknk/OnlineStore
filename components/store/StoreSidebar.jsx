@@ -87,7 +87,7 @@ const StoreSidebar = ({storeInfo}) => {
             </div>
 
             {/* Mobile Header with Hamburger */}
-            <div className="md:hidden border-b border-slate-200 bg-white sticky top-0 z-40">
+            <div className="md:hidden border-b border-slate-200 bg-white sticky top-0 z-50">
                 <div className="flex items-center justify-between p-4">
                     <div className="flex items-center gap-3">
                         <Image className="w-10 h-10 rounded-full shadow-md" src={storeInfo?.logo} alt="" width={64} height={64} />
@@ -111,46 +111,44 @@ const StoreSidebar = ({storeInfo}) => {
                         )}
                     </button>
                 </div>
+            </div>
 
-                {/* Mobile Menu - Animated Dropdown */}
-                <div
-                    style={{
-                        maxHeight: mobileOpen ? '300px' : '0px',
-                        opacity: mobileOpen ? 1 : 0,
-                    }}
-                    className={`overflow-hidden border-t border-slate-200 transition-all duration-300 ease-out ${mobileOpen ? 'animate-slideDown' : ''}`}
-                >
-                    <div className="flex flex-col gap-1 p-3 bg-gradient-to-b from-white to-slate-50">
-                        {
-                            sidebarLinks.map((link, index) => (
+            {/* Mobile Menu - Full Screen Overlay */}
+            {mobileOpen && (
+                <>
+                    {/* Backdrop */}
+                    <div 
+                        className="fixed inset-0 bg-black/50 z-40"
+                        onClick={() => setMobileOpen(false)}
+                    />
+                    
+                    {/* Menu Panel */}
+                    <div className="fixed top-20 left-0 right-0 bottom-0 z-50 bg-white shadow-lg overflow-y-auto">
+                        <div className="grid grid-cols-3 gap-4 p-6">
+                            {sidebarLinks.map((link, index) => (
                                 <Link 
                                     key={index} 
                                     href={link.href} 
-                                    className={`relative flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 transform ${
-                                        mobileOpen ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'
-                                    } ${
+                                    className={`flex flex-col items-center justify-center relative p-4 rounded-lg transition-all duration-300 ${
                                         pathname === link.href 
-                                            ? 'bg-gradient-to-r from-green-500 to-blue-600 text-white shadow-md font-medium' 
-                                            : 'text-slate-600 hover:text-green-600 hover:bg-slate-100 active:scale-95'
+                                            ? 'bg-gradient-to-br from-green-500 to-blue-600 text-white shadow-lg' 
+                                            : 'bg-slate-50 text-slate-700 hover:bg-slate-100'
                                     }`}
-                                    style={{
-                                        transitionDelay: mobileOpen ? `${index * 50}ms` : '0ms'
-                                    }}
                                     onClick={() => setMobileOpen(false)}
+                                    title={link.name}
                                 >
-                                    <FontAwesomeIcon icon={link.icon} className="text-lg flex-shrink-0 transition-transform duration-300 group-hover:scale-110" />
-                                    <p className="text-sm font-medium flex-1">{link.name}</p>
+                                    <FontAwesomeIcon icon={link.icon} className="text-3xl mb-2" />
                                     {link.badge > 0 && (
-                                        <span className="inline-flex items-center justify-center min-w-6 h-6 px-1.5 text-xs font-bold text-white bg-red-500 rounded-full shadow-md animate-pulse">
+                                        <span className="absolute -top-1 -right-1 inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-red-500 rounded-full shadow-md border-2 border-white">
                                             {link.badge > 99 ? '99+' : link.badge}
                                         </span>
                                     )}
                                 </Link>
-                            ))
-                        }
+                            ))}
+                        </div>
                     </div>
-                </div>
-            </div>
+                </>
+            )}
         </>
     )
 }

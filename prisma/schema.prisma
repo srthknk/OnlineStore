@@ -117,6 +117,18 @@ enum CancellationReason {
     SELLER_REQUEST
 }
 
+enum ReturnReason {
+    DEFECTIVE_PRODUCT
+    NOT_AS_DESCRIBED
+    WRONG_ITEM_RECEIVED
+    MISSING_PARTS
+    SIZE_NOT_FIT
+    QUALITY_ISSUE
+    DAMAGED_PACKAGING
+    CHANGED_MIND
+    OTHER_REASON
+}
+
 enum PaymentMethod {
     COD
     RAZORPAY_CARD
@@ -151,14 +163,26 @@ model Order {
     isCouponUsed          Boolean                 @default(false)
     coupon                Json                    @default("{}")
     orderItems            OrderItem[]
+    // Cancellation Details
     isCancelled           Boolean                 @default(false)
     cancellationReason    CancellationReason?
     cancellationDescription String?
     cancelledBy           String?                 // "buyer" or "seller"
     cancelledAt           DateTime?
 
+    // Return Details
+    returnRequestedAt     DateTime?               // When return was requested
+    returnReason          ReturnReason?
+    returnDescription     String?
+    returnImages          String[]                // Array of image URLs for return evidence
+    pickupAssignedTo      String?                 // Delivery partner assigned for pickup/return
+    pickupScheduledAt     DateTime?               // When pickup is scheduled
+    pickupCompletedAt     DateTime?               // When pickup was completed
+    returnApprovedAt      DateTime?               // When return was approved by seller
+    refundStatus          PaymentStatus?          @default(PENDING) // Refund status
+
     // Delivery Partner Assignment
-    deliveryPartnerId     String?                 // Assigned delivery partner
+    deliveryPartnerId     String?                 // Assigned delivery partner for delivery
     deliveryStatus        DeliveryStatus?         // Status of delivery
     deliveryStartedAt     DateTime?               // When delivery started
     deliveryCompletedAt   DateTime?               // When delivery was completed

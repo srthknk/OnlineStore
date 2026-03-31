@@ -30,7 +30,7 @@ const Newsletter = () => {
     }, [])
 
     return (
-        <section className='relative my-10 sm:my-16 md:my-24 lg:my-32 px-3 sm:px-4 md:px-6 lg:px-8'>
+        <section className='relative my-10 sm:my-16 md:my-24 lg:my-32 px-3 sm:px-4 md:px-6 lg:px-8 hidden sm:block'>
             {/* Background gradient */}
             <div className='absolute inset-0 bg-gradient-to-r from-green-50 via-emerald-50 to-teal-50 rounded-2xl md:rounded-3xl -z-10' />
             

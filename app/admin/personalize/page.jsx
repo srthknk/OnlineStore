@@ -157,14 +157,14 @@ export default function AdminPersonalize() {
     }
 
     return (
-        <div className="p-6 max-w-6xl">
-            <h1 className="text-3xl font-bold text-slate-800 mb-8">Personalize Store</h1>
+        <div className="p-4 md:p-6 max-w-6xl">
+            <h1 className="text-2xl md:text-3xl font-bold text-slate-800 mb-6 md:mb-8">Personalize Store</h1>
 
             {/* Tabs Navigation */}
-            <div className="flex gap-2 mb-8 border-b border-slate-200">
+            <div className="flex gap-1 md:gap-2 mb-6 md:mb-8 border-b border-slate-200 overflow-x-auto">
                 <button
                     onClick={() => setActiveTab('store')}
-                    className={`px-4 py-3 font-medium transition-all duration-300 ${
+                    className={`px-3 md:px-4 py-3 md:py-3 font-medium text-sm md:text-base transition-all duration-300 whitespace-nowrap ${
                         activeTab === 'store'
                             ? 'text-indigo-600 border-b-2 border-indigo-600 bg-indigo-50'
                             : 'text-slate-600 hover:text-slate-700'
@@ -174,7 +174,7 @@ export default function AdminPersonalize() {
                 </button>
                 <button
                     onClick={() => setActiveTab('faq')}
-                    className={`px-4 py-3 font-medium transition-all duration-300 ${
+                    className={`px-3 md:px-4 py-3 md:py-3 font-medium text-sm md:text-base transition-all duration-300 whitespace-nowrap ${
                         activeTab === 'faq'
                             ? 'text-indigo-600 border-b-2 border-indigo-600 bg-indigo-50'
                             : 'text-slate-600 hover:text-slate-700'
@@ -189,49 +189,49 @@ export default function AdminPersonalize() {
                 {activeTab === 'store' ? (
                     <form onSubmit={handleSubmit} className="space-y-8">
                 {/* Store Name Section */}
-                <div className="bg-white p-6 rounded-lg shadow">
-                    <h2 className="text-xl font-semibold text-slate-700 mb-4">Store Name</h2>
+                <div className="bg-white p-4 md:p-6 rounded-lg shadow">
+                    <h2 className="text-lg md:text-xl font-semibold text-slate-700 mb-4">Store Name</h2>
                     <input
                         type="text"
                         value={settings.storeName}
                         onChange={(e) => setSettings(prev => ({ ...prev, storeName: e.target.value }))}
-                        className="w-full max-w-md px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        className="w-full px-4 py-3 md:py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-base md:text-sm font-medium"
                         placeholder="Enter store name"
                     />
-                    <p className="text-sm text-slate-500 mt-2">This name will appear throughout the app</p>
+                    <p className="text-xs md:text-sm text-slate-500 mt-2">This name will appear throughout the app</p>
                 </div>
 
                 {/* Contact Information Section */}
-                <div className="bg-white p-6 rounded-lg shadow">
-                    <h2 className="text-xl font-semibold text-slate-700 mb-4">Contact Information</h2>
-                    <div className="space-y-4">
+                <div className="bg-white p-4 md:p-6 rounded-lg shadow">
+                    <h2 className="text-lg md:text-xl font-semibold text-slate-700 mb-4">Contact Information</h2>
+                    <div className="space-y-4 md:space-y-3">
                         <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-2">Email Address</label>
+                            <label className="block text-sm md:text-xs font-medium text-slate-700 mb-2">Email Address</label>
                             <input
                                 type="email"
                                 value={settings.email}
                                 onChange={(e) => setSettings(prev => ({ ...prev, email: e.target.value }))}
-                                className="w-full max-w-md px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                className="w-full px-4 py-3 md:py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-base md:text-sm font-medium"
                                 placeholder="contact@example.com"
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-2">Phone Number</label>
+                            <label className="block text-sm md:text-xs font-medium text-slate-700 mb-2">Phone Number</label>
                             <input
                                 type="tel"
                                 value={settings.phone}
                                 onChange={(e) => setSettings(prev => ({ ...prev, phone: e.target.value }))}
-                                className="w-full max-w-md px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                className="w-full px-4 py-3 md:py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-base md:text-sm font-medium"
                                 placeholder="+1-212-456-7890"
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-2">Address</label>
+                            <label className="block text-sm md:text-xs font-medium text-slate-700 mb-2">Address</label>
                             <input
                                 type="text"
                                 value={settings.address}
                                 onChange={(e) => setSettings(prev => ({ ...prev, address: e.target.value }))}
-                                className="w-full max-w-md px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                className="w-full px-4 py-3 md:py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-base md:text-sm font-medium"
                                 placeholder="Enter your address"
                             />
                         </div>
@@ -239,72 +239,72 @@ export default function AdminPersonalize() {
                 </div>
 
                 {/* Social Media Links Section */}
-                <div className="bg-white p-6 rounded-lg shadow">
-                    <h2 className="text-xl font-semibold text-slate-700 mb-4">Social Media Links</h2>
-                    <div className="space-y-4">
+                <div className="bg-white p-4 md:p-6 rounded-lg shadow">
+                    <h2 className="text-lg md:text-xl font-semibold text-slate-700 mb-4">Social Media Links</h2>
+                    <div className="space-y-4 md:space-y-3">
                         <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-2">Facebook URL</label>
+                            <label className="block text-sm md:text-xs font-medium text-slate-700 mb-2">Facebook URL</label>
                             <input
                                 type="url"
                                 value={settings.facebookUrl}
                                 onChange={(e) => setSettings(prev => ({ ...prev, facebookUrl: e.target.value }))}
-                                className="w-full max-w-md px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                className="w-full px-4 py-3 md:py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-base md:text-sm font-medium"
                                 placeholder="https://www.facebook.com"
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-2">Instagram URL</label>
+                            <label className="block text-sm md:text-xs font-medium text-slate-700 mb-2">Instagram URL</label>
                             <input
                                 type="url"
                                 value={settings.instagramUrl}
                                 onChange={(e) => setSettings(prev => ({ ...prev, instagramUrl: e.target.value }))}
-                                className="w-full max-w-md px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                className="w-full px-4 py-3 md:py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-base md:text-sm font-medium"
                                 placeholder="https://www.instagram.com"
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-2">Twitter URL</label>
+                            <label className="block text-sm md:text-xs font-medium text-slate-700 mb-2">Twitter URL</label>
                             <input
                                 type="url"
                                 value={settings.twitterUrl}
                                 onChange={(e) => setSettings(prev => ({ ...prev, twitterUrl: e.target.value }))}
-                                className="w-full max-w-md px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                className="w-full px-4 py-3 md:py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-base md:text-sm font-medium"
                                 placeholder="https://twitter.com"
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-2">LinkedIn URL</label>
+                            <label className="block text-sm md:text-xs font-medium text-slate-700 mb-2">LinkedIn URL</label>
                             <input
                                 type="url"
                                 value={settings.linkedinUrl}
                                 onChange={(e) => setSettings(prev => ({ ...prev, linkedinUrl: e.target.value }))}
-                                className="w-full max-w-md px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                className="w-full px-4 py-3 md:py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-base md:text-sm font-medium"
                                 placeholder="https://www.linkedin.com"
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-2">WhatsApp Link</label>
+                            <label className="block text-sm md:text-xs font-medium text-slate-700 mb-2">WhatsApp Link</label>
                             <input
                                 type="url"
                                 value={settings.whatsappLink}
                                 onChange={(e) => setSettings(prev => ({ ...prev, whatsappLink: e.target.value }))}
-                                className="w-full max-w-md px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                className="w-full px-4 py-3 md:py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-base md:text-sm font-medium"
                                 placeholder="https://wa.me/1234567890"
                             />
-                            <p className="text-sm text-slate-500 mt-2">Add your WhatsApp business number (e.g., https://wa.me/1234567890)</p>
+                            <p className="text-xs md:text-sm text-slate-500 mt-2">Add your WhatsApp business number (e.g., https://wa.me/1234567890)</p>
                         </div>
                     </div>
                 </div>
 
                 {/* Main Banner Section */}
-                <div className="bg-white p-6 rounded-lg shadow">
-                    <h2 className="text-xl font-semibold text-slate-700 mb-2">Main Banner</h2>
-                    <p className="text-sm text-slate-500 mb-3">The main hero banner displayed at the top of the homepage</p>
+                <div className="bg-white p-4 md:p-6 rounded-lg shadow">
+                    <h2 className="text-lg md:text-xl font-semibold text-slate-700 mb-2\">Main Banner</h2>
+                    <p className="text-xs md:text-sm text-slate-500 mb-4\">The main hero banner displayed at the top of the homepage</p>
                     
                     {/* Image Dimension Guidelines */}
-                    <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                        <p className="text-sm font-semibold text-blue-900 mb-2">📐 Image Guidelines for Best Results:</p>
-                        <ul className="text-xs text-blue-800 space-y-1 ml-4">
+                    <div className="mb-4 p-3 md:p-4 bg-blue-50 border border-blue-200 rounded-lg\">
+                        <p className="text-xs md:text-sm font-semibold text-blue-900 mb-2\">📐 Image Guidelines for Best Results:</p>
+                        <ul className="text-xs text-blue-800 space-y-1 ml-4\">
                             <li>• <strong>Recommended Dimensions:</strong> 1200×400px (3:1 aspect ratio)</li>
                             <li>• <strong>Minimum Width:</strong> 1200px for HD quality</li>
                             <li>• <strong>Aspect Ratio:</strong> 3:1 ratio (e.g., 1500×500px, 1800×600px)</li>
@@ -315,25 +315,24 @@ export default function AdminPersonalize() {
 
                     {/* Preview */}
                     {previewImages.banner1 && (
-                        <div className="mb-4">
-                            <p className="text-sm font-medium text-slate-600 mb-2">Preview</p>
+                        <div className="mb-4\">
+                            <p className="text-xs md:text-sm font-medium text-slate-600 mb-2\">Preview</p>
                             <img
                                 src={previewImages.banner1}
                                 alt="Main Banner"
-                                className="w-full max-h-60 object-cover rounded-lg"
-                            />
+                                className="w-full max-h-60 object-cover rounded-lg\"/>
                         </div>
                     )}
 
                     {/* Image Upload */}
-                    <div className="mb-4">
-                        <label className="block text-sm font-medium text-slate-700 mb-2">
+                    <div className="mb-4\">
+                        <label className="block text-sm md:text-xs font-medium text-slate-700 mb-2\">
                             Upload Image
                         </label>
-                        <label className="flex items-center justify-center w-full max-w-md px-4 py-3 border-2 border-dashed border-slate-300 rounded-lg cursor-pointer hover:border-indigo-500 transition">
-                            <div className="flex items-center gap-2">
-                                <FontAwesomeIcon icon={faUpload} className="text-slate-400" />
-                                <span className="text-slate-600">Click to upload</span>
+                        <label className="flex items-center justify-center w-full px-4 py-4 md:py-3 border-2 border-dashed border-slate-300 rounded-lg cursor-pointer hover:border-indigo-500 transition\">
+                            <div className="flex items-center gap-2\">
+                                <FontAwesomeIcon icon={faUpload} className="text-slate-400\" />
+                                <span className="text-sm md:text-xs text-slate-600\">Click to upload</span>
                             </div>
                             <input
                                 type="file"
@@ -345,48 +344,48 @@ export default function AdminPersonalize() {
                     </div>
 
                     {/* URL Input */}
-                    <div className="mb-4">
-                        <label className="block text-sm font-medium text-slate-700 mb-2">
+                    <div className="mb-4\">
+                        <label className="block text-sm md:text-xs font-medium text-slate-700 mb-2\">
                             Or enter image URL
                         </label>
                         <input
                             type="url"
                             value={settings.bannerImage1}
                             onChange={(e) => handleUrlChange('bannerImage1', e.target.value)}
-                            className="w-full max-w-md px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                            className="w-full px-4 py-3 md:py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-base md:text-sm font-medium\"
                             placeholder="https://example.com/image.jpg"
                         />
                     </div>
 
                     {/* Banner Link */}
                     <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-2">
+                        <label className="block text-sm md:text-xs font-medium text-slate-700 mb-2">
                             Banner Click Redirect Link
                         </label>
                         <input
                             type="url"
                             value={settings.bannerLink1}
                             onChange={(e) => setSettings(prev => ({ ...prev, bannerLink1: e.target.value }))}
-                            className="w-full max-w-md px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                            className="w-full px-4 py-3 md:py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-base md:text-sm font-medium"
                             placeholder="/shop"
                         />
-                        <p className="text-xs text-slate-500 mt-2">Where clicking the banner will navigate to (e.g., /shop, /deals, or https://example.com)</p>
+                        <p className="text-xs md:text-xs text-slate-500 mt-2">Where clicking the banner will navigate to (e.g., /shop, /deals, or https://example.com)</p>
                     </div>
                 </div>
 
                 {/* Feature Cards Section */}
                 <div className="space-y-6">
-                    <h2 className="text-2xl font-semibold text-slate-800">Feature Cards</h2>
-                    <p className="text-sm text-slate-600">Customize the 3 feature cards displayed below the main banner. You can add images, text, or both.</p>
+                    <h2 className="text-xl md:text-2xl font-semibold text-slate-800">Feature Cards</h2>
+                    <p className="text-xs md:text-sm text-slate-600">Customize the 3 feature cards displayed below the main banner. You can add images, text, or both.</p>
                     
                     {[1, 2, 3].map((num) => (
-                        <div key={num} className="bg-white p-6 rounded-lg shadow">
-                            <h3 className="text-lg font-semibold text-slate-700 mb-4">Feature Card {num}</h3>
+                        <div key={num} className="bg-white p-4 md:p-6 rounded-lg shadow">
+                            <h3 className="text-lg md:text-lg font-semibold text-slate-700 mb-4">Feature Card {num}</h3>
 
                             {/* Preview Image */}
                             {previewImages[`featureCard${num}`] && (
                                 <div className="mb-4">
-                                    <p className="text-sm font-medium text-slate-600 mb-2">Image Preview</p>
+                                    <p className="text-xs md:text-sm font-medium text-slate-600 mb-2">Image Preview</p>
                                     <img
                                         src={previewImages[`featureCard${num}`]}
                                         alt={`Feature Card ${num}`}
@@ -396,16 +395,16 @@ export default function AdminPersonalize() {
                             )}
 
                             {/* Card Image Upload */}
-                            <div className="mb-6 pb-6 border-b border-slate-200">
-                                <label className="block text-sm font-medium text-slate-700 mb-2">
+                            <div className="mb-6 md:mb-6 pb-6 md:pb-6 border-b border-slate-200">
+                                <label className="block text-sm md:text-xs font-medium text-slate-700 mb-2">
                                     Card Image (Optional)
                                 </label>
-                                <p className="text-xs text-slate-500 mb-3">You can display the card with image only, without text</p>
+                                <p className="text-xs md:text-xs text-slate-500 mb-3">You can display the card with image only, without text</p>
                                 <div className="mb-3">
-                                    <label className="flex items-center justify-center w-full max-w-md px-4 py-3 border-2 border-dashed border-slate-300 rounded-lg cursor-pointer hover:border-indigo-500 transition">
+                                    <label className="flex items-center justify-center w-full px-4 py-4 md:py-3 border-2 border-dashed border-slate-300 rounded-lg cursor-pointer hover:border-indigo-500 transition">
                                         <div className="flex items-center gap-2">
                                             <FontAwesomeIcon icon={faUpload} className="text-slate-400" />
-                                            <span className="text-slate-600">Click to upload</span>
+                                            <span className="text-sm md:text-xs text-slate-600">Click to upload</span>
                                         </div>
                                         <input
                                             type="file"
@@ -419,63 +418,63 @@ export default function AdminPersonalize() {
                                     type="url"
                                     value={settings[`featureCardImage${num}`]}
                                     onChange={(e) => handleUrlChange(`featureCardImage${num}`, e.target.value)}
-                                    className="w-full max-w-md px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm"
+                                    className="w-full px-4 py-3 md:py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-base md:text-sm font-medium"
                                     placeholder="Or enter image URL"
                                 />
                             </div>
 
                             {/* Card Title */}
                             <div className="mb-4">
-                                <label className="block text-sm font-medium text-slate-700 mb-2">
+                                <label className="block text-sm md:text-xs font-medium text-slate-700 mb-2">
                                     Card Title
                                 </label>
                                 <input
                                     type="text"
                                     value={settings[`featureCardTitle${num}`]}
                                     onChange={(e) => setSettings(prev => ({ ...prev, [`featureCardTitle${num}`]: e.target.value }))}
-                                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                    className="w-full px-4 py-3 md:py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-base md:text-sm font-medium"
                                     placeholder={`Feature Card ${num} title`}
                                 />
                             </div>
 
                             {/* Card Description */}
                             <div className="mb-4">
-                                <label className="block text-sm font-medium text-slate-700 mb-2">
+                                <label className="block text-sm md:text-xs font-medium text-slate-700 mb-2">
                                     Card Description
                                 </label>
                                 <textarea
                                     value={settings[`featureCardDesc${num}`]}
                                     onChange={(e) => setSettings(prev => ({ ...prev, [`featureCardDesc${num}`]: e.target.value }))}
-                                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                    className="w-full px-4 py-3 md:py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-base md:text-sm font-medium"
                                     placeholder={`Feature Card ${num} description`}
-                                    rows="2"
+                                    rows="3"
                                 />
                             </div>
 
                             {/* Button Text */}
                             <div className="mb-4">
-                                <label className="block text-sm font-medium text-slate-700 mb-2">
+                                <label className="block text-sm md:text-xs font-medium text-slate-700 mb-2">
                                     Button Text
                                 </label>
                                 <input
                                     type="text"
                                     value={settings[`featureCardButton${num}`]}
                                     onChange={(e) => setSettings(prev => ({ ...prev, [`featureCardButton${num}`]: e.target.value }))}
-                                    className="w-full max-w-md px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                    className="w-full px-4 py-3 md:py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-base md:text-sm font-medium"
                                     placeholder="Button text (e.g., Order Now)"
                                 />
                             </div>
 
                             {/* Card Link */}
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 mb-2">
+                                <label className="block text-sm md:text-xs font-medium text-slate-700 mb-2">
                                     Card Link (where button clicks)
                                 </label>
                                 <input
                                     type="url"
                                     value={settings[`featureCardLink${num}`]}
                                     onChange={(e) => setSettings(prev => ({ ...prev, [`featureCardLink${num}`]: e.target.value }))}
-                                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                    className="w-full px-4 py-3 md:py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-base md:text-sm font-medium"
                                     placeholder="https://example.com/category"
                                 />
                             </div>
@@ -487,7 +486,7 @@ export default function AdminPersonalize() {
                 <button
                     type="submit"
                     disabled={submitting}
-                    className="px-8 py-3 bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-400 text-white font-semibold rounded-lg transition"
+                    className="w-full md:w-auto px-8 py-3 md:py-2 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:shadow-lg active:scale-95 disabled:bg-slate-400 disabled:shadow-none text-white font-semibold rounded-lg md:rounded-lg transition-all duration-300 text-base md:text-sm"
                 >
                     {submitting ? 'Saving...' : 'Save Changes'}
                 </button>
